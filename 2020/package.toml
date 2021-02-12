@@ -1,8 +1,6 @@
 [package]
-name = "advent_of_code"
+name = "aoc2020"
 version = "0.1.0"
 authors = ["Erik Moqvist <erik.moqvist@gmail.com>"]
-description = "Add a short package description here."
 
 [dependencies]
-# foobar = "*"

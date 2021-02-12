@@ -1,0 +1,35 @@
+class TextFile:
+    c"std::ifstream m_file;"
+
+    def __init__(self, path: string):
+        path_utf8 = path.to_utf8()
+        path_utf8 += 0
+        ok = True
+
+        c"""
+        m_file.open((const char *)path_utf8.m_bytes->data(), std::ifstream::binary);
+
+        if (!m_file.is_open()) {
+            ok = false;
+        }
+        """
+
+        if not ok:
+            raise ValueError()
+
+    def read(self, size: i64 = -1) -> string:
+        if size == -1:
+            c"""
+            m_file.seekg(0, m_file.end);
+            size = m_file.tellg();
+            m_file.seekg(0, m_file.beg);
+            """
+
+        result = ""
+
+        for _ in range(size):
+            ch: i32 = 0
+            c"ch = m_file.get();"
+            result += char(ch)
+
+        return result

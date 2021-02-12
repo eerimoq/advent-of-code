@@ -1,0 +1,23 @@
+from .utils import TextFile
+
+def part_1(numbers: [i64]):
+    for i, n1 in enumerate(numbers):
+        for n2 in slice(numbers, i + 1):
+            if n1 + n2 == 2020:
+                print(n1 * n2)
+                return
+
+def part_2(numbers: [i64]):
+    for i, n1 in enumerate(numbers):
+        for j, n2 in slice(enumerate(numbers), i + 1):
+            for n3 in slice(numbers, j + 1):
+                if n1 + n2 + n3 == 2020:
+                    print(n1 * n2 * n3)
+                    return
+
+def day_1():
+    numbers = [i64(number)
+               for number in TextFile("src/day_1.txt").read().split("\n")
+               if number != ""]
+    part_1(numbers)
+    part_2(numbers)
