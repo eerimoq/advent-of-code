@@ -1,7 +1,5 @@
 from os import TextFile
 
-REQUIRED_FIELDS: [string] = ["ecl", "pid", "eyr", "hcl", "byr", "iyr", "hgt"]
-
 def load_passports() -> [{string: string}]:
     passports: [{string: string}] = []
 
@@ -17,7 +15,7 @@ def load_passports() -> [{string: string}]:
     return passports
 
 def are_required_fields_present(passport: {string: string}) -> bool:
-    for field in REQUIRED_FIELDS:
+    for field in ["ecl", "pid", "eyr", "hcl", "byr", "iyr", "hgt"]:
         if field not in passport:
             return False
 
