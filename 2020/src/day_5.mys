@@ -1,0 +1,42 @@
+from os import TextFile
+
+def make_seat_id(value: string) -> i64:
+    number = 0
+
+    for digit in value:
+        number <<= 1
+
+        if digit in "BR":
+            number += 1
+
+    return number
+
+def load_seat_ids() -> [i64]:
+    return [
+        make_seat_id(line)
+        for line in TextFile("src/day_5.txt").read().split("\n")
+        if line != ""
+    ]
+
+def part_1(seat_ids: [i64]):
+    print(max(seat_ids))
+
+def part_2(seat_ids: [i64]):
+    for seat_id in range(1024):
+        if seat_id in seat_ids:
+            continue
+
+        if seat_id - 1 in seat_ids and seat_id + 1 in seat_ids:
+            print(seat_id)
+            break
+
+def day_5():
+    seat_ids = load_seat_ids()
+    part_1(seat_ids)
+    part_2(seat_ids)
+
+@test
+def test_all():
+    assert make_seat_id("BFFFBBFRRR") == 567
+    assert make_seat_id("FFFBBBFRRR") == 119
+    assert make_seat_id("BBFFBBFRLL") == 820
