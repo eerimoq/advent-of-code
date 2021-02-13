@@ -1,0 +1,58 @@
+from os import TextFile
+
+class Map:
+    rows: [string]
+    height: i64
+    width: i64
+
+    def __init__(self):
+        self.rows = [
+            line
+            for line in TextFile("src/day_3.txt").read().split("\n")
+            if line != ""
+        ]
+        self.height = i64(len(self.rows))
+        self.width = i64(len(self.rows[0]))
+
+    def get_tile(self, x: i64, y: i64) -> char:
+        x = (x - 1) % self.width
+
+        return self.rows[y - 1][x]
+
+def calculate_tree_encounters(map: Map, dx: i64, dy: i64) -> i64:
+    x, y = 1, 1
+    encounters = 0
+
+    while y <= map.height:
+        tile = map.get_tile(x, y)
+
+        if tile == '#':
+            encounters += 1
+
+        x += dx
+        y += dy
+
+    return encounters
+
+def part_1(map: Map):
+    print(calculate_tree_encounters(map, 3, 1))
+
+def part_2(map: Map):
+    slopes = [
+        (1, 1),
+        (3, 1),
+        (5, 1),
+        (7, 1),
+        (1, 2)
+    ]
+    product = 1
+
+    for encounter in [calculate_tree_encounters(map, dx, dy) for dx, dy in slopes]:
+        product *= encounter
+
+    print(product)
+
+def day_3():
+    map = Map()
+    part_1(map)
+    part_2(map)

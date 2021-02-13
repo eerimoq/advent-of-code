@@ -1,8 +1,11 @@
 from .day_1 import day_1
 from .day_2 import day_2
+from .day_3 import day_3
 
 def main():
     print("Day 1:")
     day_1()
     print("Day 2:")
     day_2()
+    print("Day 3:")
+    day_3()
