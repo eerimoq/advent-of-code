@@ -1,35 +1,111 @@
+from fiber import current
+from fiber import suspend
+from fiber import Fiber
+
+c"""
+static void read_data(TextFile *text_file_p);
+
+static void on_open_complete(uv_fs_t *request_p)
+{
+    TextFile *text_file_p = (TextFile *)(request_p->data);
+
+    uv_fs_req_cleanup(request_p);
+
+    if (request_p->result < 0) {
+        fprintf(stderr, "error: %s\n", uv_strerror(request_p->result));
+    } else {
+        text_file_p->m_file = request_p->result;
+        resume(text_file_p->_fiber);
+    }
+}
+
+static void on_read_complete(uv_fs_t *request_p)
+{
+    TextFile *text_file_p = (TextFile *)(request_p->data);
+
+    uv_fs_req_cleanup(request_p);
+
+    if (request_p->result < 0) {
+        fprintf(stderr, "error: %s\n", uv_strerror(request_p->result));
+    } else if (request_p->result == 0) {
+        resume(text_file_p->_fiber);
+    } else {
+        for (int i = 0; i < request_p->result; i++) {
+            text_file_p->_data += Char(text_file_p->m_data[i]);
+        }
+
+        read_data(text_file_p);
+    }
+}
+
+static void read_data(TextFile *text_file_p)
+{
+    uv_fs_read(uv_default_loop(),
+               &text_file_p->m_request,
+               text_file_p->m_file,
+               &text_file_p->m_buf,
+               1,
+               -1,
+               on_read_complete);
+}
+"""
+
 class TextFile:
-    c"std::ifstream m_file;"
+    c"uv_fs_t m_request;"
+    c"uv_buf_t m_buf;"
+    c"char m_data[256];"
+    c"uv_file m_file;"
+    _data: string
+    _fiber: Fiber
 
     def __init__(self, path: string):
         path_utf8 = path.to_utf8()
         path_utf8 += 0
-        ok = True
+        self._fiber = current()
 
         c"""
-        m_file.open((const char *)path_utf8.m_bytes->data(), std::ifstream::binary);
+        m_request.data = this;
+        uv_fs_open(uv_default_loop(),
+                   &m_request,
+                   (const char *)path_utf8.m_bytes->data(),
+                   O_RDONLY,
+                   0,
+                   on_open_complete);
+        """
 
-        if (!m_file.is_open()) {
-            ok = false;
+        suspend()
+        self._fiber = None
+
+    def __del__(self):
+        self.close()
+
+    def close(self):
+        c"""
+        if (m_file != -1) {
+            uv_fs_close(uv_default_loop(), &m_request, m_file, NULL);
+            m_file = -1;
         }
         """
 
-        if not ok:
+    def read(self, size: i64 = -1) -> string:
+        if self._fiber is not None:
             raise ValueError()
 
-    def read(self, size: i64 = -1) -> string:
-        if size == -1:
-            c"""
-            m_file.seekg(0, m_file.end);
-            size = m_file.tellg();
-            m_file.seekg(0, m_file.beg);
-            """
+        self._fiber = current()
+        self._data = ""
 
-        result = ""
+        c"""
+        m_buf = uv_buf_init(m_data, sizeof(m_data));
+        uv_fs_read(uv_default_loop(),
+                   &m_request,
+                   m_file,
+                   &m_buf,
+                   1,
+                   -1,
+                   on_read_complete);
+        """
 
-        for _ in range(size):
-            ch: i32 = 0
-            c"ch = m_file.get();"
-            result += char(ch)
+        suspend()
+        self._fiber = None
 
-        return result
+        return self._data
