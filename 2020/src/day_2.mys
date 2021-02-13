@@ -1,0 +1,17 @@
+from os import TextFile
+
+class Entry:
+    low: i64
+    high: i64
+    ch: char
+    password: string
+
+def day_2():
+    entries: [Entry] = []
+
+    for line in TextFile("src/day_2.txt").read().split("\n"):
+        mo = line.match(re"^(\d+)-(\d+) (.): (.+)$")
+        entries.append(Entry(i64(mo.group(1)),
+                             i64(mo.group(2)),
+                             mo.group(3)[0],
+                             mo.group(4)))
