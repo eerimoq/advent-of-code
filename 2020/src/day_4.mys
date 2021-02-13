@@ -67,7 +67,6 @@ def is_valid_hgt(value: string) -> bool:
         return False
 
     height = i64(mo.group(1))
-    unit = mo.group(2)
 
     match mo.group(2):
         case "cm":
