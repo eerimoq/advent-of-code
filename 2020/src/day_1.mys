@@ -1,4 +1,4 @@
-from .utils import TextFile
+from os import TextFile
 
 def part_1(numbers: [i64]):
     for i, n1 in enumerate(numbers):
