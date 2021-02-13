@@ -1,0 +1,132 @@
+from os import TextFile
+
+REQUIRED_FIELDS: [string] = ["ecl", "pid", "eyr", "hcl", "byr", "iyr", "hgt"]
+
+def load_passports() -> [{string: string}]:
+    passports: [{string: string}] = []
+
+    for chunk in TextFile("src/day_4.txt").read().split("\n\n"):
+        passport: {string: string} = {}
+
+        for item in chunk.replace("\n", " ").split(" "):
+            key, _, value = item.partition(':')
+            passport[key] = value
+
+        passports.append(passport)
+
+    return passports
+
+def are_required_fields_present(passport: {string: string}) -> bool:
+    for field in REQUIRED_FIELDS:
+        if field not in passport:
+            return False
+
+    return True
+
+def is_valid_ecl(value: string) -> bool:
+    return value in {"amb", "blu", "brn", "gry", "grn", "hzl", "oth"}
+
+def is_valid_pid(value: string) -> bool:
+    return value.match(re"^\d{9}$") is not None
+
+def is_valid_eyr(value: string) -> bool:
+    mo = value.match(re"^(\d{4})$")
+
+    if mo is None:
+        return False
+
+    year = i64(mo.group(1))
+
+    return year >= 2020 and year <= 2030
+
+def is_valid_hcl(value: string) -> bool:
+    return value.match(re"^#[0-9a-f]{6}$") is not None
+
+def is_valid_byr(value: string) -> bool:
+    mo = value.match(re"^(\d{4})$")
+
+    if mo is None:
+        return False
+
+    year = i64(mo.group(1))
+
+    return year >= 1920 and year <= 2002
+
+def is_valid_iyr(value: string) -> bool:
+    mo = value.match(re"^(\d{4})$")
+
+    if mo is None:
+        return False
+
+    year = i64(mo.group(1))
+
+    return year >= 2010 and year <= 2020
+
+def is_valid_hgt(value: string) -> bool:
+    mo = value.match(re"^(\d+)(cm|in)$")
+
+    if mo is None:
+        return False
+
+    height = i64(mo.group(1))
+    unit = mo.group(2)
+
+    match mo.group(2):
+        case "cm":
+            return height >= 150 and height <= 193
+        case "in":
+            return height >= 59 and height <= 76
+        case _:
+            return False
+
+def part_1(passports: [{string: string}]):
+    number_of_valid_passports = 0
+
+    for passport in passports:
+        if are_required_fields_present(passport):
+            number_of_valid_passports += 1
+
+    print(number_of_valid_passports)
+
+def is_valid_part_2(passport: {string: string}) -> bool:
+    if not are_required_fields_present(passport):
+        return False
+
+    for key, value in passport:
+        # Bug: Match does not work here. Compilation error. ok not
+        #      defined.
+        if key == "ecl":
+            ok = is_valid_ecl(value)
+        elif key == "pid":
+            ok = is_valid_pid(value)
+        elif key == "eyr":
+            ok = is_valid_eyr(value)
+        elif key == "hcl":
+            ok = is_valid_hcl(value)
+        elif key == "byr":
+            ok = is_valid_byr(value)
+        elif key == "iyr":
+            ok = is_valid_iyr(value)
+        elif key == "hgt":
+            ok = is_valid_hgt(value)
+        else:
+            ok = True
+
+        if not ok:
+            return False
+
+    return True
+
+def part_2(passports: [{string: string}]):
+    number_of_valid_passports = 0
+
+    for passport in passports:
+        if is_valid_part_2(passport):
+            number_of_valid_passports += 1
+
+    print(number_of_valid_passports)
+
+def day_4():
+    passports = load_passports()
+    part_1(passports)
+    part_2(passports)
