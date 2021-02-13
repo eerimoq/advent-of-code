@@ -14,8 +14,7 @@ def make_seat_id(value: string) -> i64:
 def load_seat_ids() -> [i64]:
     return [
         make_seat_id(line)
-        for line in TextFile("src/day_5.txt").read().split("\n")
-        if line != ""
+        for line in TextFile("src/day_5.txt").read().strip().split("\n")
     ]
 
 def part_1(seat_ids: [i64]):

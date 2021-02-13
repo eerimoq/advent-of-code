@@ -6,11 +6,7 @@ class Map:
     width: i64
 
     def __init__(self):
-        self.rows = [
-            line
-            for line in TextFile("src/day_3.txt").read().split("\n")
-            if line != ""
-        ]
+        self.rows = TextFile("src/day_3.txt").read().strip().split("\n")
         self.height = i64(len(self.rows))
         self.width = i64(len(self.rows[0]))
 
