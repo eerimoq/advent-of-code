@@ -1,14 +1,10 @@
-Advent Of Code
+Advent of Code
 ==============
 
-This package provides...
+Advent of Code solutions.
 
-Examples
-========
+Build and run with
 
-.. code-block:: python
+.. code-block:: text
 
-   from advent_of_code import add
-
-   def main():
-       print('1 + 2 =', add(1, 2))
+   $ cd 2020 && mys run

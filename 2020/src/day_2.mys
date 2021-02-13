@@ -3,8 +3,8 @@ from os import TextFile
 class Entry:
     low: i64
     high: i64
-    ch: char
-    password: string
+    letter: char
+    password: [char]
 
 def load_entries() -> [Entry]:
     entries: [Entry] = []
@@ -17,12 +17,33 @@ def load_entries() -> [Entry]:
         entries.append(Entry(i64(mo.group(1)),
                              i64(mo.group(2)),
                              mo.group(3)[0],
-                             mo.group(4)))
+                             [ch for ch in mo.group(4)]))
 
     return entries
 
-def day_2():
-    entries = load_entries()
+def part_1(entries: [Entry]):
+    number_of_valid_passwords = 0
 
     for entry in entries:
-        print(entry)
+        count = entry.password.count(entry.letter)
+
+        if entry.low <= count and count <= entry.high:
+            number_of_valid_passwords += 1
+
+    print(number_of_valid_passwords)
+
+def part_2(entries: [Entry]):
+    number_of_valid_passwords = 0
+
+    for entry in entries:
+        selected = [entry.password[entry.low - 1], entry.password[entry.high - 1]]
+
+        if selected.count(entry.letter) == 1:
+            number_of_valid_passwords += 1
+
+    print(number_of_valid_passwords)
+
+def day_2():
+    entries = load_entries()
+    part_1(entries)
+    part_2(entries)
