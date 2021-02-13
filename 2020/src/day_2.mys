@@ -6,12 +6,23 @@ class Entry:
     ch: char
     password: string
 
-def day_2():
+def load_entries() -> [Entry]:
     entries: [Entry] = []
 
     for line in TextFile("src/day_2.txt").read().split("\n"):
+        if line == "":
+            continue
+
         mo = line.match(re"^(\d+)-(\d+) (.): (.+)$")
         entries.append(Entry(i64(mo.group(1)),
                              i64(mo.group(2)),
                              mo.group(3)[0],
                              mo.group(4)))
+
+    return entries
+
+def day_2():
+    entries = load_entries()
+
+    for entry in entries:
+        print(entry)
