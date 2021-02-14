@@ -17,7 +17,7 @@ def load_instructions(code: string) -> [Op]:
     return instructions
 
 def run(instructions: [Op]) -> (bool, i64):
-    count: [i64] = [0 for _ in range(i64(len(instructions)))]
+    count = [0 for _ in range(i64(len(instructions)))]
     ok = False
     pc = 0
     acc = 0
