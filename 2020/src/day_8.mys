@@ -3,16 +3,20 @@ from os import TextFile
 class OpError(Error):
     message: string
 
-def load_instructions(code: string) -> [(string, i64)]:
-    instructions: [(string, i64)] = []
+class Op:
+    name: string
+    value: i64
+
+def load_instructions(code: string) -> [Op]:
+    instructions: [Op] = []
 
     for line in code.strip().split("\n"):
         name, _, value = line.partition(" ")
-        instructions.append((name, i64(value)))
+        instructions.append(Op(name, i64(value)))
 
     return instructions
 
-def run(instructions: [(string, i64)]) -> (bool, i64):
+def run(instructions: [Op]) -> (bool, i64):
     count: [i64] = [0 for _ in range(i64(len(instructions)))]
     ok = False
     pc = 0
@@ -27,33 +31,34 @@ def run(instructions: [(string, i64)]) -> (bool, i64):
             break
 
         count[pc] += 1
-        name, value = instructions[pc]
+        op = instructions[pc]
 
-        match name:
+        match op.name:
             case "nop":
                 pc += 1
             case "acc":
-                acc += value
+                acc += op.value
                 pc += 1
             case "jmp":
-                pc += value
+                pc += op.value
             case _:
-                raise OpError(name)
+                raise OpError(op.name)
 
     return (ok, acc)
 
-def part_1(instructions: [(string, i64)]):
+def part_1(instructions: [Op]):
     print(run(instructions)[1])
 
-def part_2(instructions: [(string, i64)]):
+def part_2(instructions: [Op]):
     for i in range(i64(len(instructions))):
-        name = instructions[i][0]
+        op = instructions[i]
+        name = op.name
 
         match name:
             case "nop":
-                instructions[i][0] = "jmp"
+                op.name = "jmp"
             case "jmp":
-                instructions[i][0] = "nop"
+                op.name = "nop"
             case _:
                 continue
 
@@ -63,7 +68,7 @@ def part_2(instructions: [(string, i64)]):
             print(acc)
             break
 
-        instructions[i][0] = name
+        op.name = name
 
 def day_8():
     instructions = load_instructions(TextFile("src/day_8.txt").read())
