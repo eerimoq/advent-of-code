@@ -54,6 +54,8 @@ def part_2(instructions: [(string, i64)]):
                 instructions[i][0] = "jmp"
             case "jmp":
                 instructions[i][0] = "nop"
+            case _:
+                continue
 
         ok, acc = run(instructions)
 
