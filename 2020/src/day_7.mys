@@ -1,0 +1,25 @@
+from os import TextFile
+
+def load_bags() -> {string: [string]}:
+    bags: {string: [string]} = {}
+
+    for line in TextFile("src/day_7.txt").read().strip().split("\n"):
+        color, _, contains = line.partition(" bags contain ")
+        bag: [string] = []
+
+        for contain in contains.split(","):
+            mo = contain.strip().match(re"\d+ (.*) bag")
+
+            if mo is None:
+                continue
+
+            bag.append(mo.group(1))
+
+        print(bag)
+        bags[color] = bag
+
+    return bags
+
+def day_7():
+    bags = load_bags()
+    print(bags)

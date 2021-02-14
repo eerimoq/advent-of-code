@@ -4,6 +4,7 @@ from .day_3 import day_3
 from .day_4 import day_4
 from .day_5 import day_5
 from .day_6 import day_6
+from .day_7 import day_7
 
 def main():
     print("Day 1:")
@@ -18,3 +19,5 @@ def main():
     day_5()
     print("Day 6:")
     day_6()
+    print("Day 7:")
+    day_7()
