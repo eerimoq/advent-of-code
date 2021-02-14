@@ -1,0 +1,89 @@
+from os import TextFile
+
+class OpError(Error):
+    message: string
+
+class Program:
+    instructions: [(string, i64)]
+
+    def run(self) -> (bool, i64):
+        count: [i64] = [0 for _ in range(i64(len(self.instructions)))]
+        ok = False
+        pc = 0
+        acc = 0
+
+        while True:
+            if pc == i64(len(self.instructions)):
+                ok = True
+                break
+
+            if count[pc] > 0:
+                break
+
+            count[pc] += 1
+            name, value = self.instructions[pc]
+
+            match name:
+                case "nop":
+                    pc += 1
+                case "acc":
+                    acc += value
+                    pc += 1
+                case "jmp":
+                    pc += value
+                case _:
+                    raise OpError(name)
+
+        return (ok, acc)
+
+def load_instructions(code: string) -> [(string, i64)]:
+    instructions: [(string, i64)] = []
+
+    for line in code.strip().split("\n"):
+        name, _, value = line.partition(" ")
+        instructions.append((name, i64(value)))
+
+    return instructions
+
+def part_1(instructions: [(string, i64)]):
+    program = Program(instructions)
+    print(program.run()[1])
+
+def part_2(instructions: [(string, i64)]):
+    for i in range(i64(len(instructions))):
+        name = instructions[i][0]
+
+        match name:
+            case "nop":
+                instructions[i][0] = "jmp"
+            case "jmp":
+                instructions[i][0] = "nop"
+
+        program = Program(instructions)
+        ok, acc = program.run()
+
+        if ok:
+            print(acc)
+            break
+
+        instructions[i][0] = name
+
+def day_8():
+    instructions = load_instructions(TextFile("src/day_8.txt").read())
+    part_1(instructions)
+    part_2(instructions)
+
+@test
+def test_part_1():
+    code = ("nop +0\n"
+            "acc +1\n"
+            "jmp +4\n"
+            "acc +3\n"
+            "jmp -3\n"
+            "acc -99\n"
+            "acc +1\n"
+            "jmp -4\n"
+            "acc +6\n")
+    instructions = load_instructions(code)
+    program = Program(instructions)
+    assert program.run() == (False, 5)
