@@ -1,5 +1,26 @@
 from os import TextFile
 
+@generic(T)
+def union(items: [{T}]) -> {T}:
+    result: {T} = {}
+
+    for item in items:
+        result |= item
+
+    return result
+
+@generic(T)
+def intersection(items: [{T}]) -> {T}:
+    result: {T} = {}
+
+    if len(items) > 0:
+        result |= items[0]
+
+        for item in slice(items, 1):
+            result &= item
+
+    return result
+
 def load_answers() -> [[{char}]]:
     answers: [[{char}]] = []
 
@@ -22,12 +43,7 @@ def part_1(answers: [[{char}]]):
     count: u64 = 0
 
     for group_answers in answers:
-        group_answers_union: {char} = {}
-
-        for person_answers in group_answers:
-            group_answers_union |= person_answers
-
-        count += len(group_answers_union)
+        count += len(union[char](group_answers))
 
     print(count)
 
@@ -35,13 +51,7 @@ def part_2(answers: [[{char}]]):
     count: u64 = 0
 
     for group_answers in answers:
-        group_answers_intersection: {char} = {}
-        group_answers_intersection |= group_answers[0]
-
-        for person_answers in group_answers:
-            group_answers_intersection &= person_answers
-
-        count += len(group_answers_intersection)
+        count += len(intersection[char](group_answers))
 
     print(count)
 
