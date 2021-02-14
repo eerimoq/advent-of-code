@@ -16,6 +16,7 @@ def part_2(numbers: [i64]):
                     return
 
 def day_1():
-    numbers = [i64(number) for number in TextFile("src/day_1.txt").read().split("\n")]
+    numbers = [i64(number)
+               for number in TextFile("src/day_1/input.txt").read().split("\n")]
     part_1(numbers)
     part_2(numbers)

@@ -3,7 +3,7 @@ from os import TextFile
 def load_answers() -> [[{char}]]:
     answers: [[{char}]] = []
 
-    for group in TextFile("src/day_6.txt").read().strip().split("\n\n"):
+    for group in TextFile("src/day_6/input.txt").read().strip().split("\n\n"):
         group_answers: [{char}] = []
 
         for person_answers_string in group.split("\n"):

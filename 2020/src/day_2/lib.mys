@@ -9,7 +9,7 @@ class Entry:
 def load_entries() -> [Entry]:
     entries: [Entry] = []
 
-    for line in TextFile("src/day_2.txt").read().strip().split("\n"):
+    for line in TextFile("src/day_2/input.txt").read().strip().split("\n"):
         mo = line.match(re"^(\d+)-(\d+) (.): (.+)$")
         entries.append(Entry(i64(mo.group(1)),
                              i64(mo.group(2)),
