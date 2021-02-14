@@ -15,11 +15,32 @@ def load_bags() -> {string: [string]}:
 
             bag.append(mo.group(1))
 
-        print(bag)
         bags[color] = bag
 
     return bags
 
+class Part1:
+    bags: {string: [string]}
+
+    def find_in_bag(self, contains: [string]) -> bool:
+        for color in contains:
+            if color == "shiny gold":
+                return True
+            else:
+                if self.find_in_bag(self.bags[color]):
+                    return True
+
+        return False
+
+    def process(self):
+        count = 0
+
+        for color, contains in self.bags:
+            if self.find_in_bag(contains):
+                count += 1
+
+        print(count)
+
 def day_7():
     bags = load_bags()
-    print(bags)
+    Part1(bags).process()
