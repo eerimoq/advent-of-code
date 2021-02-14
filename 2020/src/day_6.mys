@@ -1,0 +1,51 @@
+from os import TextFile
+
+def load_answers() -> [[{char}]]:
+    answers: [[{char}]] = []
+
+    for group in TextFile("src/day_6.txt").read().strip().split("\n\n"):
+        group_answers: [{char}] = []
+
+        for person_answers_string in group.split("\n"):
+            person_answers: {char} = {}
+
+            for answer in person_answers_string:
+                person_answers.add(answer)
+
+            group_answers.append(person_answers)
+
+        answers.append(group_answers)
+
+    return answers
+
+def part_1(answers: [[{char}]]):
+    count: u64 = 0
+
+    for group_answers in answers:
+        group_answers_union: {char} = {}
+
+        for person_answers in group_answers:
+            group_answers_union |= person_answers
+
+        count += len(group_answers_union)
+
+    print(count)
+
+def part_2(answers: [[{char}]]):
+    count: u64 = 0
+
+    for group_answers in answers:
+        group_answers_intersection: {char} = {}
+        group_answers_intersection |= group_answers[0]
+
+        for person_answers in group_answers:
+            group_answers_intersection &= person_answers
+
+        count += len(group_answers_intersection)
+
+    print(count)
+
+def day_6():
+    answers = load_answers()
+    part_1(answers)
+    part_2(answers)
