@@ -1,29 +1,29 @@
 from os import TextFile
 
-def load_bags() -> {string: [string]}:
-    bags: {string: [string]} = {}
+def load_bags() -> {string: [(string, i64)]}:
+    bags: {string: [(string, i64)]} = {}
 
     for line in TextFile("src/day_7.txt").read().strip().split("\n"):
         color, _, contains = line.partition(" bags contain ")
-        bag: [string] = []
+        bag: [(string, i64)] = []
 
         for contain in contains.split(","):
-            mo = contain.strip().match(re"\d+ (.*) bag")
+            mo = contain.strip().match(re"(\d+) (.*) bag")
 
             if mo is None:
                 continue
 
-            bag.append(mo.group(1))
+            bag.append((mo.group(2), i64(mo.group(1))))
 
         bags[color] = bag
 
     return bags
 
 class Part1:
-    bags: {string: [string]}
+    bags: {string: [(string, i64)]}
 
-    def find_in_bag(self, contains: [string]) -> bool:
-        for color in contains:
+    def find_in_bag(self, contains: [(string, i64)]) -> bool:
+        for color, _ in contains:
             if color == "shiny gold":
                 return True
             else:
@@ -41,6 +41,22 @@ class Part1:
 
         print(count)
 
+class Part2:
+    bags: {string: [(string, i64)]}
+
+    def count_bags_in_bag(self, contains: [(string, i64)]) -> i64:
+        total_count = 0
+
+        for color, count in contains:
+            total_count += count
+            total_count += count * self.count_bags_in_bag(self.bags[color])
+
+        return total_count
+
+    def process(self):
+        print(self.count_bags_in_bag(self.bags["shiny gold"]))
+
 def day_7():
     bags = load_bags()
     Part1(bags).process()
+    Part2(bags).process()
