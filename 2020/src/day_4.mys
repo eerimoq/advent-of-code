@@ -90,24 +90,23 @@ def is_valid_part_2(passport: {string: string}) -> bool:
         return False
 
     for key, value in passport:
-        # Bug: Match does not work here. Compilation error. ok not
-        #      defined.
-        if key == "ecl":
-            ok = is_valid_ecl(value)
-        elif key == "pid":
-            ok = is_valid_pid(value)
-        elif key == "eyr":
-            ok = is_valid_eyr(value)
-        elif key == "hcl":
-            ok = is_valid_hcl(value)
-        elif key == "byr":
-            ok = is_valid_byr(value)
-        elif key == "iyr":
-            ok = is_valid_iyr(value)
-        elif key == "hgt":
-            ok = is_valid_hgt(value)
-        else:
-            ok = True
+        match key:
+            case "ecl":
+                ok = is_valid_ecl(value)
+            case "pid":
+                ok = is_valid_pid(value)
+            case "eyr":
+                ok = is_valid_eyr(value)
+            case "hcl":
+                ok = is_valid_hcl(value)
+            case "byr":
+                ok = is_valid_byr(value)
+            case "iyr":
+                ok = is_valid_iyr(value)
+            case "hgt":
+                ok = is_valid_hgt(value)
+            case _:
+                ok = True
 
         if not ok:
             return False
