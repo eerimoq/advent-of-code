@@ -3,6 +3,15 @@ from os import TextFile
 class OpError(Error):
     message: string
 
+def load_instructions(code: string) -> [(string, i64)]:
+    instructions: [(string, i64)] = []
+
+    for line in code.strip().split("\n"):
+        name, _, value = line.partition(" ")
+        instructions.append((name, i64(value)))
+
+    return instructions
+
 def run(instructions: [(string, i64)]) -> (bool, i64):
     count: [i64] = [0 for _ in range(i64(len(instructions)))]
     ok = False
@@ -32,15 +41,6 @@ def run(instructions: [(string, i64)]) -> (bool, i64):
                 raise OpError(name)
 
     return (ok, acc)
-
-def load_instructions(code: string) -> [(string, i64)]:
-    instructions: [(string, i64)] = []
-
-    for line in code.strip().split("\n"):
-        name, _, value = line.partition(" ")
-        instructions.append((name, i64(value)))
-
-    return instructions
 
 def part_1(instructions: [(string, i64)]):
     print(run(instructions)[1])
