@@ -1,0 +1,92 @@
+from os import TextFile
+
+def load_instructions(code: string) -> [Instruction]:
+    instructions: [Instruction] = []
+
+    for line in code.strip().split("\n"):
+        mo = line.match(re"^mask = (\w+)$")
+
+        if mo is not None:
+            instructions.append(MaskInstruction(mo.group(1)))
+
+        mo = line.match(re"^mem\[(\d+)\] = (\d+)$")
+
+        if mo is not None:
+            instructions.append(MemInstruction(u64(mo.group(1)), u64(mo.group(2))))
+
+    return instructions
+
+@trait
+class Instruction:
+    pass
+
+class MaskInstruction(Instruction):
+    set_mask: u64
+    clear_mask: u64
+
+    def __init__(self, mask: string):
+        self.set_mask = 0
+        self.clear_mask = 0
+
+        for bit in mask:
+            self.set_mask <<= 1
+            self.clear_mask <<= 1
+
+            match bit:
+                case '1':
+                    self.set_mask |= 1
+                case '0':
+                    self.clear_mask |= 1
+
+        self.clear_mask ^= 0xffffffffffffffff
+
+class MemInstruction(Instruction):
+    address: u64
+    value: u64
+
+class Computer:
+    memory: {u64: u64}
+    set_mask: u64
+    clear_mask: u64
+
+    def __init__(self):
+        self.memory = {}
+        self.set_mask = 0
+        self.clear_mask = 0
+
+    def run(self, instructions: [Instruction]) -> u64:
+        for instruction in instructions:
+            match instruction:
+
+                case MaskInstruction() as mi:
+                    self.set_mask = mi.set_mask
+                    self.clear_mask = mi.clear_mask
+
+                case MemInstruction() as mi:
+                    if mi.address not in self.memory:
+                        self.memory[mi.address] = 0
+
+                    value = mi.value
+                    value |= self.set_mask
+                    value &= self.clear_mask
+                    self.memory[mi.address] = value
+
+        return sum(self.memory.values())
+
+def part_1(instructions: [Instruction]):
+    computer = Computer()
+    print(computer.run(instructions))
+
+def day_14():
+    instructions = load_instructions(TextFile("src/day_14.txt").read().strip())
+    part_1(instructions)
+
+@test
+def test_part_1():
+    code = ("mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X\n"
+            "mem[8] = 11\n"
+            "mem[7] = 101\n"
+            "mem[8] = 0\n")
+    instructions = load_instructions(code)
+    computer = Computer()
+    assert computer.run(instructions) == 165
