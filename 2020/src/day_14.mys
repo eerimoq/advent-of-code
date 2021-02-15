@@ -1,26 +1,26 @@
 from os import TextFile
 
-def load_instructions(code: string) -> [Instruction]:
-    instructions: [Instruction] = []
+def load_ops(code: string) -> [Op]:
+    ops: [Op] = []
 
     for line in code.strip().split("\n"):
         mo = line.match(re"^mask = (\w+)$")
 
         if mo is not None:
-            instructions.append(MaskInstruction(mo.group(1)))
+            ops.append(MaskOp(mo.group(1)))
 
         mo = line.match(re"^mem\[(\d+)\] = (\d+)$")
 
         if mo is not None:
-            instructions.append(MemInstruction(u64(mo.group(1)), u64(mo.group(2))))
+            ops.append(MemOp(u64(mo.group(1)), u64(mo.group(2))))
 
-    return instructions
+    return ops
 
 @trait
-class Instruction:
+class Op:
     pass
 
-class MaskInstruction(Instruction):
+class MaskOp(Op):
     set_mask: u64
     clear_mask: u64
 
@@ -40,7 +40,7 @@ class MaskInstruction(Instruction):
 
         self.clear_mask ^= 0xffffffffffffffff
 
-class MemInstruction(Instruction):
+class MemOp(Op):
     address: u64
     value: u64
 
@@ -54,15 +54,15 @@ class Computer:
         self.set_mask = 0
         self.clear_mask = 0
 
-    def run(self, instructions: [Instruction]) -> u64:
-        for instruction in instructions:
-            match instruction:
+    def run(self, ops: [Op]) -> u64:
+        for op in ops:
+            match op:
 
-                case MaskInstruction() as mi:
+                case MaskOp() as mi:
                     self.set_mask = mi.set_mask
                     self.clear_mask = mi.clear_mask
 
-                case MemInstruction() as mi:
+                case MemOp() as mi:
                     if mi.address not in self.memory:
                         self.memory[mi.address] = 0
 
@@ -73,13 +73,13 @@ class Computer:
 
         return sum(self.memory.values())
 
-def part_1(instructions: [Instruction]):
+def part_1(ops: [Op]):
     computer = Computer()
-    print(computer.run(instructions))
+    print(computer.run(ops))
 
 def day_14():
-    instructions = load_instructions(TextFile("src/day_14.txt").read().strip())
-    part_1(instructions)
+    ops = load_ops(TextFile("src/day_14.txt").read().strip())
+    part_1(ops)
 
 @test
 def test_part_1():
@@ -87,6 +87,6 @@ def test_part_1():
             "mem[8] = 11\n"
             "mem[7] = 101\n"
             "mem[8] = 0\n")
-    instructions = load_instructions(code)
+    ops = load_ops(code)
     computer = Computer()
-    assert computer.run(instructions) == 165
+    assert computer.run(ops) == 165
