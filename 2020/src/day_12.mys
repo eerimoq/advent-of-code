@@ -1,0 +1,169 @@
+from os import TextFile
+
+class NameError(Error):
+    message: char
+
+class AngleError(Error):
+    angle: i64
+
+class Instruction:
+    name: char
+    value: i64
+
+def load_instructions(text: string) -> [Instruction]:
+    instructions: [Instruction] = []
+
+    for line in text.strip().split("\n"):
+        instructions.append(Instruction(line[0], i64(line[1:])))
+
+    return instructions
+
+class Ship:
+    x: i64  # negative west and positive east
+    y: i64  # negative south and positive north
+    angle: i64  # 0 is east, 90 north, 180 west and 270 south
+
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+        self.angle = 0
+
+    def run(self, instructions: [Instruction]):
+        for instruction in instructions:
+            match instruction.name:
+                case 'F':
+                    self.move_forward(instruction.value)
+                case 'R':
+                    self.turn(-instruction.value)
+                case 'L':
+                    self.turn(instruction.value)
+                case 'N':
+                    self.y += instruction.value
+                case 'S':
+                    self.y -= instruction.value
+                case 'W':
+                    self.x -= instruction.value
+                case 'E':
+                    self.x += instruction.value
+                case _ as ch:
+                    raise NameError(ch)
+
+    def move_forward(self, distance: i64):
+        match self.angle:
+            case 0:
+                self.x += distance
+            case 90:
+                self.y += distance
+            case 180:
+                self.x -= distance
+            case 270:
+                self.y -= distance
+            case _:
+                raise AngleError(self.angle)
+
+    def turn(self, angle: i64):
+        self.angle += angle
+        self.angle %= 360
+
+        if self.angle < 0:
+            self.angle += 360
+
+class Waypoint:
+    x: i64
+    y: i64
+
+class ShipWithWaypoint:
+    x: i64  # negative west and positive east
+    y: i64  # negative south and positive north
+    waypoint: Waypoint
+
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+        self.waypoint = Waypoint(10, 1)
+
+    def run(self, instructions: [Instruction]):
+        for instruction in instructions:
+            match instruction.name:
+                case 'F':
+                    self.move(instruction.value)
+                case 'R':
+                    self.rotate(-instruction.value)
+                case 'L':
+                    self.rotate(instruction.value)
+                case 'N':
+                    self.waypoint.y += instruction.value
+                case 'S':
+                    self.waypoint.y -= instruction.value
+                case 'W':
+                    self.waypoint.x -= instruction.value
+                case 'E':
+                    self.waypoint.x += instruction.value
+                case _ as ch:
+                    raise NameError(ch)
+
+    def move(self, distance: i64):
+        self.x += self.waypoint.x * distance
+        self.y += self.waypoint.y * distance
+
+    def rotate(self, angle: i64):
+        x = self.waypoint.x
+        y = self.waypoint.y
+
+        if angle < 0:
+             angle += 360
+
+        match angle:
+            case 90:
+                self.waypoint.x = -y
+                self.waypoint.y = x
+            case 180:
+                self.waypoint.x = -x
+                self.waypoint.y = -y
+            case 270:
+                self.waypoint.x = y
+                self.waypoint.y = -x
+            case _:
+                raise AngleError(angle)
+
+def manhattan_distance(x: i64, y: i64) -> i64:
+    return abs(x) + abs(y)
+
+def part_1(instructions: [Instruction]):
+    ship = Ship()
+    ship.run(instructions)
+    print(manhattan_distance(ship.x, ship.y))
+
+def part_2(instructions: [Instruction]):
+    ship = ShipWithWaypoint()
+    ship.run(instructions)
+    print(manhattan_distance(ship.x, ship.y))
+
+def day_12():
+    instructions = load_instructions(TextFile("src/day_12.txt").read().strip())
+    part_1(instructions)
+    part_2(instructions)
+
+@test
+def test_part_1():
+    text = ("F10\n"
+            "N3\n"
+            "F7\n"
+            "R90\n"
+            "F11\n")
+    instructions = load_instructions(text)
+    ship = Ship()
+    ship.run(instructions)
+    assert manhattan_distance(ship.x, ship.y) == 25
+
+@test
+def test_part_2():
+    text = ("F10\n"
+            "N3\n"
+            "F7\n"
+            "R90\n"
+            "F11\n")
+    instructions = load_instructions(text)
+    ship = ShipWithWaypoint()
+    ship.run(instructions)
+    assert manhattan_distance(ship.x, ship.y) == 286
