@@ -38,21 +38,19 @@ def evaluate(reader: StringReader, is_part_2: bool) -> i64:
 
     return value
 
-def part_1(expressions: [string]):
+def part(expressions: [string], is_part_2: bool):
     value = 0
 
     for expression in expressions:
-        value += evaluate(StringReader(expression), False)
+        value += evaluate(StringReader(expression), is_part_2)
 
     print(value)
+
+def part_1(expressions: [string]):
+    part(expressions, False)
 
 def part_2(expressions: [string]):
-    value = 0
-
-    for expression in expressions:
-        value += evaluate(StringReader(expression), True)
-
-    print(value)
+    part(expressions, True)
 
 def day_18():
     expressions = load_expressions()
