@@ -58,18 +58,18 @@ class Computer:
         for op in ops:
             match op:
 
-                case MaskOp() as mi:
-                    self.set_mask = mi.set_mask
-                    self.clear_mask = mi.clear_mask
+                case MaskOp() as mask_op:
+                    self.set_mask = mask_op.set_mask
+                    self.clear_mask = mask_op.clear_mask
 
-                case MemOp() as mi:
-                    if mi.address not in self.memory:
-                        self.memory[mi.address] = 0
+                case MemOp() as mem_op:
+                    if mem_op.address not in self.memory:
+                        self.memory[mem_op.address] = 0
 
-                    value = mi.value
+                    value = mem_op.value
                     value |= self.set_mask
                     value &= self.clear_mask
-                    self.memory[mi.address] = value
+                    self.memory[mem_op.address] = value
 
         return sum(self.memory.values())
 
