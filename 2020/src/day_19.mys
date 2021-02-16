@@ -1,0 +1,102 @@
+from os import TextFile
+from string import StringReader
+
+@trait
+class Rule:
+    pass
+
+class CharRule(Rule):
+    value: char
+
+class ListRule(Rule):
+    rules: [[i64]]
+
+def load_rules_and_messages(text: string) -> ({i64: Rule}, [string]):
+    rules: {i64: Rule} = {}
+    messages: [string] = []
+
+    for line in text.split("\n"):
+        mo = line.match(re"^(\d+): \"(\w)\"$")
+
+        if mo is not None:
+            rules[i64(mo.group(1))] = CharRule(mo.group(2)[0])
+            continue
+
+        mo = line.match(re"^(\d+): (.*)$")
+
+        if mo is not None:
+            lists: [[i64]] = []
+
+            for subrules in mo.group(2).split('|'):
+                lists.append([i64(value) for value in subrules.strip().split(" ")])
+
+            rules[i64(mo.group(1))] = ListRule(lists)
+            continue
+
+        if line != "":
+            messages.append(line)
+
+    return rules, messages
+
+class MessageMatcher:
+    rules: {i64: Rule}
+    _reader: StringReader
+
+    def _match(self, rule: Rule) -> bool:
+        match rule:
+            case CharRule() as char_rule:
+                return self._reader.get() == char_rule.value
+            case ListRule() as list_rule:
+                for rules in list_rule.rules:
+                    pos = self._reader.tell()
+                    is_match = True
+
+                    for rule_number in rules:
+                        if not self._match(self.rules[rule_number]):
+                            is_match = False
+
+                    if is_match:
+                        return True
+
+                    self._reader.seek(pos)
+
+                return False
+
+    def match(self, message: string) -> bool:
+        self._reader = StringReader(message)
+
+        if not self._match(self.rules[0]):
+            return False
+
+        return self._reader.available() == 0
+
+def part_1(rules: {i64: Rule}, messages: [string]) -> i64:
+    number_of_matching_messages = 0
+    matcher = MessageMatcher(rules)
+
+    for message in messages:
+        if matcher.match(message):
+            number_of_matching_messages += 1
+
+    return number_of_matching_messages
+
+def day_19():
+    rules, messages = load_rules_and_messages(TextFile("src/day_19.txt").read().strip())
+    print(part_1(rules, messages))
+
+@test
+def test_part_1():
+    text = ("0: 4 1 5\n"
+            "1: 2 3 | 3 2\n"
+            "2: 4 4 | 5 5\n"
+            "3: 4 5 | 5 4\n"
+            "4: \"a\"\n"
+            "5: \"b\"\n"
+            "\n"
+            "ababbb\n"
+            "bababa\n"
+            "abbbab\n"
+            "aaabbb\n"
+            "aaaabbb\n")
+    rules, messages = load_rules_and_messages(text.strip())
+    assert part_1(rules, messages) == 2
