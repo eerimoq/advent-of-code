@@ -45,14 +45,15 @@ def play(deck_1: Deck, deck_2: Deck) -> i64:
         if card_1 > card_2:
             deck_1.put_card_on_bottom(card_1)
             deck_1.put_card_on_bottom(card_2)
+
+            if deck_2.number_of_cards() == 0:
+                return calc_score(deck_1)
         else:
             deck_2.put_card_on_bottom(card_2)
             deck_2.put_card_on_bottom(card_1)
 
-        if deck_1.number_of_cards() == 0:
-            return calc_score(deck_2)
-        elif deck_2.number_of_cards() == 0:
-            return calc_score(deck_1)
+            if deck_1.number_of_cards() == 0:
+                return calc_score(deck_2)
 
 def part_1(deck_1: Deck, deck_2: Deck) -> i64:
     return play(deck_1, deck_2)
