@@ -32,7 +32,7 @@ def load_decks(text: string) -> [Deck]:
 def calc_score(deck: Deck) -> i64:
     value = 0
 
-    for i, card in zip(range(deck.number_of_cards(), 0, -1), deck.cards):
+    for i, card in enumerate(reversed(deck.cards), 1):
         value += i * card
 
     return value
