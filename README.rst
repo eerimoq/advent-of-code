@@ -7,4 +7,4 @@ Build and run with
 
 .. code-block:: text
 
-   $ cd 2020 && mys run
+   $ cd 2020 && mys run -- 1

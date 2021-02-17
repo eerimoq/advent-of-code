@@ -1,3 +1,4 @@
+from argparse import Parser
 from .day_1 import day_1
 from .day_2 import day_2
 from .day_3 import day_3
@@ -12,30 +13,40 @@ from .day_18 import day_18
 from .day_19 import day_19
 from .day_22 import day_22
 
-def main():
-    print("Day 1:")
-    day_1()
-    print("Day 2:")
-    day_2()
-    print("Day 3:")
-    day_3()
-    print("Day 4:")
-    day_4()
-    print("Day 5:")
-    day_5()
-    print("Day 6:")
-    day_6()
-    print("Day 7:")
-    day_7()
-    print("Day 8:")
-    day_8()
-    print("Day 12:")
-    day_12()
-    print("Day 14:")
-    day_14()
-    print("Day 18:")
-    day_18()
-    print("Day 19:")
-    day_19()
-    print("Day 22:")
-    day_22()
+def main(argv: [string]):
+    parser = Parser("aoc2020")
+    parser.add_positional("days", multiple_occurrences=True)
+    args = parser.parse(argv)
+
+    for day in args.values_of("days"):
+        print(f"Day {day}:")
+
+        match i64(day):
+            case 1:
+                day_1()
+            case 2:
+                day_2()
+            case 3:
+                day_3()
+            case 4:
+                day_4()
+            case 5:
+                day_5()
+            case 6:
+                day_6()
+            case 7:
+                day_7()
+            case 8:
+                day_8()
+            case 12:
+                day_12()
+            case 14:
+                day_14()
+            case 18:
+                day_18()
+            case 19:
+                day_19()
+            case 22:
+                day_22()
+            case _:
+                print(f"This day is not implemented.")
