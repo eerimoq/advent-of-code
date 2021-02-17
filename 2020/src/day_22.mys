@@ -30,12 +30,12 @@ def load_decks(text: string) -> [Deck]:
     return decks
 
 def calc_score(deck: Deck) -> i64:
-    value = 0
+    score = 0
 
     for i, card in enumerate(reversed(deck.cards), 1):
-        value += i * card
+        score += i * card
 
-    return value
+    return score
 
 def play(deck_1: Deck, deck_2: Deck) -> i64:
     while True:
