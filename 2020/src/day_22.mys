@@ -1,0 +1,65 @@
+from os import TextFile
+
+def load_decks(text: string) -> [[i64]]:
+    decks: [[i64]] = []
+
+    for deck_text in text.split("\n\n"):
+        deck: [i64] = []
+
+        for line in deck_text.split("\n"):
+            if line.is_digit():
+                deck.append(i64(line))
+
+        decks.append(deck)
+
+    return decks
+
+def calc_score(deck: [i64]) -> i64:
+    value = 0
+
+    for i, card in zip(range(i64(len(deck)), 0, -1), deck):
+        value += i * card
+
+    return value
+
+def play(deck_1: [i64], deck_2: [i64]) -> i64:
+    while True:
+        card_1 = deck_1.pop(0)
+        card_2 = deck_2.pop(0)
+
+        if card_1 > card_2:
+            deck_1.append(card_1)
+            deck_1.append(card_2)
+        else:
+            deck_2.append(card_2)
+            deck_2.append(card_1)
+
+        if len(deck_1) == 0:
+            return calc_score(deck_2)
+        elif len(deck_2) == 0:
+            return calc_score(deck_1)
+
+def part_1(deck_1: [i64], deck_2: [i64]) -> i64:
+    return play(deck_1, deck_2)
+    
+def day_22():
+    decks = load_decks(TextFile("src/day_22.txt").read().strip())
+    print(part_1(decks[0], decks[1]))
+
+@test
+def test_part_1():
+    text = ("Player 1:\n"
+            "9\n"
+            "2\n"
+            "6\n"
+            "3\n"
+            "1\n"
+            "\n"
+            "Player 2:\n"
+            "5\n"
+            "8\n"
+            "4\n"
+            "7\n"
+            "10\n")
+    decks = load_decks(text.strip())
+    print(part_1(decks[0], decks[1]))
