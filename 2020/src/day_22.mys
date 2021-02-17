@@ -1,47 +1,62 @@
 from os import TextFile
 
-def load_decks(text: string) -> [[i64]]:
-    decks: [[i64]] = []
+class Deck:
+    cards: [i64]
+
+    def __init__(self):
+        self.cards = []
+
+    def draw_card(self) -> i64:
+        return self.cards.pop(0)
+
+    def put_card_on_bottom(self, card: i64):
+        self.cards.append(card)
+
+    def number_of_cards(self) -> i64:
+        return i64(len(self.cards))
+
+def load_decks(text: string) -> [Deck]:
+    decks: [Deck] = []
 
     for deck_text in text.split("\n\n"):
-        deck: [i64] = []
+        deck = Deck()
 
         for line in deck_text.split("\n"):
             if line.is_digit():
-                deck.append(i64(line))
+                deck.put_card_on_bottom(i64(line))
 
         decks.append(deck)
 
     return decks
 
-def calc_score(deck: [i64]) -> i64:
+def calc_score(deck: Deck) -> i64:
     value = 0
 
-    for i, card in zip(range(i64(len(deck)), 0, -1), deck):
+    for i, card in zip(range(deck.number_of_cards(), 0, -1), deck.cards):
         value += i * card
 
     return value
 
-def play(deck_1: [i64], deck_2: [i64]) -> i64:
+def play(deck_1: Deck, deck_2: Deck) -> i64:
     while True:
-        card_1 = deck_1.pop(0)
-        card_2 = deck_2.pop(0)
+        card_1 = deck_1.draw_card()
+        card_2 = deck_2.draw_card()
 
         if card_1 > card_2:
-            deck_1.append(card_1)
-            deck_1.append(card_2)
+            deck_1.put_card_on_bottom(card_1)
+            deck_1.put_card_on_bottom(card_2)
         else:
-            deck_2.append(card_2)
-            deck_2.append(card_1)
+            deck_2.put_card_on_bottom(card_2)
+            deck_2.put_card_on_bottom(card_1)
 
-        if len(deck_1) == 0:
+        if deck_1.number_of_cards() == 0:
             return calc_score(deck_2)
-        elif len(deck_2) == 0:
+        elif deck_2.number_of_cards() == 0:
             return calc_score(deck_1)
 
-def part_1(deck_1: [i64], deck_2: [i64]) -> i64:
+def part_1(deck_1: Deck, deck_2: Deck) -> i64:
     return play(deck_1, deck_2)
-    
+
 def day_22():
     decks = load_decks(TextFile("src/day_22.txt").read().strip())
     print(part_1(decks[0], decks[1]))
