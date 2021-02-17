@@ -1,36 +1,21 @@
 from os import TextFile
-from string import StringReader
+from string import StringBuilder
 
-@trait
-class Rule:
-    pass
-
-class CharRule(Rule):
-    value: char
-
-class ListRule(Rule):
-    rules: [[i64]]
-
-def load_rules_and_messages(text: string) -> ({i64: Rule}, [string]):
-    rules: {i64: Rule} = {}
+def load_rules_and_messages(text: string) -> ({string: string}, [string]):
+    rules: {string: string} = {}
     messages: [string] = []
 
     for line in text.split("\n"):
         mo = line.match(re"^(\d+): \"(\w)\"$")
 
         if mo is not None:
-            rules[i64(mo.group(1))] = CharRule(mo.group(2)[0])
+            rules[mo.group(1)] = mo.group(2)
             continue
 
         mo = line.match(re"^(\d+): (.*)$")
 
         if mo is not None:
-            lists: [[i64]] = []
-
-            for subrules in mo.group(2).split('|'):
-                lists.append([i64(value) for value in subrules.strip().split(" ")])
-
-            rules[i64(mo.group(1))] = ListRule(lists)
+            rules[mo.group(1)] = mo.group(2)
             continue
 
         if line != "":
@@ -38,51 +23,51 @@ def load_rules_and_messages(text: string) -> ({i64: Rule}, [string]):
 
     return rules, messages
 
-class MessageMatcher:
-    rules: {i64: Rule}
-    _reader: StringReader
+def create_regex_recurse(builder: StringBuilder,
+                         rule: string,
+                         rules: {string: string}):
+    builder += '('
 
-    def _match(self, rule: Rule) -> bool:
-        match rule:
-            case CharRule() as char_rule:
-                return self._reader.get() == char_rule.value
-            case ListRule() as list_rule:
-                for rules in list_rule.rules:
-                    pos = self._reader.tell()
-                    is_match = True
+    for value in rule.split(" "):
+        if value.is_digit():
+            create_regex_recurse(builder, rules[value], rules)
+        else:
+            builder += value
 
-                    for rule_number in rules:
-                        if not self._match(self.rules[rule_number]):
-                            is_match = False
+    builder += ')'
 
-                    if is_match:
-                        return True
+def create_regex(rules: {string: string}) -> regex:
+    builder = StringBuilder()
+    builder += '^'
+    create_regex_recurse(builder, rules["0"], rules)
+    builder += '$'
 
-                    self._reader.seek(pos)
+    return regex(builder.to_string(), "")
 
-                return False
-
-    def match(self, message: string) -> bool:
-        self._reader = StringReader(message)
-
-        if not self._match(self.rules[0]):
-            return False
-
-        return self._reader.available() == 0
-
-def part_1(rules: {i64: Rule}, messages: [string]) -> i64:
+def part(rules: {string: string}, messages: [string]) -> i64:
+    re = create_regex(rules)
     number_of_matching_messages = 0
-    matcher = MessageMatcher(rules)
 
     for message in messages:
-        if matcher.match(message):
+        if message.match(re) is not None:
             number_of_matching_messages += 1
 
     return number_of_matching_messages
 
+def part_1(rules: {string: string}, messages: [string]) -> i64:
+    return part(rules, messages)
+
+def part_2(rules: {string: string}, messages: [string]) -> i64:
+    rules["8"] = "42 +"
+    # Same number of 42:s and 31:s. Hardcoded limit of 4.
+    rules["11"] = " | ".join([f"42 {{{i}}} 31 {{{i}}}" for i in range(1, 5)])
+
+    return part(rules, messages)
+
 def day_19():
     rules, messages = load_rules_and_messages(TextFile("src/day_19.txt").read().strip())
     print(part_1(rules, messages))
+    print(part_2(rules, messages))
 
 @test
 def test_part_1():
@@ -100,3 +85,56 @@ def test_part_1():
             "aaaabbb\n")
     rules, messages = load_rules_and_messages(text.strip())
     assert part_1(rules, messages) == 2
+
+@test
+def test_part_2():
+    text = ("42: 9 14 | 10 1\n"
+            "9: 14 27 | 1 26\n"
+            "10: 23 14 | 28 1\n"
+            "1: \"a\"\n"
+            "11: 42 31\n"
+            "5: 1 14 | 15 1\n"
+            "19: 14 1 | 14 14\n"
+            "12: 24 14 | 19 1\n"
+            "16: 15 1 | 14 14\n"
+            "31: 14 17 | 1 13\n"
+            "6: 14 14 | 1 14\n"
+            "2: 1 24 | 14 4\n"
+            "0: 8 11\n"
+            "13: 14 3 | 1 12\n"
+            "15: 1 | 14\n"
+            "17: 14 2 | 1 7\n"
+            "23: 25 1 | 22 14\n"
+            "28: 16 1\n"
+            "4: 1 1\n"
+            "20: 14 14 | 1 15\n"
+            "3: 5 14 | 16 1\n"
+            "27: 1 6 | 14 18\n"
+            "14: \"b\"\n"
+            "21: 14 1 | 1 14\n"
+            "25: 1 1 | 1 14\n"
+            "22: 14 14\n"
+            "8: 42\n"
+            "26: 14 22 | 1 20\n"
+            "18: 15 15\n"
+            "7: 14 5 | 1 21\n"
+            "24: 14 1\n"
+            "\n"
+            "abbbbbabbbaaaababbaabbbbabababbbabbbbbbabaaaa\n"
+            "bbabbbbaabaabba\n"
+            "babbbbaabbbbbabbbbbbaabaaabaaa\n"
+            "aaabbbbbbaaaabaababaabababbabaaabbababababaaa\n"
+            "bbbbbbbaaaabbbbaaabbabaaa\n"
+            "bbbababbbbaaaaaaaabbababaaababaabab\n"
+            "ababaaaaaabaaab\n"
+            "ababaaaaabbbaba\n"
+            "baabbaaaabbaaaababbaababb\n"
+            "abbbbabbbbaaaababbbbbbaaaababb\n"
+            "aaaaabbaabaaaaababaa\n"
+            "aaaabbaaaabbaaa\n"
+            "aaaabbaabbaaaaaaabbbabbbaaabbaabaaa\n"
+            "babaaabbbaaabaababbaabababaaab\n"
+            "aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba\n")
+    rules, messages = load_rules_and_messages(text.strip())
+    assert part_1(rules, messages) == 3
+    assert part_2(rules, messages) == 12
