@@ -1,17 +1,17 @@
 from argparse import Parser
 from .day_1 import day_1
+from .day_12 import day_12
+from .day_14 import day_14
+from .day_18 import day_18
+from .day_19 import day_19
 from .day_2 import day_2
+from .day_22 import day_22
 from .day_3 import day_3
 from .day_4 import day_4
 from .day_5 import day_5
 from .day_6 import day_6
 from .day_7 import day_7
 from .day_8 import day_8
-from .day_12 import day_12
-from .day_14 import day_14
-from .day_18 import day_18
-from .day_19 import day_19
-from .day_22 import day_22
 
 def main(argv: [string]):
     parser = Parser("aoc2020")

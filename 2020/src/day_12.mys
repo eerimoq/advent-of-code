@@ -111,7 +111,7 @@ class ShipWithWaypoint:
         y = self.waypoint.y
 
         if angle < 0:
-             angle += 360
+            angle += 360
 
         match angle:
             case 90:
