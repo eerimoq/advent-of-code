@@ -24,7 +24,7 @@ def intersection(items: [{T}]) -> {T}:
 def load_answers() -> [[{char}]]:
     answers: [[{char}]] = []
 
-    for group in TextFile("src/day_6.txt").read().strip().split("\n\n"):
+    for group in TextFile(f"{__assets__}/day_06.txt").read().strip().split("\n\n"):
         group_answers: [{char}] = []
 
         for person_answers_string in group.split("\n"):
@@ -55,7 +55,7 @@ def part_2(answers: [[{char}]]):
 
     print(count)
 
-def day_6():
+def day_06():
     answers = load_answers()
     part_1(answers)
     part_2(answers)

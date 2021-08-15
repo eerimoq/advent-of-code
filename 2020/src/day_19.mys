@@ -65,7 +65,7 @@ def part_2(rules: {string: string}, messages: [string]) -> i64:
     return part(rules, messages)
 
 def day_19():
-    rules, messages = load_rules_and_messages(TextFile("src/day_19.txt").read().strip())
+    rules, messages = load_rules_and_messages(TextFile(f"{__assets__}/day_19.txt").read().strip())
     print(part_1(rules, messages))
     print(part_2(rules, messages))
 

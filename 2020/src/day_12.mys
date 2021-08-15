@@ -140,7 +140,7 @@ def part_2(instructions: [Instruction]):
     print(manhattan_distance(ship.x, ship.y))
 
 def day_12():
-    instructions = load_instructions(TextFile("src/day_12.txt").read().strip())
+    instructions = load_instructions(TextFile(f"{__assets__}/day_12.txt").read().strip())
     part_1(instructions)
     part_2(instructions)
 

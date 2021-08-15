@@ -6,7 +6,7 @@ class Map:
     width: i64
 
     def __init__(self):
-        self.rows = TextFile("src/day_3.txt").read().strip().split("\n")
+        self.rows = TextFile(f"{__assets__}/day_03.txt").read().strip().split("\n")
         self.height = i64(len(self.rows))
         self.width = i64(len(self.rows[0]))
 
@@ -48,7 +48,7 @@ def part_2(map: Map):
 
     print(product)
 
-def day_3():
+def day_03():
     map = Map()
     part_1(map)
     part_2(map)

@@ -15,7 +15,11 @@ def part_2(numbers: [i64]):
                     print(n1 * n2 * n3)
                     return
 
-def day_1():
-    numbers = [i64(number) for number in TextFile("src/day_1.txt").read().split("\n")]
+def day_01():
+    numbers = [
+        i64(number)
+        for number in
+        TextFile(f"{__assets__}/day_01.txt").read().split("\n")
+    ]
     part_1(numbers)
     part_2(numbers)

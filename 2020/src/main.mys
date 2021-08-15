@@ -1,21 +1,23 @@
 from argparse import Parser
-from .day_1 import day_1
+from .day_01 import day_01
+from .day_02 import day_02
+from .day_03 import day_03
+from .day_04 import day_04
+from .day_05 import day_05
+from .day_06 import day_06
+from .day_07 import day_07
+from .day_08 import day_08
 from .day_12 import day_12
 from .day_14 import day_14
 from .day_18 import day_18
 from .day_19 import day_19
-from .day_2 import day_2
 from .day_22 import day_22
-from .day_3 import day_3
-from .day_4 import day_4
-from .day_5 import day_5
-from .day_6 import day_6
-from .day_7 import day_7
-from .day_8 import day_8
 
 def main(argv: [string]):
     parser = Parser("aoc2020")
-    parser.add_positional("days", multiple_occurrences=True)
+    parser.add_positional("days",
+                          multiple_occurrences=True,
+                          help="Days to run.")
     args = parser.parse(argv)
 
     for day in args.values_of("days"):
@@ -23,21 +25,21 @@ def main(argv: [string]):
 
         match i64(day):
             case 1:
-                day_1()
+                day_01()
             case 2:
-                day_2()
+                day_02()
             case 3:
-                day_3()
+                day_03()
             case 4:
-                day_4()
+                day_04()
             case 5:
-                day_5()
+                day_05()
             case 6:
-                day_6()
+                day_06()
             case 7:
-                day_7()
+                day_07()
             case 8:
-                day_8()
+                day_08()
             case 12:
                 day_12()
             case 14:

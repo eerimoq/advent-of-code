@@ -59,7 +59,7 @@ def part_1(deck_1: Deck, deck_2: Deck) -> i64:
     return play(deck_1, deck_2)
 
 def day_22():
-    decks = load_decks(TextFile("src/day_22.txt").read().strip())
+    decks = load_decks(TextFile(f"{__assets__}/day_22.txt").read().strip())
     print(part_1(decks[0], decks[1]))
 
 @test

@@ -70,8 +70,8 @@ def part_2(instructions: [Op]):
 
         op.name = name
 
-def day_8():
-    instructions = load_instructions(TextFile("src/day_8.txt").read())
+def day_08():
+    instructions = load_instructions(TextFile(f"{__assets__}/day_08.txt").read())
     part_1(instructions)
     part_2(instructions)
 

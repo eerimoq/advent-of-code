@@ -78,7 +78,7 @@ def part_1(ops: [Op]):
     print(computer.run(ops))
 
 def day_14():
-    ops = load_ops(TextFile("src/day_14.txt").read().strip())
+    ops = load_ops(TextFile(f"{__assets__}/day_14.txt").read().strip())
     part_1(ops)
 
 @test

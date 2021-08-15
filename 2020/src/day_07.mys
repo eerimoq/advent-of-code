@@ -3,7 +3,7 @@ from os import TextFile
 def load_bags() -> {string: [(string, i64)]}:
     bags: {string: [(string, i64)]} = {}
 
-    for line in TextFile("src/day_7.txt").read().strip().split("\n"):
+    for line in TextFile(f"{__assets__}/day_07.txt").read().strip().split("\n"):
         color, _, contains = line.partition(" bags contain ")
         bag: [(string, i64)] = []
 
@@ -56,7 +56,7 @@ class Part2:
     def process(self):
         print(self.count_bags_in_bag(self.bags["shiny gold"]))
 
-def day_7():
+def day_07():
     bags = load_bags()
     Part1(bags).process()
     Part2(bags).process()

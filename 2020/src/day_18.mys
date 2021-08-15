@@ -3,7 +3,7 @@ from string import StringReader
 
 def load_expressions() -> [string]:
     return [line.replace(" ", "")
-            for line in TextFile("src/day_18.txt").read().strip().split("\n")]
+            for line in TextFile(f"{__assets__}/day_18.txt").read().strip().split("\n")]
 
 def evaluate_once(reader: StringReader, is_part_2: bool) -> i64:
     match reader.get():
