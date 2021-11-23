@@ -51,4 +51,4 @@ def main(argv: [string]):
             case 22:
                 day_22()
             case _:
-                print(f"This day is not implemented.")
+                print("This day is not implemented.")
