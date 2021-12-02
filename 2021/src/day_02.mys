@@ -1,0 +1,56 @@
+from os import TextFile
+
+def part_1(commands: [(string, i64)]) -> i64:
+    horizontal_position = 0
+    depth = 0
+
+    for action, value in commands:
+        match action:
+            case "forward":
+                horizontal_position += value
+            case "up":
+                depth -= value
+            case "down":
+                depth += value
+
+    return horizontal_position * depth
+
+def part_2(commands: [(string, i64)]) -> i64:
+    horizontal_position = 0
+    depth = 0
+    aim = 0
+
+    for action, value in commands:
+        match action:
+            case "forward":
+                horizontal_position += value
+                depth += (aim * value)
+            case "up":
+                aim -= value
+            case "down":
+                aim += value
+
+    return horizontal_position * depth
+
+def day_02():
+    commands: [(string, i64)] = []
+
+    for line in TextFile(f"{__assets__}/day_02.txt").read().strip().split("\n"):
+        parts = line.split(' ')
+        commands.append((parts[0], i64(parts[1])))
+
+    print(part_1(commands))
+    print(part_2(commands))
+
+@test
+def test_all():
+    commands = [
+        ("forward", 5),
+        ("down", 5),
+        ("forward", 8),
+        ("up", 3),
+        ("down", 8),
+        ("forward", 2)
+    ]
+    assert part_1(commands) == 150
+    assert part_2(commands) == 900

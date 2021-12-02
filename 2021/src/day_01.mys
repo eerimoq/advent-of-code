@@ -28,7 +28,7 @@ def day_01():
     print(part_2(numbers))
 
 @test
-def test_part_1():
+def test_all():
     numbers = [
         199,
         200,
@@ -42,19 +42,4 @@ def test_part_1():
         263
     ]
     assert part_1(numbers) == 7
-
-@test
-def test_part_2():
-    numbers = [
-        199,
-        200,
-        208,
-        210,
-        200,
-        207,
-        240,
-        269,
-        260,
-        263
-    ]
     assert part_2(numbers) == 5
