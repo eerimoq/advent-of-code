@@ -2,6 +2,7 @@ from argparse import Parser
 from .day_01 import day_01
 from .day_02 import day_02
 from .day_03 import day_03
+from .day_04 import day_04
 
 def main(argv: [string]):
     parser = Parser("aoc2021")
@@ -20,5 +21,7 @@ def main(argv: [string]):
                 day_02()
             case 3:
                 day_03()
+            case 4:
+                day_04()
             case _:
                 print("This day is not implemented.")
