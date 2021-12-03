@@ -1,0 +1,102 @@
+from os import TextFile
+
+def to_i64_from_binary(value: string) -> i64:
+    result = 0
+
+    for bit in value:
+        result <<= 1
+
+        if bit == '1':
+            result |= 1
+
+    return result
+
+def count_ones_and_zeros_at_index(report: [string], index: i64) -> (i64, i64):
+    number_of_ones = 0
+    number_of_zeros = 0
+
+    for value in report:
+        if value[index] == '1':
+            number_of_ones += 1
+        else:
+            number_of_zeros += 1
+
+    return number_of_ones, number_of_zeros
+
+def part_1(report: [string]) -> i64:
+    gamma_rate = 0
+    epsilon_rate = 0
+
+    for index in range(i64(len(report[0]))):
+        number_of_ones, number_of_zeros = count_ones_and_zeros_at_index(report,
+                                                                        index)
+        gamma_rate <<= 1
+        epsilon_rate <<= 1
+
+        if number_of_ones > number_of_zeros:
+            gamma_rate |= 1
+        else:
+            epsilon_rate |= 1
+
+    return gamma_rate * epsilon_rate
+
+def calc_oxygen_generator_rating(report: [string]) -> i64:
+    for index in range(i64(len(report[0]))):
+        number_of_ones, number_of_zeros = count_ones_and_zeros_at_index(report,
+                                                                        index)
+
+        if number_of_ones >= number_of_zeros:
+            report = [value for value in report if value[index] == '1']
+        else:
+            report = [value for value in report if value[index] == '0']
+
+        if len(report) == 1:
+            return to_i64_from_binary(report[0])
+
+    raise NotImplementedError()
+
+def calc_co2_scrubber_rating(report: [string]) -> i64:
+    for index in range(i64(len(report[0]))):
+        number_of_ones, number_of_zeros = count_ones_and_zeros_at_index(report,
+                                                                        index)
+
+        if number_of_zeros <= number_of_ones:
+            report = [value for value in report if value[index] == '0']
+        else:
+            report = [value for value in report if value[index] == '1']
+
+        if len(report) == 1:
+            return to_i64_from_binary(report[0])
+
+    raise NotImplementedError()
+
+def part_2(report: [string]) -> i64:
+    return calc_oxygen_generator_rating(report) * calc_co2_scrubber_rating(report)
+
+def day_03():
+    report: [string] = []
+
+    for line in TextFile(f"{__assets__}/day_03.txt").read().strip().split("\n"):
+        report.append(line)
+
+    print(part_1(report))
+    print(part_2(report))
+
+@test
+def test_all():
+    report = [
+        "00100",
+        "11110",
+        "10110",
+        "10111",
+        "10101",
+        "01111",
+        "00111",
+        "11100",
+        "10000",
+        "11001",
+        "00010",
+        "01010"
+    ]
+    assert part_1(report) == 198
+    assert part_2(report) == 230
