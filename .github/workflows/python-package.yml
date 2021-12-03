@@ -24,4 +24,5 @@ jobs:
         python -m pip install mys
     - name: Test
       run: |
-        mys -C 2020 run 1 2 3 4 5 6 7 8 12 14 18 19 22
+        mys -C 2020 test
+        mys -C 2021 test
