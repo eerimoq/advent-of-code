@@ -63,10 +63,7 @@ def part_2(report: [string]) -> i64:
     return calc_oxygen_generator_rating(report) * calc_co2_scrubber_rating(report)
 
 def day_03():
-    report: [string] = []
-
-    for line in TextFile(f"{__assets__}/day_03.txt").read().strip().split("\n"):
-        report.append(line)
+    report = TextFile(f"{__assets__}/day_03.txt").read().strip().split("\n")
 
     print(part_1(report))
     print(part_2(report))

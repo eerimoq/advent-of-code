@@ -1,0 +1,20 @@
+from os import TextFile
+
+def part_1(data: [string]) -> i64:
+    return 0
+
+def day_04():
+    data: [string] = []
+
+    for line in TextFile(f"{__assets__}/day_04.txt").read().strip().split("\n"):
+        data.append(line)
+
+    print(part_1(data))
+
+@test
+def test_all():
+    data = [
+        ""
+    ]
+    assert part_1(data) == 0
+    # assert part_2(data) == 900
