@@ -1,11 +1,19 @@
 from os import TextFile
 
 def has_bingo(marks: [bool]) -> bool:
-    for i in range(0, 5):
-        if marks[5*i] and marks[5*i+1] and marks[5*i+2] and marks[5*i+3] and marks[5*i+4]:
+    for i in range(5):
+        if (marks[5 * i]
+            and marks[5 * i + 1]
+            and marks[5 * i + 2]
+            and marks[5 * i + 3]
+            and marks[5 * i + 4]):
             return True
 
-        if marks[i] and marks[5+i] and marks[10+i] and marks[15+i] and marks[20+i]:
+        if (marks[i]
+            and marks[5 + i]
+            and marks[10 + i]
+            and marks[15 + i]
+            and marks[20 + i]):
             return True
 
     return False
@@ -60,15 +68,14 @@ def day_04():
     boards: [[i64]] = []
 
     for index in range(2, i64(len(lines) - 2), 6):
-        board = [i64(number) for number in lines[index].strip().split(re"\s+")]
-        n = [i64(number) for number in lines[index+1].strip().split(re"\s+")]
-        board.extend(n)
-        n = [i64(number) for number in lines[index+2].strip().split(re"\s+")]
-        board.extend(n)
-        n = [i64(number) for number in lines[index+3].strip().split(re"\s+")]
-        board.extend(n)
-        n = [i64(number) for number in lines[index+4].strip().split(re"\s+")]
-        board.extend(n)
+        board: [i64] = []
+
+        for row_index in range(5):
+            board.extend([
+                i64(number)
+                for number in lines[index + row_index].strip().split(re"\s+")
+            ])
+
         boards.append(board)
 
     print(part_1(numbers, boards))
@@ -77,33 +84,9 @@ def day_04():
 @test
 def test_all():
     numbers = [
-        7,
-        4,
-        9,
-        5,
-        11,
-        17,
-        23,
-        2,
-        0,
-        14,
-        21,
-        24,
-        10,
-        16,
-        13,
-        6,
-        15,
-        25,
-        12,
-        22,
-        18,
-        20,
-        8,
-        19,
-        3,
-        26,
-        1
+        7, 4, 9, 5, 11, 17, 23, 2, 0, 14,
+        21, 24, 10, 16, 13, 6, 15, 25, 12, 22,
+        18, 20, 8, 19, 3, 26, 1
     ]
     boards = [
         [
