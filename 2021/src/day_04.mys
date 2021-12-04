@@ -27,14 +27,18 @@ def calc_unmarked_numbers(board: [i64], marks: [bool]) -> i64:
 
     return unmarked_numbers_sum
 
+def mark_number(board: [i64], marks: [bool], number: i64):
+    for index in range(25):
+        if board[index] == number:
+            marks[index] = True
+            break
+
 def part_1(numbers: [i64], boards: [[i64]]) -> i64:
     marks = [[False for _ in range(25)] for _ in boards]
 
     for number in numbers:
         for board, mark in zip(boards, marks):
-            for index in range(25):
-                if board[index] == number:
-                    mark[index] = True
+            mark_number(board, mark, number)
 
             if has_bingo(mark):
                 return calc_unmarked_numbers(board, mark) * number
@@ -50,9 +54,7 @@ def part_2(numbers: [i64], boards: [[i64]]) -> i64:
             if i in boards_with_bingo:
                 continue
 
-            for index in range(25):
-                if board[index] == number:
-                    mark[index] = True
+            mark_number(board, mark, number)
 
             if has_bingo(mark):
                 boards_with_bingo.append(i)
