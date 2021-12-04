@@ -1,0 +1,21 @@
+from os import TextFile
+
+def part_1(commands: [string]) -> i64:
+    return 0
+
+def day_05():
+    commands: [string] = []
+
+    for line in TextFile(f"{__assets__}/day_02.txt").read().strip().split("\n"):
+        commands.append(line)
+
+    print(part_1(commands))
+    # print(part_2(commands))
+
+@test
+def test_all():
+    commands = [
+        ""
+    ]
+    assert part_1(commands) == 0
+    # assert part_2(commands) == 900
