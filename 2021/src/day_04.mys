@@ -1,20 +1,132 @@
 from os import TextFile
 
-def part_1(data: [string]) -> i64:
-    return 0
+def has_bingo(marks: [bool]) -> bool:
+    for i in range(0, 5):
+        if marks[5*i] and marks[5*i+1] and marks[5*i+2] and marks[5*i+3] and marks[5*i+4]:
+            return True
+
+        if marks[i] and marks[5+i] and marks[10+i] and marks[15+i] and marks[20+i]:
+            return True
+
+    return False
+
+def calc_unmarked_numbers(board: [i64], marks: [bool]) -> i64:
+    unmarked_numbers_sum = 0
+
+    for number, mark in zip(board, marks):
+        if not mark:
+            unmarked_numbers_sum += number
+
+    return unmarked_numbers_sum
+
+def part_1(numbers: [i64], boards: [[i64]]) -> i64:
+    marks = [[False for _ in range(25)] for _ in boards]
+
+    for number in numbers:
+        for board, mark in zip(boards, marks):
+            for index in range(25):
+                if board[index] == number:
+                    mark[index] = True
+
+            if has_bingo(mark):
+                return calc_unmarked_numbers(board, mark) * number
+
+    raise NotImplementedError("No bingo")
+
+def part_2(numbers: [i64], boards: [[i64]]) -> i64:
+    boards_with_bingo: [i64] = []
+    marks = [[False for _ in range(25)] for _ in boards]
+
+    for number in numbers:
+        for i, (board, mark) in enumerate(zip(boards, marks)):
+            if i in boards_with_bingo:
+                continue
+
+            for index in range(25):
+                if board[index] == number:
+                    mark[index] = True
+
+            if has_bingo(mark):
+                boards_with_bingo.append(i)
+
+                if len(boards_with_bingo) == len(boards):
+                    return calc_unmarked_numbers(board, mark) * number
+
+    raise NotImplementedError("No bingo")
 
 def day_04():
-    data: [string] = []
+    lines = TextFile(f"{__assets__}/day_04.txt").read().strip().split("\n")
+    numbers = [i64(number) for number in lines[0].split(',')]
+    boards: [[i64]] = []
 
-    for line in TextFile(f"{__assets__}/day_04.txt").read().strip().split("\n"):
-        data.append(line)
+    for index in range(2, i64(len(lines) - 2), 6):
+        board = [i64(number) for number in lines[index].strip().split(re"\s+")]
+        n = [i64(number) for number in lines[index+1].strip().split(re"\s+")]
+        board.extend(n)
+        n = [i64(number) for number in lines[index+2].strip().split(re"\s+")]
+        board.extend(n)
+        n = [i64(number) for number in lines[index+3].strip().split(re"\s+")]
+        board.extend(n)
+        n = [i64(number) for number in lines[index+4].strip().split(re"\s+")]
+        board.extend(n)
+        boards.append(board)
 
-    print(part_1(data))
+    print(part_1(numbers, boards))
+    print(part_2(numbers, boards))
 
 @test
 def test_all():
-    data = [
-        ""
+    numbers = [
+        7,
+        4,
+        9,
+        5,
+        11,
+        17,
+        23,
+        2,
+        0,
+        14,
+        21,
+        24,
+        10,
+        16,
+        13,
+        6,
+        15,
+        25,
+        12,
+        22,
+        18,
+        20,
+        8,
+        19,
+        3,
+        26,
+        1
     ]
-    assert part_1(data) == 0
-    # assert part_2(data) == 900
+    boards = [
+        [
+            22, 13, 17, 11, 0,
+            8, 2, 23, 4, 24,
+            21, 9, 14, 16, 7,
+            6, 10, 3, 18, 5,
+            1, 12, 20, 15, 19
+        ],
+        [
+            3, 15 , 0 , 2, 22,
+            9, 18, 13, 17, 5,
+            19, 8, 7, 25, 23,
+            20, 11, 10, 24, 4,
+            14, 21, 16, 12, 6
+        ],
+        [
+            14, 21, 17, 24, 4,
+            10, 16, 15, 9, 19,
+            18, 8, 23, 26, 20,
+            22, 11, 13, 6, 5,
+            2, 0, 12, 3, 7
+        ]
+    ]
+    assert part_1(numbers, boards) == 4512
+    assert part_2(numbers, boards) == 1924
