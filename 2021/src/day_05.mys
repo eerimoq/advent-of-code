@@ -6,7 +6,7 @@ def part_1(commands: [string]) -> i64:
 def day_05():
     commands: [string] = []
 
-    for line in TextFile(f"{__assets__}/day_02.txt").read().strip().split("\n"):
+    for line in TextFile(f"{__assets__}/day_05.txt").read().strip().split("\n"):
         commands.append(line)
 
     print(part_1(commands))

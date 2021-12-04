@@ -69,7 +69,7 @@ def day_04():
     numbers = [i64(number) for number in lines[0].split(',')]
     boards: [[i64]] = []
 
-    for index in range(2, i64(len(lines) - 2), 6):
+    for index in range(2, i64(len(lines)), 6):
         board: [i64] = []
 
         for row_index in range(5):
