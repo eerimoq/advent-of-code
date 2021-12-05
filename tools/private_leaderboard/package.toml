@@ -1,0 +1,11 @@
+[package]
+name = "private_leaderboard"
+version = "0.1.0"
+authors = ["Erik Moqvist <erik.moqvist@gmail.com>"]
+description = "Add a short package description here."
+
+[dependencies]
+argparse = "latest"
+json = "latest"
+os = "latest"
+time = "latest"
