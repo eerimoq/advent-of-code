@@ -31,12 +31,14 @@ class Diagram:
         x = p0.x
         y = p0.y
 
-        while x != p1.x or y != p1.y:
+        while True:
             self.canvas[y][x] += 1
+
+            if x == p1.x and y == p1.y:
+                break
+
             x += x_diff
             y += y_diff
-
-        self.canvas[y][x] += 1
 
     def count_number_of_overlapping_lines(self) -> i64:
         number_of_overlapping_lines = 0
