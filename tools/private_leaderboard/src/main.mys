@@ -16,46 +16,6 @@ def calc_day_start_ts(day: u8) -> i64:
 
     return day_start.to_time_since_epoch().seconds
 
-class Member:
-    name: string
-    star_1_time: i64
-    star_2_time: i64
-    star_2_delta: i64
-
-    def __init__(self,
-                 member_id: string,
-                 member: Value,
-                 day: string,
-                 day_start_ts: i64):
-        star_1_ts = -1
-        star_2_ts = -1
-        completion_day = member.get("completion_day_level").get_object().get(day, None)
-
-        if completion_day is not None:
-            star_1_ts = completion_day.get("1").get("get_star_ts").get_integer()
-            star_2 = completion_day.get_object().get("2", None)
-
-            if star_2 is not None:
-                star_2_ts = star_2.get("get_star_ts").get_integer()
-
-        match member.get("name"):
-            case String() as string:
-                self.name = string.get_string()
-            case _:
-                self.name = f"(anonymous user #{member_id})"
-
-        if star_1_ts != -1:
-            self.star_1_time = star_1_ts - day_start_ts
-        else:
-            self.star_1_time = -1
-
-        if star_2_ts != -1:
-            self.star_2_time = star_2_ts - day_start_ts
-        else:
-            self.star_2_time = -1
-
-        self.star_2_delta = self.star_2_time - self.star_1_time
-
 def main(argv: [string]):
     parser = Parser()
     parser.add_positional("database")
@@ -66,10 +26,21 @@ def main(argv: [string]):
     day = args.value_of("day")
     day_start_ts = calc_day_start_ts(u8(day))
 
-    for member_id, member_data in private_leaderboard.get("members").get_object():
-        member = Member(member_id, member_data, day, day_start_ts)
+    for member_id, member in private_leaderboard.get("members").get_object():
+        try:
+            match member.get("name"):
+                case String() as string:
+                    name = string.get_string()
+                case _:
+                    name = f"(anonymous user #{member_id})"
 
-        if member.star_1_time != -1 and member.star_2_time != -1:
-            print(member.star_1_time, member.star_2_time, member.star_2_delta, member.name)
-        elif member.star_1_time != -1:
-            print(member.star_1_time, member.name)
+            completion_day = member.get("completion_day_level").get(day)
+            star_1_ts = completion_day.get("1").get("get_star_ts").get_integer()
+            star_2_ts = completion_day.get("2").get("get_star_ts").get_integer()
+            star_1_time = star_1_ts - day_start_ts
+            star_2_time = star_2_ts - day_start_ts
+            star_2_delta = star_2_time - star_1_time
+
+            print(star_1_time, star_2_time, star_2_delta, name)
+        except:
+            pass
