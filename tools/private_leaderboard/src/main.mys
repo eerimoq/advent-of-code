@@ -18,15 +18,15 @@ def calc_day_start_ts(day: u8) -> i64:
 
 def main(argv: [string]):
     parser = Parser()
-    parser.add_positional("database")
+    parser.add_positional("api_json")
     parser.add_positional("day")
     args = parser.parse(argv)
 
-    private_leaderboard = decode(TextFile(args.value_of("database")).read())
+    api_json = decode(TextFile(args.value_of("api_json")).read())
     day = args.value_of("day")
     day_start_ts = calc_day_start_ts(u8(day))
 
-    for member_id, member in private_leaderboard.get("members").get_object():
+    for member_id, member in api_json.get("members").get_object():
         try:
             match member.get("name"):
                 case String() as string:
