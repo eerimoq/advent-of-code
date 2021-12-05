@@ -3,7 +3,7 @@ from os import TextFile
 def load_passports() -> [{string: string}]:
     passports: [{string: string}] = []
 
-    for chunk in TextFile(f"{__assets__}/day_04.txt").read().split("\n\n"):
+    for chunk in TextFile(f"{__assets__}/day_04.txt").read().strip().split("\n\n"):
         passport: {string: string} = {}
 
         for item in chunk.replace("\n", " ").split(" "):

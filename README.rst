@@ -7,5 +7,5 @@ Build and run with
 
 .. code-block:: text
 
-   $ cd 2020 && mys run -- 1
-   $ cd 2021 && mys run -- 1
+   $ mys -C 2020 run -- 1
+   $ mys -C 2021 run -- 1
