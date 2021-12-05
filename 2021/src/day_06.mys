@@ -1,115 +1,24 @@
 from os import TextFile
 
-class Point:
-    x: i64
-    y: i64
+def part_1(lines: [string]) -> i64:
+    return 0
 
-class Diagram:
-    canvas: [[i64]]
+def day_06():
+    lines: [string] = []
 
-    def __init__(self, x_max: i64, y_max: i64):
-        self.canvas = []
-
-        for _ in range(y_max + 1):
-            self.canvas.append([0 for _ in range(x_max + 1)])
-
-    def draw_line(self, p0: Point, p1: Point):
-        if p0.x < p1.x:
-            x_diff = 1
-        elif p1.x < p0.x:
-            x_diff = -1
-        else:
-            x_diff = 0
-
-        if p0.y < p1.y:
-            y_diff = 1
-        elif p1.y < p0.y:
-            y_diff = -1
-        else:
-            y_diff = 0
-
-        x = p0.x
-        y = p0.y
-
-        while True:
-            self.canvas[y][x] += 1
-
-            if x == p1.x and y == p1.y:
-                break
-
-            x += x_diff
-            y += y_diff
-
-    def count_number_of_overlapping_lines(self) -> i64:
-        number_of_overlapping_lines = 0
-
-        for line in self.canvas:
-            for value in line:
-                if value > 1:
-                    number_of_overlapping_lines += 1
-
-        return number_of_overlapping_lines
-
-def create_empty_diagram(lines: [(Point, Point)]) -> Diagram:
-    x_max = 0
-    y_max = 0
-
-    for p0, p1 in lines:
-        x_max = max(x_max, p0.x)
-        x_max = max(x_max, p1.x)
-        y_max = max(y_max, p0.y)
-        y_max = max(y_max, p1.y)
-
-    return Diagram(x_max, y_max)
-
-def is_horizontal_or_vertical_line(p0: Point, p1: Point) -> bool:
-    return p0.x == p1.x or p0.y == p1.y
-
-def part_1(lines: [(Point, Point)]) -> i64:
-    diagram = create_empty_diagram(lines)
-
-    for p0, p1 in lines:
-        if is_horizontal_or_vertical_line(p0, p1):
-            diagram.draw_line(p0, p1)
-
-    return diagram.count_number_of_overlapping_lines()
-
-def part_2(lines: [(Point, Point)]) -> i64:
-    diagram = create_empty_diagram(lines)
-
-    for p0, p1 in lines:
-        diagram.draw_line(p0, p1)
-
-    return diagram.count_number_of_overlapping_lines()
-
-def day_05():
-    lines: [(Point, Point)] = []
-
-    for line in TextFile(f"{__assets__}/day_05.txt").read().strip().split("\n"):
-        mo = line.match(re"(\d+),(\d+) -> (\d+),(\d+)")
+    for line in TextFile(f"{__assets__}/day_06.txt").read().strip().split("\n"):
+        mo = line.match(re"(\d+)")
 
         if mo is None:
             continue
 
-        lines.append((Point(i64(mo.group(1)), i64(mo.group(2))),
-                      Point(i64(mo.group(3)), i64(mo.group(4)))))
+        lines.append(mo.group(1))
 
     print(part_1(lines))
-    print(part_2(lines))
 
 @test
 def test_all():
     lines = [
-        (Point(0, 9), Point(5, 9)),
-        (Point(8, 0), Point(0, 8)),
-        (Point(9, 4), Point(3, 4)),
-        (Point(2, 2), Point(2, 1)),
-        (Point(7, 0), Point(7, 4)),
-        (Point(6, 4), Point(2, 0)),
-        (Point(0, 9), Point(2, 9)),
-        (Point(3, 4), Point(1, 4)),
-        (Point(0, 0), Point(8, 8)),
-        (Point(5, 5), Point(8, 2))
+        ""
     ]
-    assert part_1(lines) == 5
-    assert part_2(lines) == 12
+    assert part_1(lines) == 0
