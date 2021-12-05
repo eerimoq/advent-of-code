@@ -18,14 +18,14 @@ class Diagram:
     def draw_line(self, line: Line):
         if line.x1 < line.x2:
             x_diff = 1
-        elif line.x2 < line.x1:
+        elif line.x1 > line.x2:
             x_diff = -1
         else:
             x_diff = 0
 
         if line.y1 < line.y2:
             y_diff = 1
-        elif line.y2 < line.y1:
+        elif line.y1 > line.y2:
             y_diff = -1
         else:
             y_diff = 0
@@ -87,10 +87,6 @@ def day_05():
 
     for line in TextFile(f"{__assets__}/day_05.txt").read().strip().split("\n"):
         mo = line.match(re"(\d+),(\d+) -> (\d+),(\d+)")
-
-        if mo is None:
-            continue
-
         lines.append((Line(i64(mo.group(1)),
                            i64(mo.group(2)),
                            i64(mo.group(3)),
@@ -102,16 +98,16 @@ def day_05():
 @test
 def test_all():
     lines = [
-        (Line(0, 9, 5, 9)),
-        (Line(8, 0, 0, 8)),
-        (Line(9, 4, 3, 4)),
-        (Line(2, 2, 2, 1)),
-        (Line(7, 0, 7, 4)),
-        (Line(6, 4, 2, 0)),
-        (Line(0, 9, 2, 9)),
-        (Line(3, 4, 1, 4)),
-        (Line(0, 0, 8, 8)),
-        (Line(5, 5, 8, 2))
+        Line(0, 9, 5, 9),
+        Line(8, 0, 0, 8),
+        Line(9, 4, 3, 4),
+        Line(2, 2, 2, 1),
+        Line(7, 0, 7, 4),
+        Line(6, 4, 2, 0),
+        Line(0, 9, 2, 9),
+        Line(3, 4, 1, 4),
+        Line(0, 0, 8, 8),
+        Line(5, 5, 8, 2)
     ]
     assert part_1(lines) == 5
     assert part_2(lines) == 12

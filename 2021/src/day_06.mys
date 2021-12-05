@@ -8,10 +8,6 @@ def day_06():
 
     for line in TextFile(f"{__assets__}/day_06.txt").read().strip().split("\n"):
         mo = line.match(re"(\d+)")
-
-        if mo is None:
-            continue
-
         lines.append(mo.group(1))
 
     print(part_1(lines))
