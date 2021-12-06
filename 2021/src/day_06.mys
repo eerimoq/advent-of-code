@@ -1,20 +1,37 @@
 from os import TextFile
 
-def part_1(lines: [string]) -> i64:
-    return 0
+def calc_number_of_lanternfish(timers: [i64], days: i64) -> i64:
+    number_of_lanternfish_per_timer = [0 for _ in range(9)]
+
+    for timer in timers:
+        number_of_lanternfish_per_timer[timer] += 1
+
+    for _ in range(days):
+        zeros = number_of_lanternfish_per_timer.pop(0)
+        number_of_lanternfish_per_timer[6] += zeros
+        number_of_lanternfish_per_timer.append(zeros)
+
+    return sum(number_of_lanternfish_per_timer)
+
+def part_1(timers: [i64]) -> i64:
+    return calc_number_of_lanternfish(timers, 80)
+
+def part_2(timers: [i64]) -> i64:
+    return calc_number_of_lanternfish(timers, 256)
 
 def day_06():
-    lines: [string] = []
+    timers = [
+        i64(number)
+        for number in TextFile(f"{__assets__}/day_06.txt").read().strip().split(",")
+    ]
 
-    for line in TextFile(f"{__assets__}/day_06.txt").read().strip().split("\n"):
-        mo = line.match(re"(\d+)")
-        lines.append(mo.group(1))
-
-    print(part_1(lines))
+    print(part_1(timers))
+    print(part_2(timers))
 
 @test
 def test_all():
-    lines = [
-        ""
+    timers = [
+        3, 4, 3, 1, 2
     ]
-    assert part_1(lines) == 0
+    assert part_1(timers) == 5934
+    assert part_2(timers) == 26984457539
