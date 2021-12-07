@@ -1,0 +1,53 @@
+from os import TextFile
+
+def part_1(positions: [i64]) -> i64:
+    minimum_fuel = -1
+
+    for alignment_position in range(max(positions) + 1):
+        fuel = 0
+
+        for position in positions:
+            fuel += abs(position - alignment_position)
+
+        if minimum_fuel == -1:
+            minimum_fuel = fuel
+        elif fuel < minimum_fuel:
+            minimum_fuel = fuel
+
+    return minimum_fuel
+
+def part_2(positions: [i64]) -> i64:
+    minimum_fuel = -1
+
+    for alignment_position in range(max(positions) + 1):
+        fuel = 0
+
+        for position in positions:
+            steps = abs(position - alignment_position)
+
+            for step in range(steps):
+                fuel += step + 1
+
+        if minimum_fuel == -1:
+            minimum_fuel = fuel
+        elif fuel < minimum_fuel:
+            minimum_fuel = fuel
+
+    return minimum_fuel
+
+def day_07():
+    positions = [
+        i64(value)
+        for value in TextFile(f"{__assets__}/day_07.txt").read().strip().split(',')
+    ]
+
+    print(part_1(positions))
+    print(part_2(positions))
+
+@test
+def test_all():
+    positions = [
+        16, 1, 2, 0, 4, 2, 7, 1, 2, 14
+    ]
+    assert part_1(positions) == 37
+    assert part_2(positions) == 168
