@@ -1,0 +1,32 @@
+from os import TextFile
+
+def get_input(filename: string) -> [string]:
+    items: [string] = []
+
+    for value in TextFile(f"{__assets__}/day_08/{filename}").read().split("\n"):
+        if value == "":
+            continue
+
+        mo = value.match(re"(\d+)")
+        items.append(mo.group(1))
+
+    return items
+
+def part_1(filename: string) -> i64:
+    items = get_input(filename)
+
+    return 0
+
+def part_2(filename: string) -> i64:
+    items = get_input(filename)
+
+    return 0
+
+def day_08():
+    print(part_1("input.txt"))
+    print(part_2("input.txt"))
+
+@test
+def test_all():
+    assert part_1("example.txt") == 0
+    assert part_2("example.txt") == 0
