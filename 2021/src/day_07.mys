@@ -9,9 +9,7 @@ def part_1(positions: [i64]) -> i64:
         for position in positions:
             fuel += abs(position - alignment_position)
 
-        if minimum_fuel == -1:
-            minimum_fuel = fuel
-        elif fuel < minimum_fuel:
+        if fuel < minimum_fuel or minimum_fuel == -1:
             minimum_fuel = fuel
 
     return minimum_fuel
@@ -28,9 +26,7 @@ def part_2(positions: [i64]) -> i64:
             for step in range(steps):
                 fuel += step + 1
 
-        if minimum_fuel == -1:
-            minimum_fuel = fuel
-        elif fuel < minimum_fuel:
+        if fuel < minimum_fuel or minimum_fuel == -1:
             minimum_fuel = fuel
 
     return minimum_fuel
