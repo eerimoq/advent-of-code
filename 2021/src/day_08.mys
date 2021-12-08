@@ -1,26 +1,89 @@
 from os import TextFile
 
-def get_input(filename: string) -> [string]:
-    items: [string] = []
+def get_input(filename: string) -> [([string], [string])]:
+    items: [([string], [string])] = []
 
     for value in TextFile(f"{__assets__}/day_08/{filename}").read().split("\n"):
         if value == "":
             continue
 
-        mo = value.match(re"(\d+)")
-        items.append(mo.group(1))
+        parts = value.split("|")
+        patterns = parts[0].strip().split(" ")
+        digits = parts[1].strip().split(" ")
+        items.append((patterns, digits))
 
     return items
 
 def part_1(filename: string) -> i64:
     items = get_input(filename)
+    count = 0
 
-    return 0
+    for item in items:
+        for digit in item[1]:
+            if len(digit) in [2, 4, 3, 7]:
+                count += 1
+
+    return count
+
+def is_all_in(segments: string, digit: string) -> bool:
+    for segment in segments:
+        if segment not in digit:
+            return False
+
+    return True
 
 def part_2(filename: string) -> i64:
     items = get_input(filename)
+    count = 0
 
-    return 0
+    for patterns, digits in items:
+        cf = ""
+        bcdf = ""
+        acf = ""
+
+        for pattern in patterns:
+            if len(pattern) == 2:
+                cf = pattern
+            elif len(pattern) == 4:
+                bcdf = pattern
+            elif len(pattern) == 3:
+                acf = pattern
+
+        bd = ""
+
+        for segment in bcdf:
+            if segment not in cf:
+                bd += segment
+
+        number = 0
+
+        for digit in digits:
+            number *= 10
+
+            if len(digit) == 2:
+                number += 1
+            elif len(digit) == 4:
+                number += 4
+            elif len(digit) == 3:
+                number += 7
+            elif len(digit) == 7:
+                number += 8
+            elif len(digit) == 5:
+                if is_all_in(acf, digit):
+                    number += 3
+                elif is_all_in(bd, digit):
+                    number += 5
+                else:
+                    number += 2
+            elif len(digit) == 6:
+                if not is_all_in(cf, digit):
+                    number += 6
+                elif is_all_in(bcdf, digit):
+                    number += 9
+
+        count += number
+
+    return count
 
 def day_08():
     print(part_1("input.txt"))
@@ -28,5 +91,5 @@ def day_08():
 
 @test
 def test_all():
-    assert part_1("example.txt") == 0
-    assert part_2("example.txt") == 0
+    assert part_1("example.txt") == 26
+    assert part_2("example.txt") == 61229
