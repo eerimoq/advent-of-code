@@ -1,0 +1,45 @@
+from os import TextFile
+
+def get_input(filename: string) -> [i64]:
+    items: [i64] = []
+
+    for value in TextFile(f"{__assets__}/day_01/{filename}").read().split("\n"):
+        if value == "":
+            continue
+
+        items.append(i64(value))
+
+    return items
+
+def part_1(filename: string) -> i64:
+    items = get_input(filename)
+    fuel_requirements = 0
+
+    for item in items:
+        fuel_requirements += item / 3 - 2
+
+    return fuel_requirements
+
+def part_2(filename: string) -> i64:
+    items = get_input(filename)
+    fuel_requirements = 0
+
+    for item in items:
+        while True:
+            item = item / 3 - 2
+
+            if item <= 0:
+                break
+
+            fuel_requirements += item
+
+    return fuel_requirements
+
+def day_01():
+    print(part_1("input.txt"))
+    print(part_2("input.txt"))
+
+@test
+def test_all():
+    assert part_1("example.txt") == 33583
+    assert part_2("example.txt") == 50346
