@@ -1,0 +1,33 @@
+from os import TextFile
+
+def get_input(filename: string) -> [string]:
+    items: [string] = []
+
+    for value in TextFile(f"{__assets__}/day_09/{filename}").read().split("\n"):
+        if value == "":
+            continue
+
+        items.append(value)
+
+    return items
+
+def part_1(filename: string) -> i64:
+    items = get_input(filename)
+    res = 0
+
+    return res
+
+def part_2(filename: string) -> i64:
+    items = get_input(filename)
+    res = 0
+
+    return res
+
+def day_09():
+    print(part_1("input.txt"))
+    print(part_2("input.txt"))
+
+@test
+def test_all():
+    assert part_1("example.txt") == 0
+    assert part_2("example.txt") == 0
