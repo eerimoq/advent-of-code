@@ -42,12 +42,13 @@ def part_2(filename: string) -> i64:
         acf = ""
 
         for pattern in patterns:
-            if len(pattern) == 2:
-                cf = pattern
-            elif len(pattern) == 4:
-                bcdf = pattern
-            elif len(pattern) == 3:
-                acf = pattern
+            match len(pattern):
+                case 2:
+                    cf = pattern
+                case 4:
+                    bcdf = pattern
+                case 3:
+                    acf = pattern
 
         bd = ""
 
@@ -60,26 +61,27 @@ def part_2(filename: string) -> i64:
         for digit in digits:
             number *= 10
 
-            if len(digit) == 2:
-                number += 1
-            elif len(digit) == 4:
-                number += 4
-            elif len(digit) == 3:
-                number += 7
-            elif len(digit) == 7:
-                number += 8
-            elif len(digit) == 5:
-                if is_all_in(acf, digit):
-                    number += 3
-                elif is_all_in(bd, digit):
-                    number += 5
-                else:
-                    number += 2
-            elif len(digit) == 6:
-                if not is_all_in(cf, digit):
-                    number += 6
-                elif is_all_in(bcdf, digit):
-                    number += 9
+            match len(digit):
+                case 2:
+                    number += 1
+                case 4:
+                    number += 4
+                case 3:
+                    number += 7
+                case 7:
+                    number += 8
+                case 5:
+                    if is_all_in(acf, digit):
+                        number += 3
+                    elif is_all_in(bd, digit):
+                        number += 5
+                    else:
+                        number += 2
+                case 6:
+                    if not is_all_in(cf, digit):
+                        number += 6
+                    elif is_all_in(bcdf, digit):
+                        number += 9
 
         count += number
 
