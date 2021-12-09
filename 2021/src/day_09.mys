@@ -52,34 +52,30 @@ def part_1(filename: string) -> i64:
 
     return sum([items[y][x] + 1 for x, y in find_low_points(items)])
 
+def calc_adjecent_size(depth: i64, x: i64, y: i64, items: [[i64]]) -> i64:
+    adjecent = items[y][x]
+
+    if adjecent >= depth and adjecent != 9:
+        return calc_size(x, y, items)
+    else:
+        return 0
+
 def calc_size(x: i64, y: i64, items: [[i64]]) -> i64:
     depth = items[y][x]
-    items[y][x] = 9
+    items[y][x] = 9  # Mark consumed.
     size = 1
 
     if x > 0:
-        adjecent = items[y][x - 1]
-
-        if adjecent >= depth and adjecent != 9:
-            size += calc_size(x - 1, y, items)
+        size += calc_adjecent_size(depth, x - 1, y, items)
 
     if x < i64(len(items[0])) - 1:
-        adjecent = items[y][x + 1]
-
-        if adjecent >= depth and adjecent != 9:
-            size += calc_size(x + 1, y, items)
+        size += calc_adjecent_size(depth, x + 1, y, items)
 
     if y > 0:
-        adjecent = items[y - 1][x]
-
-        if adjecent >= depth and adjecent != 9:
-            size += calc_size(x, y - 1, items)
+        size += calc_adjecent_size(depth, x, y - 1, items)
 
     if y < i64(len(items)) - 1:
-        adjecent = items[y + 1][x]
-
-        if adjecent >= depth and adjecent != 9:
-            size += calc_size(x, y + 1, items)
+        size += calc_adjecent_size(depth, x, y + 1, items)
 
     return size
 
