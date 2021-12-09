@@ -10,7 +10,7 @@ def get_input(filename: string) -> [[i64]]:
         digits: [i64] = []
 
         for ch in value:
-            digits.append(i64(i32(ch) - i32('0')))
+            digits.append(i64(string(ch)))
 
         items.append(digits)
 
@@ -121,4 +121,5 @@ def day_09():
 def test_all():
     assert part_1("example.txt") == 15
     assert part_2("example.txt") == 1134
+    assert part_1("input.txt") == 541
     assert part_2("input.txt") == 847504
