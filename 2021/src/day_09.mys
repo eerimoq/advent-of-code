@@ -49,13 +49,13 @@ class Matrix:
 
         return neighbours
 
-def find_low_points_2(m: Matrix) -> [(i64, i64, i64)]:
+def find_low_points(m: Matrix) -> [(i64, i64, i64)]:
     low_points: [(i64, i64, i64)] = []
 
     for r in range(m.height):
         for c in range(m.width):
             low = True
-            
+
             for nr, nc in m.neighbours(r, c):
                 if m.get(nr, nc) <= m.get(r, c):
                     low = False
@@ -75,91 +75,17 @@ def calc_basin_size(r: i64, c: i64, m: Matrix) -> i64:
 
     return size
 
-def foo():
-    sizes: [i64] = []
-    m = Matrix(get_input("example.txt"))
-    
-    for r, c, _ in find_low_points_2(m):
-        sizes.append(calc_basin_size(r, c, m))
-
-    sizes.sort()
-
-    print(sizes[-3] * sizes[-2] * sizes[-1])
-
-def find_low_points(items: [[i64]]) -> [(i64, i64)]:
-    low_points: [(i64, i64)] = []
-
-    for y in range(i64(len(items))):
-        for x in range(i64(len(items[0]))):
-            if is_low_point(x, y, items):
-                low_points.append((x, y))
-
-    return low_points
-
-def is_low_point(x: i64, y: i64, items: [[i64]]) -> bool:
-    num = items[y][x]
-    up = 9
-    down = 9
-    left = 9
-    right = 9
-
-    if y > 0:
-        up = items[y - 1][x]
-
-    if y < i64(len(items)) - 1:
-        down = items[y + 1][x]
-
-    if x > 0:
-        left = items[y][x - 1]
-
-    if x < i64(len(items[0])) - 1:
-        right = items[y][x + 1]
-
-    return num < up and num < down and num < left and num < right
-
 def part_1(filename: string) -> i64:
-    items = get_input(filename)
+    m = Matrix(get_input(filename))
 
-    return sum([items[y][x] + 1 for x, y in find_low_points(items)])
-
-def calc_adjecent_size(depth: i64, x: i64, y: i64, items: [[i64]]) -> i64:
-    adjecent = items[y][x]
-
-    if adjecent >= depth and adjecent != 9:
-        return calc_size(x, y, items)
-    else:
-        return 0
-
-def calc_size(x: i64, y: i64, items: [[i64]]) -> i64:
-    depth = items[y][x]
-    items[y][x] = 9  # Mark consumed.
-    size = 1
-
-    if x > 0:
-        size += calc_adjecent_size(depth, x - 1, y, items)
-
-    if x < i64(len(items[0])) - 1:
-        size += calc_adjecent_size(depth, x + 1, y, items)
-
-    if y > 0:
-        size += calc_adjecent_size(depth, x, y - 1, items)
-
-    if y < i64(len(items)) - 1:
-        size += calc_adjecent_size(depth, x, y + 1, items)
-
-    return size
+    return sum([v + 1 for _, _, v in find_low_points(m)])
 
 def part_2(filename: string) -> i64:
-    items = get_input(filename)
-    low_points = find_low_points(items)
-    basin_sizes: [i64] = []
+    m = Matrix(get_input(filename))
+    sizes = [calc_basin_size(r, c, m) for r, c, _ in find_low_points(m)]
+    sizes.sort()
 
-    for x, y in low_points:
-        basin_sizes.append(calc_size(x, y, items))
-
-    basin_sizes.sort()
-
-    return basin_sizes[-1] * basin_sizes[-2] * basin_sizes[-3]
+    return sizes[-3] * sizes[-2] * sizes[-1]
 
 def day_09():
     print(part_1("input.txt"))
