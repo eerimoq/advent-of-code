@@ -41,7 +41,7 @@ def part_1(filename: string) -> i64:
 
     return score
 
-def is_corrupted_line(line: string) -> bool:
+def get_illegal_line_rest(line: string) -> [char]:
     stack: [char] = []
 
     for ch in line:
@@ -50,9 +50,9 @@ def is_corrupted_line(line: string) -> bool:
         elif ch == stack[-1]:
             stack.pop()
         else:
-            return True
+            return None
 
-    return False
+    return stack
 
 def part_2(filename: string) -> i64:
     items = get_input(filename)
@@ -65,23 +65,19 @@ def part_2(filename: string) -> i64:
     }
 
     for line in items:
-        if not is_corrupted_line(line):
-            stack: [char] = []
+        stack = get_illegal_line_rest(line)
 
-            for ch in line:
-                if ch in O2C:
-                    stack.append(O2C[ch])
-                else:
-                    stack.pop()
+        if stack is None:
+            continue
 
-            stack.reverse()
-            score = 0
+        stack.reverse()
+        score = 0
 
-            for ch in stack:
-                score *= 5
-                score += c2s[ch]
+        for ch in stack:
+            score *= 5
+            score += c2s[ch]
 
-            scores.append(score)
+        scores.append(score)
 
     scores.sort()
 
