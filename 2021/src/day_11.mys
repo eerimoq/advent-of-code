@@ -3,7 +3,7 @@ from os import TextFile
 def get_input(filename: string) -> [string]:
     items: [string] = []
 
-    for line in TextFile(f"{__assets__}/day_11/{filename}").read().split("\n"):
+    for line in TextFile(f"{__assets__}/day_11/{filename}").read().strip().split("\n"):
         if line == "":
             continue
 

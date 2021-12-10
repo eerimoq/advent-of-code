@@ -1,15 +1,7 @@
 from os import TextFile
 
 def get_input(filename: string) -> [string]:
-    items: [string] = []
-
-    for line in TextFile(f"{__assets__}/day_10/{filename}").read().split("\n"):
-        if line == "":
-            continue
-
-        items.append(line)
-
-    return items
+    return TextFile(f"{__assets__}/day_10/{filename}").read().strip().split("\n")
 
 O2C: {char: char} = {
     '(': ')',
@@ -19,7 +11,7 @@ O2C: {char: char} = {
 }
 
 def part_1(filename: string) -> i64:
-    items = get_input(filename)
+    lines = get_input(filename)
     score = 0
     stack: [char] = []
     c2s = {
@@ -29,7 +21,7 @@ def part_1(filename: string) -> i64:
         '>': 25137
     }
 
-    for line in items:
+    for line in lines:
         for ch in line:
             if ch in O2C:
                 stack.append(O2C[ch])
@@ -55,7 +47,7 @@ def get_illegal_line_rest(line: string) -> [char]:
     return stack
 
 def part_2(filename: string) -> i64:
-    items = get_input(filename)
+    lines = get_input(filename)
     scores: [i64] = []
     c2s = {
         ')': 1,
@@ -64,7 +56,7 @@ def part_2(filename: string) -> i64:
         '>': 4
     }
 
-    for line in items:
+    for line in lines:
         stack = get_illegal_line_rest(line)
 
         if stack is None:

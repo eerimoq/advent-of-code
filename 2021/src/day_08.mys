@@ -3,10 +3,7 @@ from os import TextFile
 def get_input(filename: string) -> [([string], [string])]:
     items: [([string], [string])] = []
 
-    for value in TextFile(f"{__assets__}/day_08/{filename}").read().split("\n"):
-        if value == "":
-            continue
-
+    for value in TextFile(f"{__assets__}/day_08/{filename}").read().strip().split("\n"):
         parts = value.split("|")
         patterns = parts[0].strip().split(" ")
         digits = parts[1].strip().split(" ")
@@ -95,3 +92,5 @@ def day_08():
 def test_all():
     assert part_1("example.txt") == 26
     assert part_2("example.txt") == 61229
+    assert part_1("input.txt") == 255
+    assert part_2("input.txt") == 982158
