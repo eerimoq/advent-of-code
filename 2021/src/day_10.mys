@@ -13,13 +13,94 @@ def get_input(filename: string) -> [string]:
 
 def part_1(filename: string) -> i64:
     items = get_input(filename)
+    corrupted: [char] = []
 
-    return 0
+    for line in items:
+        stack: [char] = []
+
+        for ch in line:
+            if ch in "({[<":
+                stack.append(ch)
+            else:
+                c = stack.pop()
+
+                if c == '(' and ch != ')':
+                    corrupted.append(ch)
+                elif c == '{' and ch != '}':
+                    corrupted.append(ch)
+                elif c == '[' and ch != ']':
+                    corrupted.append(ch)
+                elif c == '<' and ch != '>':
+                    corrupted.append(ch)
+
+    score = 0
+
+    for ch in corrupted:
+        if ch == ')':
+            score += 3
+        elif ch == '}':
+            score += 1197
+        elif ch == ']':
+            score += 57
+        elif ch == '>':
+            score += 25137
+
+    return score
+
+def is_corrupted_line(line: string) -> bool:
+    stack: [char] = []
+
+    for ch in line:
+        if ch in "({[<":
+            stack.append(ch)
+        else:
+            c = stack.pop()
+
+            if c == '(' and ch != ')':
+                return True
+            elif c == '{' and ch != '}':
+                return True
+            elif c == '[' and ch != ']':
+                return True
+            elif c == '<' and ch != '>':
+                return True
+
+    return False
 
 def part_2(filename: string) -> i64:
     items = get_input(filename)
+    scores: [i64] = []
 
-    return 0
+    for line in items:
+        if not is_corrupted_line(line):
+            stack: [char] = []
+
+            for ch in line:
+                if ch in "({[<":
+                    stack.append(ch)
+                else:
+                    stack.pop()
+
+            stack.reverse()
+            score = 0
+
+            for ch in stack:
+                score *= 5
+
+                if ch == '(':
+                    score += 1
+                elif ch == '{':
+                    score += 3
+                elif ch == '[':
+                    score += 2
+                elif ch == '<':
+                    score += 4
+
+            scores.append(score)
+
+    scores.sort()
+
+    return scores[len(scores) / 2]
 
 def day_10():
     print(part_1("input.txt"))
@@ -27,7 +108,7 @@ def day_10():
 
 @test
 def test_all():
-    assert part_1("example.txt") == 15
-    # assert part_2("example.txt") == 1134
-    # assert part_1("input.txt") == 541
-    # assert part_2("input.txt") == 847504
+    assert part_1("example.txt") == 26397
+    assert part_2("example.txt") == 288957
+    assert part_1("input.txt") == 369105
+    assert part_2("input.txt") == 3999363569

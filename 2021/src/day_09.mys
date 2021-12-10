@@ -16,6 +16,76 @@ def get_input(filename: string) -> [[i64]]:
 
     return items
 
+class Matrix:
+    data: [[i64]]
+    height: i64
+    width: i64
+
+    def __init__(self, data: [[i64]]):
+        self.data = data
+        self.height = i64(len(data))
+        self.width = i64(len(data[0]))
+
+    def get(self, r: i64, c: i64) -> i64:
+        return self.data[r][c]
+
+    def set(self, r: i64, c: i64, v: i64):
+        self.data[r][c] = v
+
+    def neighbours(self, r: i64, c: i64) -> [(i64, i64)]:
+        neighbours: [(i64, i64)] = []
+
+        if c > 0:
+            neighbours.append((r, c - 1))
+
+        if c < self.width - 1:
+            neighbours.append((r, c + 1))
+
+        if r > 0:
+            neighbours.append((r - 1, c))
+
+        if r < self.height - 1:
+            neighbours.append((r + 1, c))
+
+        return neighbours
+
+def find_low_points_2(m: Matrix) -> [(i64, i64, i64)]:
+    low_points: [(i64, i64, i64)] = []
+
+    for r in range(m.height):
+        for c in range(m.width):
+            low = True
+            
+            for nr, nc in m.neighbours(r, c):
+                if m.get(nr, nc) <= m.get(r, c):
+                    low = False
+
+            if low:
+                low_points.append((r, c, m.get(r, c)))
+
+    return low_points
+
+def calc_basin_size(r: i64, c: i64, m: Matrix) -> i64:
+    size = 1
+    m.set(r, c, 9)
+
+    for nr, nc in m.neighbours(r, c):
+        if m.get(nr, nc) != 9:
+            size += calc_basin_size(nr, nc, m)
+
+    return size
+
+def foo():
+    sizes: [i64] = []
+    m = Matrix(get_input("example.txt"))
+    
+    for r, c, _ in find_low_points_2(m):
+        sizes.append(calc_basin_size(r, c, m))
+
+    sizes.sort()
+
+    print(sizes[-3] * sizes[-2] * sizes[-1])
+
 def find_low_points(items: [[i64]]) -> [(i64, i64)]:
     low_points: [(i64, i64)] = []
 
