@@ -1,0 +1,53 @@
+from os import TextFile
+
+def get_input(filename: string) -> [i64]:
+    return [
+        i64(value)
+        for value in TextFile(f"{__assets__}/day_02/{filename}").read().strip().split(",")
+    ]
+
+def run(program: [i64]):
+    for i in range(0, i64(len(program)), 4):
+        match program[i]:
+            case 1:
+                in1 = program[i + 1]
+                in2 = program[i + 2]
+                out = program[i + 3]
+                program[out] = program[in1] + program[in2]
+            case 2:
+                in1 = program[i + 1]
+                in2 = program[i + 2]
+                out = program[i + 3]
+                program[out] = program[in1] * program[in2]
+            case 99:
+                break
+
+def part_1(filename: string) -> i64:
+    program = get_input(filename)
+    program[1] = 12
+    program[2] = 2
+    run(program)
+
+    return program[0]
+
+def part_2(filename: string) -> i64:
+    for noun in range(100):
+        for verb in range(100):
+            program = get_input(filename)
+            program[1] = noun
+            program[2] = verb
+            run(program)
+
+            if program[0] == 19690720:
+                return 100 * noun + verb
+
+    raise NotImplementedError("no noun and verb found")
+
+def day_02():
+    print(part_1("input.txt"))
+    print(part_2("input.txt"))
+
+@test
+def test_all():
+    assert part_1("input.txt") == 6087827
+    assert part_2("input.txt") == 5379

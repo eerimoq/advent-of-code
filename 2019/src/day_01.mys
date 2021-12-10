@@ -3,7 +3,7 @@ from os import TextFile
 def get_input(filename: string) -> [i64]:
     items: [i64] = []
 
-    for value in TextFile(f"{__assets__}/day_01/{filename}").read().split("\n"):
+    for value in TextFile(f"{__assets__}/day_01/{filename}").read().strip().split("\n"):
         if value == "":
             continue
 
