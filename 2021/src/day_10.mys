@@ -38,10 +38,10 @@ def part_1(filename: string) -> i64:
     for ch in corrupted:
         if ch == ')':
             score += 3
-        elif ch == '}':
-            score += 1197
         elif ch == ']':
             score += 57
+        elif ch == '}':
+            score += 1197
         elif ch == '>':
             score += 25137
 
@@ -58,9 +58,9 @@ def is_corrupted_line(line: string) -> bool:
 
             if c == '(' and ch != ')':
                 return True
-            elif c == '{' and ch != '}':
-                return True
             elif c == '[' and ch != ']':
+                return True
+            elif c == '{' and ch != '}':
                 return True
             elif c == '<' and ch != '>':
                 return True
@@ -89,10 +89,10 @@ def part_2(filename: string) -> i64:
 
                 if ch == '(':
                     score += 1
-                elif ch == '{':
-                    score += 3
                 elif ch == '[':
                     score += 2
+                elif ch == '{':
+                    score += 3
                 elif ch == '<':
                     score += 4
 
