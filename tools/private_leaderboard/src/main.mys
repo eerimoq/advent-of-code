@@ -16,6 +16,9 @@ def calc_day_start_ts(day: u8) -> i64:
 
     return day_start.to_time_since_epoch().seconds
 
+def ft(time: i64) -> string:
+    return f"{time / 60}:{time % 60}"
+
 def main(argv: [string]):
     parser = Parser()
     parser.add_positional("api_json")
@@ -41,6 +44,6 @@ def main(argv: [string]):
             star_2_time = star_2_ts - day_start_ts
             star_2_delta = star_2_time - star_1_time
 
-            print(star_1_time, star_2_time, star_2_delta, name)
+            print(ft(star_1_time), ft(star_2_time), ft(star_2_delta), name)
         except:
             pass

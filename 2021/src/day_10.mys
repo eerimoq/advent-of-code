@@ -11,39 +11,33 @@ def get_input(filename: string) -> [string]:
 
     return items
 
+O2C: {char: char} = {
+    '(': ')',
+    '{': '}',
+    '[': ']',
+    '<': '>'
+}
+
 def part_1(filename: string) -> i64:
     items = get_input(filename)
-    corrupted: [char] = []
+    score = 0
+    stack: [char] = []
+    c2s = {
+        ')': 3,
+        ']': 57,
+        '}': 1197,
+        '>': 25137
+    }
 
     for line in items:
-        stack: [char] = []
-
         for ch in line:
-            if ch in "({[<":
-                stack.append(ch)
+            if ch in O2C:
+                stack.append(O2C[ch])
+            elif ch == stack[-1]:
+                stack.pop()
             else:
-                c = stack.pop()
-
-                if c == '(' and ch != ')':
-                    corrupted.append(ch)
-                elif c == '{' and ch != '}':
-                    corrupted.append(ch)
-                elif c == '[' and ch != ']':
-                    corrupted.append(ch)
-                elif c == '<' and ch != '>':
-                    corrupted.append(ch)
-
-    score = 0
-
-    for ch in corrupted:
-        if ch == ')':
-            score += 3
-        elif ch == ']':
-            score += 57
-        elif ch == '}':
-            score += 1197
-        elif ch == '>':
-            score += 25137
+                score += c2s[ch]
+                break
 
     return score
 
@@ -51,33 +45,32 @@ def is_corrupted_line(line: string) -> bool:
     stack: [char] = []
 
     for ch in line:
-        if ch in "({[<":
-            stack.append(ch)
+        if ch in O2C:
+            stack.append(O2C[ch])
+        elif ch == stack[-1]:
+            stack.pop()
         else:
-            c = stack.pop()
-
-            if c == '(' and ch != ')':
-                return True
-            elif c == '[' and ch != ']':
-                return True
-            elif c == '{' and ch != '}':
-                return True
-            elif c == '<' and ch != '>':
-                return True
+            return True
 
     return False
 
 def part_2(filename: string) -> i64:
     items = get_input(filename)
     scores: [i64] = []
+    c2s = {
+        ')': 1,
+        ']': 2,
+        '}': 3,
+        '>': 4
+    }
 
     for line in items:
         if not is_corrupted_line(line):
             stack: [char] = []
 
             for ch in line:
-                if ch in "({[<":
-                    stack.append(ch)
+                if ch in O2C:
+                    stack.append(O2C[ch])
                 else:
                     stack.pop()
 
@@ -86,15 +79,7 @@ def part_2(filename: string) -> i64:
 
             for ch in stack:
                 score *= 5
-
-                if ch == '(':
-                    score += 1
-                elif ch == '[':
-                    score += 2
-                elif ch == '{':
-                    score += 3
-                elif ch == '<':
-                    score += 4
+                score += c2s[ch]
 
             scores.append(score)
 
