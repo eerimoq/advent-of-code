@@ -1,6 +1,14 @@
 from os import TextFile
 
-def part_1(numbers: [i64]) -> i64:
+def get_input(filename: string) -> [i64]:
+    return [
+        i64(number)
+        for number in
+        TextFile(f"{__assets__}/day_01/{filename}").read().strip().split("\n")
+    ]
+
+def part_1(filename: string) -> i64:
+    numbers = get_input(filename)
     number_of_increases = 0
 
     for i in range(1, i64(len(numbers))):
@@ -9,7 +17,8 @@ def part_1(numbers: [i64]) -> i64:
 
     return number_of_increases
 
-def part_2(numbers: [i64]) -> i64:
+def part_2(filename: string) -> i64:
+    numbers = get_input(filename)
     number_of_increases = 0
 
     for i in range(3, i64(len(numbers))):
@@ -19,27 +28,12 @@ def part_2(numbers: [i64]) -> i64:
     return number_of_increases
 
 def day_01():
-    numbers = [
-        i64(number)
-        for number in
-        TextFile(f"{__assets__}/day_01.txt").read().strip().split("\n")
-    ]
-    print(part_1(numbers))
-    print(part_2(numbers))
+    print(part_1("input.txt"))
+    print(part_2("input.txt"))
 
 @test
 def test_all():
-    numbers = [
-        199,
-        200,
-        208,
-        210,
-        200,
-        207,
-        240,
-        269,
-        260,
-        263
-    ]
-    assert part_1(numbers) == 7
-    assert part_2(numbers) == 5
+    assert part_1("example.txt") == 7
+    assert part_2("example.txt") == 5
+    assert part_1("input.txt") == 1754
+    assert part_2("input.txt") == 1789

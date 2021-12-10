@@ -1,5 +1,8 @@
 from os import TextFile
 
+def get_input(filename: string) -> [string]:
+    return TextFile(f"{__assets__}/day_03/{filename}").read().strip().split("\n")
+
 def count_ones_and_zeros_at_index(report: [string], index: i64) -> (i64, i64):
     number_of_ones = 0
     number_of_zeros = 0
@@ -12,7 +15,8 @@ def count_ones_and_zeros_at_index(report: [string], index: i64) -> (i64, i64):
 
     return number_of_ones, number_of_zeros
 
-def part_1(report: [string]) -> i64:
+def part_1(filename: string) -> i64:
+    report = get_input(filename)
     gamma_rate = 0
     epsilon_rate = 0
 
@@ -59,30 +63,18 @@ def calc_co2_scrubber_rating(report: [string]) -> i64:
 
     raise NotImplementedError()
 
-def part_2(report: [string]) -> i64:
+def part_2(filename: string) -> i64:
+    report = get_input(filename)
+
     return calc_oxygen_generator_rating(report) * calc_co2_scrubber_rating(report)
 
 def day_03():
-    report = TextFile(f"{__assets__}/day_03.txt").read().strip().split("\n")
-
-    print(part_1(report))
-    print(part_2(report))
+    print(part_1("input.txt"))
+    print(part_2("input.txt"))
 
 @test
 def test_all():
-    report = [
-        "00100",
-        "11110",
-        "10110",
-        "10111",
-        "10101",
-        "01111",
-        "00111",
-        "11100",
-        "10000",
-        "11001",
-        "00010",
-        "01010"
-    ]
-    assert part_1(report) == 198
-    assert part_2(report) == 230
+    assert part_1("example.txt") == 198
+    assert part_2("example.txt") == 230
+    assert part_1("input.txt") == 3923414
+    assert part_2("input.txt") == 5852595

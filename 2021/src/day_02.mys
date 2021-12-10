@@ -1,6 +1,16 @@
 from os import TextFile
 
-def part_1(commands: [(string, i64)]) -> i64:
+def get_input(filename: string) -> [(string, i64)]:
+    commands: [(string, i64)] = []
+
+    for line in TextFile(f"{__assets__}/day_02/{filename}").read().strip().split("\n"):
+        parts = line.split(' ')
+        commands.append((parts[0], i64(parts[1])))
+
+    return commands
+
+def part_1(filename: string) -> i64:
+    commands = get_input(filename)
     horizontal_position = 0
     depth = 0
 
@@ -15,7 +25,8 @@ def part_1(commands: [(string, i64)]) -> i64:
 
     return horizontal_position * depth
 
-def part_2(commands: [(string, i64)]) -> i64:
+def part_2(filename: string) -> i64:
+    commands = get_input(filename)
     horizontal_position = 0
     depth = 0
     aim = 0
@@ -33,24 +44,12 @@ def part_2(commands: [(string, i64)]) -> i64:
     return horizontal_position * depth
 
 def day_02():
-    commands: [(string, i64)] = []
-
-    for line in TextFile(f"{__assets__}/day_02.txt").read().strip().split("\n"):
-        parts = line.split(' ')
-        commands.append((parts[0], i64(parts[1])))
-
-    print(part_1(commands))
-    print(part_2(commands))
+    print(part_1("input.txt"))
+    print(part_2("input.txt"))
 
 @test
 def test_all():
-    commands = [
-        ("forward", 5),
-        ("down", 5),
-        ("forward", 8),
-        ("up", 3),
-        ("down", 8),
-        ("forward", 2)
-    ]
-    assert part_1(commands) == 150
-    assert part_2(commands) == 900
+    assert part_1("example.txt") == 150
+    assert part_2("example.txt") == 900
+    assert part_1("input.txt") == 2272262
+    assert part_2("input.txt") == 2134882034

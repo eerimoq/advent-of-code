@@ -1,6 +1,13 @@
 from os import TextFile
 
-def part_1(positions: [i64]) -> i64:
+def get_input(filename: string) -> [i64]:
+    return [
+        i64(value)
+        for value in TextFile(f"{__assets__}/day_07/{filename}").read().strip().split(',')
+    ]
+
+def part_1(filename: string) -> i64:
+    positions = get_input(filename)
     minimum_fuel = -1
 
     for alignment_position in range(max(positions) + 1):
@@ -14,7 +21,8 @@ def part_1(positions: [i64]) -> i64:
 
     return minimum_fuel
 
-def part_2(positions: [i64]) -> i64:
+def part_2(filename: string) -> i64:
+    positions = get_input(filename)
     minimum_fuel = -1
 
     for alignment_position in range(max(positions) + 1):
@@ -32,18 +40,12 @@ def part_2(positions: [i64]) -> i64:
     return minimum_fuel
 
 def day_07():
-    positions = [
-        i64(value)
-        for value in TextFile(f"{__assets__}/day_07.txt").read().strip().split(',')
-    ]
-
-    print(part_1(positions))
-    print(part_2(positions))
+    print(part_1("input.txt"))
+    print(part_2("input.txt"))
 
 @test
 def test_all():
-    positions = [
-        16, 1, 2, 0, 4, 2, 7, 1, 2, 14
-    ]
-    assert part_1(positions) == 37
-    assert part_2(positions) == 168
+    assert part_1("example.txt") == 37
+    assert part_2("example.txt") == 168
+    assert part_1("input.txt") == 326132
+    assert part_2("input.txt") == 88612508

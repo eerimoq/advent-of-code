@@ -1,5 +1,23 @@
 from os import TextFile
 
+def get_input(filename: string) -> ([i64], [[i64]]):
+    lines = TextFile(f"{__assets__}/day_04/{filename}").read().strip().split("\n")
+    numbers = [i64(number) for number in lines[0].split(',')]
+    boards: [[i64]] = []
+
+    for index in range(2, i64(len(lines)), 6):
+        board: [i64] = []
+
+        for row_index in range(5):
+            board.extend([
+                i64(number)
+                for number in lines[index + row_index].strip().split(re"\s+")
+            ])
+
+        boards.append(board)
+
+    return numbers, boards
+
 def has_bingo(marks: [bool]) -> bool:
     for i in range(5):
         if (marks[5 * i]
@@ -33,7 +51,8 @@ def mark_number(board: [i64], marks: [bool], number: i64):
             marks[index] = True
             break
 
-def part_1(numbers: [i64], boards: [[i64]]) -> i64:
+def part_1(filename: string) -> i64:
+    numbers, boards = get_input(filename)
     marks = [[False for _ in range(25)] for _ in boards]
 
     for number in numbers:
@@ -45,7 +64,8 @@ def part_1(numbers: [i64], boards: [[i64]]) -> i64:
 
     raise NotImplementedError("No bingo")
 
-def part_2(numbers: [i64], boards: [[i64]]) -> i64:
+def part_2(filename: string) -> i64:
+    numbers, boards = get_input(filename)
     boards_with_bingo: [i64] = []
     marks = [[False for _ in range(25)] for _ in boards]
 
@@ -65,53 +85,12 @@ def part_2(numbers: [i64], boards: [[i64]]) -> i64:
     raise NotImplementedError("No bingo")
 
 def day_04():
-    lines = TextFile(f"{__assets__}/day_04.txt").read().strip().split("\n")
-    numbers = [i64(number) for number in lines[0].split(',')]
-    boards: [[i64]] = []
-
-    for index in range(2, i64(len(lines)), 6):
-        board: [i64] = []
-
-        for row_index in range(5):
-            board.extend([
-                i64(number)
-                for number in lines[index + row_index].strip().split(re"\s+")
-            ])
-
-        boards.append(board)
-
-    print(part_1(numbers, boards))
-    print(part_2(numbers, boards))
+    print(part_1("input.txt"))
+    print(part_2("input.txt"))
 
 @test
 def test_all():
-    numbers = [
-        7, 4, 9, 5, 11, 17, 23, 2, 0, 14,
-        21, 24, 10, 16, 13, 6, 15, 25, 12, 22,
-        18, 20, 8, 19, 3, 26, 1
-    ]
-    boards = [
-        [
-            22, 13, 17, 11, 0,
-            8, 2, 23, 4, 24,
-            21, 9, 14, 16, 7,
-            6, 10, 3, 18, 5,
-            1, 12, 20, 15, 19
-        ],
-        [
-            3, 15 , 0 , 2, 22,
-            9, 18, 13, 17, 5,
-            19, 8, 7, 25, 23,
-            20, 11, 10, 24, 4,
-            14, 21, 16, 12, 6
-        ],
-        [
-            14, 21, 17, 24, 4,
-            10, 16, 15, 9, 19,
-            18, 8, 23, 26, 20,
-            22, 11, 13, 6, 5,
-            2, 0, 12, 3, 7
-        ]
-    ]
-    assert part_1(numbers, boards) == 4512
-    assert part_2(numbers, boards) == 1924
+    assert part_1("example.txt") == 4512
+    assert part_2("example.txt") == 1924
+    assert part_1("input.txt") == 11536
+    assert part_2("input.txt") == 1284
