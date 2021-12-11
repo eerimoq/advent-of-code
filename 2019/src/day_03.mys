@@ -1,0 +1,197 @@
+from os import TextFile
+
+def get_input(filename: string) -> [[(char, i64)]]:
+    lines: [[(char, i64)]] = []
+
+    for line in TextFile(f"{__assets__}/day_03/{filename}").read().strip().split('\n'):
+        lines.append([
+            (command[0], i64(command[1:]))
+            for command in line.split(',')
+        ])
+
+    return lines
+
+def is_intersection(x: i64, y: i64, line: [(char, i64)]) -> bool:
+    ox = 0
+    oy = 0
+
+    for direction, distance in line:
+        match direction:
+            case 'U':
+                for _ in range(distance):
+                    oy += 1
+
+                    if ox == x and oy == y:
+                        return True
+            case 'D':
+                for _ in range(distance):
+                    oy -= 1
+
+                    if ox == x and oy == y:
+                        return True
+            case 'R':
+                for _ in range(distance):
+                    ox += 1
+
+                    if ox == x and oy == y:
+                        return True
+            case 'L':
+                for _ in range(distance):
+                    ox -= 1
+
+                    if ox == x and oy == y:
+                        return True
+
+    return False
+
+def part_1(filename: string) -> i64:
+    lines = get_input(filename)
+    line_1 = lines[0]
+    line_2 = lines[1]
+    x = 0
+    y = 0
+    intersections: [(i64, i64)] = []
+
+    for direction, distance in line_1:
+        match direction:
+            case 'U':
+                for _ in range(distance):
+                    y += 1
+
+                    if is_intersection(x, y, line_2):
+                        intersections.append((x, y))
+            case 'D':
+                for _ in range(distance):
+                    y -= 1
+
+                    if is_intersection(x, y, line_2):
+                        intersections.append((x, y))
+            case 'R':
+                for _ in range(distance):
+                    x += 1
+
+                    if is_intersection(x, y, line_2):
+                        intersections.append((x, y))
+            case 'L':
+                for _ in range(distance):
+                    x -= 1
+
+                    if is_intersection(x, y, line_2):
+                        intersections.append((x, y))
+
+    minimum_distance = -1
+
+    for xi, yi in intersections:
+        distance = abs(xi) + abs(yi)
+
+        if minimum_distance == -1 or distance < minimum_distance:
+            minimum_distance = distance
+
+    return minimum_distance
+
+def calc_intersection(x: i64, y: i64, line: [(char, i64)]) -> i64:
+    ox = 0
+    oy = 0
+    s = 0
+
+    for direction, distance in line:
+        match direction:
+            case 'U':
+                for _ in range(distance):
+                    oy += 1
+                    s += 1
+
+                    if ox == x and oy == y:
+                        return s
+            case 'D':
+                for _ in range(distance):
+                    oy -= 1
+                    s += 1
+
+                    if ox == x and oy == y:
+                        return s
+            case 'R':
+                for _ in range(distance):
+                    ox += 1
+                    s += 1
+
+                    if ox == x and oy == y:
+                        return s
+            case 'L':
+                for _ in range(distance):
+                    ox -= 1
+                    s += 1
+
+                    if ox == x and oy == y:
+                        return s
+
+    return -1
+
+def part_2(filename: string) -> i64:
+    lines = get_input(filename)
+    line_1 = lines[0]
+    line_2 = lines[1]
+    x = 0
+    y = 0
+    s = 0
+    intersections: [(i64, i64, i64)] = []
+
+    for direction, distance in line_1:
+        match direction:
+            case 'U':
+                for _ in range(distance):
+                    y += 1
+                    s += 1
+                    s2 = calc_intersection(x, y, line_2)
+
+                    if s2 != -1:
+                        intersections.append((s, s2))
+            case 'D':
+                for _ in range(distance):
+                    y -= 1
+                    s += 1
+                    s2 = calc_intersection(x, y, line_2)
+
+                    if s2 != -1:
+                        intersections.append((s, s2))
+            case 'R':
+                for _ in range(distance):
+                    x += 1
+                    s += 1
+                    s2 = calc_intersection(x, y, line_2)
+
+                    if s2 != -1:
+                        intersections.append((s, s2))
+            case 'L':
+                for _ in range(distance):
+                    x -= 1
+                    s += 1
+                    s2 = calc_intersection(x, y, line_2)
+
+                    if s2 != -1:
+                        intersections.append((s, s2))
+
+    minimum_steps = -1
+
+    for si, s2i in intersections:
+        steps = si + s2i
+
+        if minimum_steps == -1 or steps < minimum_steps:
+            minimum_steps = steps
+
+    return minimum_steps
+
+def day_03():
+    print(part_1("input.txt"))
+    print(part_2("input.txt"))
+
+@test
+def test_all():
+    assert part_1("example.txt") == 6
+    assert part_1("example_2.txt") == 159
+    assert part_1("example_3.txt") == 135
+    assert part_1("input.txt") == 2050
+    assert part_2("example.txt") == 30
+    assert part_2("example_2.txt") == 610
+    assert part_2("example_3.txt") == 410
+    assert part_2("input.txt") == 21666
