@@ -10,6 +10,7 @@ from .day_08 import day_08
 from .day_09 import day_09
 from .day_10 import day_10
 from .day_11 import day_11
+from .day_12 import day_12
 
 def main(argv: [string]):
     parser = Parser("aoc2021")
@@ -44,5 +45,7 @@ def main(argv: [string]):
                 day_10()
             case 11:
                 day_11()
+            case 12:
+                day_12()
             case _:
                 print("This day is not implemented.")
