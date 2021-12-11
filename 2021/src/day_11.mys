@@ -42,33 +42,24 @@ class Matrix:
 
         return neighbours
 
-def update_neighbours(r: i64, c: i64, energies: Matrix) -> i64:
+def update(energies: Matrix) -> i64:
     flashes = 0
-
-    for nr, nc in energies.neighbours(r, c):
-        flashes += update(nr, nc, energies)
-
-    return flashes
-
-def update(r: i64, c: i64, energies: Matrix) -> i64:
-    flashes = 0
-    energy = energies.get(r, c)
-
-    if energy < 10:
-        energies.set(r, c, energy + 1)
-
-        if energy == 9:
-            flashes += 1
-            flashes += update_neighbours(r, c, energies)
-
-    return flashes
-
-def update_step(energies: Matrix) -> i64:
-    flashes = 0
+    to_visit: [(i64, i64)] = []
 
     for r in range(energies.height):
         for c in range(energies.width):
-            flashes += update(r, c, energies)
+            to_visit.append((r, c))
+
+    while len(to_visit) > 0:
+        r, c = to_visit.pop()
+        energy = energies.get(r, c)
+
+        if energy < 10:
+            energies.set(r, c, energy + 1)
+
+            if energy == 9:
+                flashes += 1
+                to_visit.extend(energies.neighbours(r, c))
 
     for r in range(energies.height):
         for c in range(energies.width):
@@ -82,7 +73,7 @@ def part_1(filename: string) -> i64:
     flashes = 0
 
     for _ in range(100):
-        flashes += update_step(energies)
+        flashes += update(energies)
 
     return flashes
 
@@ -90,7 +81,7 @@ def part_2(filename: string) -> i64:
     energies = Matrix(get_input(filename))
 
     for step in range(1000):
-        flashes = update_step(energies)
+        flashes = update(energies)
 
         if flashes == 100:
             return step + 1
