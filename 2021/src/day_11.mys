@@ -1,25 +1,101 @@
 from os import TextFile
 
-def get_input(filename: string) -> [string]:
-    items: [string] = []
+def get_input(filename: string) -> [[i64]]:
+    items: [[i64]] = []
 
     for line in TextFile(f"{__assets__}/day_11/{filename}").read().strip().split("\n"):
-        if line == "":
-            continue
+        digits: [i64] = []
 
-        items.append(line)
+        for ch in line:
+            digits.append(i64(string(ch)))
+
+        items.append(digits)
 
     return items
 
-def part_1(filename: string) -> i64:
-    items = get_input(filename)
+class Matrix:
+    data: [[i64]]
+    height: i64
+    width: i64
 
-    return 0
+    def __init__(self, data: [[i64]]):
+        self.data = data
+        self.height = i64(len(data))
+        self.width = i64(len(data[0]))
+
+    def get(self, r: i64, c: i64) -> i64:
+        return self.data[r][c]
+
+    def set(self, r: i64, c: i64, v: i64):
+        self.data[r][c] = v
+
+    def neighbours(self, r: i64, c: i64) -> [(i64, i64)]:
+        neighbours: [(i64, i64)] = []
+
+        for nr in range(r - 1, r + 2):
+            for nc in range(c - 1, c + 2):
+                if nr == r and nc == c:
+                    continue
+
+                if nr >= 0 and nr < self.height and nc >= 0 and nc < self.width:
+                    neighbours.append((nr, nc))
+
+        return neighbours
+
+def update_neighbours(r: i64, c: i64, energies: Matrix) -> i64:
+    flashes = 0
+
+    for nr, nc in energies.neighbours(r, c):
+        flashes += update(nr, nc, energies)
+
+    return flashes
+
+def update(r: i64, c: i64, energies: Matrix) -> i64:
+    flashes = 0
+    energy = energies.get(r, c)
+
+    if energy < 10:
+        energies.set(r, c, energy + 1)
+
+        if energy == 9:
+            flashes += 1
+            flashes += update_neighbours(r, c, energies)
+
+    return flashes
+
+def update_step(energies: Matrix) -> i64:
+    flashes = 0
+
+    for r in range(energies.height):
+        for c in range(energies.width):
+            flashes += update(r, c, energies)
+
+    for r in range(energies.height):
+        for c in range(energies.width):
+            if energies.get(r, c) == 10:
+                energies.set(r, c, 0)
+
+    return flashes
+
+def part_1(filename: string) -> i64:
+    energies = Matrix(get_input(filename))
+    flashes = 0
+
+    for _ in range(100):
+        flashes += update_step(energies)
+
+    return flashes
 
 def part_2(filename: string) -> i64:
-    items = get_input(filename)
+    energies = Matrix(get_input(filename))
 
-    return 0
+    for step in range(1000):
+        flashes = update_step(energies)
+
+        if flashes == 100:
+            return step + 1
+
+    raise NotImplementedError("Never.")
 
 def day_11():
     print(part_1("input.txt"))
@@ -27,7 +103,6 @@ def day_11():
 
 @test
 def test_all():
-    assert part_1("example.txt") == 0
-    assert part_2("example.txt") == 0
-    # assert part_1("input.txt") == 0
-    # assert part_2("input.txt") == 0
+    assert part_1("example.txt") == 1656
+    assert part_1("input.txt") == 1562
+    assert part_2("input.txt") == 268
