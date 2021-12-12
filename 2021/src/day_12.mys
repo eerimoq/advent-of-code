@@ -51,10 +51,10 @@ def part_1(filename: string) -> i64:
     return i64(len(paths))
 
 def explore_2(cave: string,
-                   path: [string],
-                   paths: [[string]],
-                   adjecent_caves: {string: [string]},
-                   small_cave_visited_twice: bool):
+              path: [string],
+              paths: [[string]],
+              adjecent_caves: {string: [string]},
+              small_cave_visited_twice: bool):
     if cave.is_lower() and cave in path:
         if small_cave_visited_twice or cave == "start":
             return
