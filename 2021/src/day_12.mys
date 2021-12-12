@@ -30,7 +30,6 @@ def part_1(filename: string) -> i64:
     adjecent_caves = find_adjecent_caves(lines)
     number_of_paths = 0
     queue = [("start", ["start"])]
-    i = 0
 
     while len(queue) > 0:
         cave, path = queue.pop()
@@ -48,7 +47,6 @@ def part_2(filename: string) -> i64:
     adjecent_caves = find_adjecent_caves(lines)
     number_of_paths = 0
     queue = [("start", ["start"], False)]
-    i = 0
 
     while len(queue) > 0:
         cave, path, twice = queue.pop()
