@@ -1,22 +1,94 @@
 from os import TextFile
 
-def get_input(filename: string) -> [string]:
-    items: [string] = []
+def get_input(filename: string) -> [(string, string)]:
+    items: [(string, string)] = []
 
     for line in TextFile(f"{__assets__}/day_12/{filename}").read().strip().split("\n"):
-        items.append(line)
+        parts = line.split('-')
+        items.append((parts[0], parts[1]))
 
     return items
 
+def is_upper(value: string) -> bool:
+    return value == value.upper()
+
+def find_adjecent_caves(lines: [(string, string)]) -> {string: [string]}:
+    adjecent_caves: {string: [string]} = {}
+
+    for begin, end in lines:
+        if begin not in adjecent_caves:
+            adjecent_caves[begin] = []
+
+        adjecent_caves[begin].append(end)
+
+        if end not in adjecent_caves:
+            adjecent_caves[end] = []
+
+        adjecent_caves[end].append(begin)
+
+    return adjecent_caves
+
+def explore_from_1(cave: string,
+                   path: [string],
+                   paths: [[string]],
+                   adjecent_caves: {string: [string]}):
+    if not is_upper(cave) and cave in path:
+        return
+
+    path.append(cave)
+
+    if cave == "end":
+        paths.append([c for c in path])
+    else:
+        for other_cave in adjecent_caves[cave]:
+            explore_from_1(other_cave, path, paths, adjecent_caves)
+
+    path.pop()
+
 def part_1(filename: string) -> i64:
     lines = get_input(filename)
+    adjecent_caves = find_adjecent_caves(lines)
+    paths: [[string]] = []
+    path: [string] = []
 
-    return 0
+    explore_from_1("start", path, paths, adjecent_caves)
+
+    return i64(len(paths))
+
+def explore_from_2(cave: string,
+                   path: [string],
+                   paths: [[string]],
+                   adjecent_caves: {string: [string]},
+                   small_cave_visited_twice: bool):
+    if not is_upper(cave) and cave in path:
+        if small_cave_visited_twice or cave in ["start", "end"]:
+            return
+        else:
+            small_cave_visited_twice = True
+
+    path.append(cave)
+
+    if cave == "end":
+        paths.append([c for c in path])
+    else:
+        for other_cave in adjecent_caves[cave]:
+            explore_from_2(other_cave,
+                           path,
+                           paths,
+                           adjecent_caves,
+                           small_cave_visited_twice)
+
+    path.pop()
 
 def part_2(filename: string) -> i64:
     lines = get_input(filename)
+    adjecent_caves = find_adjecent_caves(lines)
+    paths: [[string]] = []
+    path: [string] = []
 
-    return 0
+    explore_from_2("start", path, paths, adjecent_caves, False)
+
+    return i64(len(paths))
 
 def day_12():
     print(part_1("input.txt"))
@@ -24,5 +96,7 @@ def day_12():
 
 @test
 def test_all():
-    assert part_1("example.txt") == 0
-    assert part_2("example.txt") == 0
+    assert part_1("example.txt") == 10
+    assert part_2("example.txt") == 36
+    assert part_1("input.txt") == 3000
+    assert part_2("input.txt") == 74222
