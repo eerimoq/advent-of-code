@@ -9,9 +9,6 @@ def get_input(filename: string) -> [(string, string)]:
 
     return items
 
-def is_upper(value: string) -> bool:
-    return value == value.upper()
-
 def find_adjecent_caves(lines: [(string, string)]) -> {string: [string]}:
     adjecent_caves: {string: [string]} = {}
 
@@ -32,7 +29,7 @@ def explore_from_1(cave: string,
                    path: [string],
                    paths: [[string]],
                    adjecent_caves: {string: [string]}):
-    if not is_upper(cave) and cave in path:
+    if cave.is_lower() and cave in path:
         return
 
     path.append(cave)
@@ -58,7 +55,7 @@ def explore_from_2(cave: string,
                    paths: [[string]],
                    adjecent_caves: {string: [string]},
                    small_cave_visited_twice: bool):
-    if not is_upper(cave) and cave in path:
+    if cave.is_lower() and cave in path:
         if small_cave_visited_twice or cave == "start":
             return
         else:
