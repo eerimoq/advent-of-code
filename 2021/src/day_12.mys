@@ -29,16 +29,16 @@ def part_1(filename: string) -> i64:
     lines = get_input(filename)
     adjecent_caves = find_adjecent_caves(lines)
     number_of_paths = 0
-    queue = [("start", ["start"])]
+    queue = [["start"]]
 
     while len(queue) > 0:
-        cave, path = queue.pop()
+        path = queue.pop()
 
-        for adjecent_cave in adjecent_caves[cave]:
+        for adjecent_cave in adjecent_caves[path[-1]]:
             if adjecent_cave == "end":
                 number_of_paths += 1
             elif adjecent_cave.is_upper() or adjecent_cave not in path:
-                queue.append((adjecent_cave, path + [adjecent_cave]))
+                queue.append(path + [adjecent_cave])
 
     return number_of_paths
 
@@ -46,12 +46,12 @@ def part_2(filename: string) -> i64:
     lines = get_input(filename)
     adjecent_caves = find_adjecent_caves(lines)
     number_of_paths = 0
-    queue = [("start", ["start"], False)]
+    queue = [(["start"], False)]
 
     while len(queue) > 0:
-        cave, path, twice = queue.pop()
+        path, twice = queue.pop()
 
-        for adjecent_cave in adjecent_caves[cave]:
+        for adjecent_cave in adjecent_caves[path[-1]]:
             if adjecent_cave == "end":
                 number_of_paths += 1
             else:
@@ -59,9 +59,9 @@ def part_2(filename: string) -> i64:
 
                 if adjecent_cave.is_lower() and adjecent_cave in path:
                     if not twice and adjecent_cave != "start":
-                        queue.append((adjecent_cave, adjecent_path, True))
+                        queue.append((adjecent_path, True))
                 else:
-                    queue.append((adjecent_cave, adjecent_path, twice))
+                    queue.append((adjecent_path, twice))
 
     return number_of_paths
 
