@@ -134,7 +134,7 @@ def part_2(filename: string) -> i64:
     x = 0
     y = 0
     s = 0
-    intersections: [(i64, i64, i64)] = []
+    intersections: [(i64, i64)] = []
 
     for direction, distance in line_1:
         match direction:
