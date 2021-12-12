@@ -13,15 +13,8 @@ def find_adjecent_caves(lines: [(string, string)]) -> {string: [string]}:
     adjecent_caves: {string: [string]} = {}
 
     for begin, end in lines:
-        if begin not in adjecent_caves:
-            adjecent_caves[begin] = []
-
-        adjecent_caves[begin].append(end)
-
-        if end not in adjecent_caves:
-            adjecent_caves[end] = []
-
-        adjecent_caves[end].append(begin)
+        adjecent_caves.get(begin, [], True).append(end)
+        adjecent_caves.get(end, [], True).append(begin)
 
     return adjecent_caves
 
