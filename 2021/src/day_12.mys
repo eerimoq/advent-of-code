@@ -25,10 +25,10 @@ def find_adjecent_caves(lines: [(string, string)]) -> {string: [string]}:
 
     return adjecent_caves
 
-def explore_from_1(cave: string,
-                   path: [string],
-                   paths: [[string]],
-                   adjecent_caves: {string: [string]}):
+def explore_1(cave: string,
+              path: [string],
+              paths: [[string]],
+              adjecent_caves: {string: [string]}):
     if cave.is_lower() and cave in path:
         return
 
@@ -38,7 +38,7 @@ def explore_from_1(cave: string,
         paths.append([c for c in path])
     else:
         for adjecent_cave in adjecent_caves[cave]:
-            explore_from_1(adjecent_cave, path, paths, adjecent_caves)
+            explore_1(adjecent_cave, path, paths, adjecent_caves)
 
     path.pop()
 
@@ -46,11 +46,11 @@ def part_1(filename: string) -> i64:
     lines = get_input(filename)
     adjecent_caves = find_adjecent_caves(lines)
     paths: [[string]] = []
-    explore_from_1("start", [], paths, adjecent_caves)
+    explore_1("start", [], paths, adjecent_caves)
 
     return i64(len(paths))
 
-def explore_from_2(cave: string,
+def explore_2(cave: string,
                    path: [string],
                    paths: [[string]],
                    adjecent_caves: {string: [string]},
@@ -67,11 +67,11 @@ def explore_from_2(cave: string,
         paths.append([c for c in path])
     else:
         for adjecent_cave in adjecent_caves[cave]:
-            explore_from_2(adjecent_cave,
-                           path,
-                           paths,
-                           adjecent_caves,
-                           small_cave_visited_twice)
+            explore_2(adjecent_cave,
+                      path,
+                      paths,
+                      adjecent_caves,
+                      small_cave_visited_twice)
 
     path.pop()
 
@@ -79,7 +79,7 @@ def part_2(filename: string) -> i64:
     lines = get_input(filename)
     adjecent_caves = find_adjecent_caves(lines)
     paths: [[string]] = []
-    explore_from_2("start", [], paths, adjecent_caves, False)
+    explore_2("start", [], paths, adjecent_caves, False)
 
     return i64(len(paths))
 
