@@ -103,17 +103,14 @@ def part_2(filename: string) -> i64:
             match direction:
                 case 'U':
                     y += 1
-                    s += 1
                 case 'D':
                     y -= 1
-                    s += 1
                 case 'R':
                     x += 1
-                    s += 1
                 case 'L':
                     x -= 1
-                    s += 1
 
+            s += 1
             s2 = calc_intersection(x, y, line_2)
 
             if s2 != -1:
