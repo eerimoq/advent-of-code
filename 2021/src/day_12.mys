@@ -36,12 +36,10 @@ def part_1(filename: string) -> i64:
         cave, path = queue.pop()
 
         for adjecent_cave in adjecent_caves[cave]:
-            adjecent_path = path + [adjecent_cave]
-
             if adjecent_cave == "end":
                 number_of_paths += 1
             elif adjecent_cave.is_upper() or adjecent_cave not in path:
-                queue.append((adjecent_cave, adjecent_path))
+                queue.append((adjecent_cave, path + [adjecent_cave]))
 
     return number_of_paths
 
@@ -56,11 +54,11 @@ def part_2(filename: string) -> i64:
         cave, path, twice = queue.pop()
 
         for adjecent_cave in adjecent_caves[cave]:
-            adjecent_path = path + [adjecent_cave]
-
             if adjecent_cave == "end":
                 number_of_paths += 1
             else:
+                adjecent_path = path + [adjecent_cave]
+
                 if adjecent_cave.is_lower() and adjecent_cave in path:
                     if not twice and adjecent_cave != "start":
                         queue.append((adjecent_cave, adjecent_path, True))
