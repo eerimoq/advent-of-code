@@ -25,61 +25,47 @@ def find_adjecent_caves(lines: [(string, string)]) -> {string: [string]}:
 
     return adjecent_caves
 
-def explore_1(cave: string,
-              path: [string],
-              paths: [[string]],
-              adjecent_caves: {string: [string]}):
-    if cave.is_lower() and cave in path:
-        return
-
-    path.append(cave)
-
-    if cave == "end":
-        paths.append([c for c in path])
-    else:
-        for adjecent_cave in adjecent_caves[cave]:
-            explore_1(adjecent_cave, path, paths, adjecent_caves)
-
-    path.pop()
-
 def part_1(filename: string) -> i64:
     lines = get_input(filename)
     adjecent_caves = find_adjecent_caves(lines)
     paths: [[string]] = []
-    explore_1("start", [], paths, adjecent_caves)
+    queue = [("start", ["start"])]
+    i = 0
+
+    while len(queue) > 0:
+        cave, path = queue.pop()
+
+        for adjecent_cave in adjecent_caves[cave]:
+            adjecent_path = path + [adjecent_cave]
+
+            if adjecent_cave == "end":
+                paths.append(adjecent_path)
+            elif adjecent_cave.is_upper() or adjecent_cave not in path:
+                queue.append((adjecent_cave, adjecent_path))
 
     return i64(len(paths))
-
-def explore_2(cave: string,
-              path: [string],
-              paths: [[string]],
-              adjecent_caves: {string: [string]},
-              small_cave_visited_twice: bool):
-    if cave.is_lower() and cave in path:
-        if small_cave_visited_twice or cave == "start":
-            return
-        else:
-            small_cave_visited_twice = True
-
-    path.append(cave)
-
-    if cave == "end":
-        paths.append([c for c in path])
-    else:
-        for adjecent_cave in adjecent_caves[cave]:
-            explore_2(adjecent_cave,
-                      path,
-                      paths,
-                      adjecent_caves,
-                      small_cave_visited_twice)
-
-    path.pop()
 
 def part_2(filename: string) -> i64:
     lines = get_input(filename)
     adjecent_caves = find_adjecent_caves(lines)
     paths: [[string]] = []
-    explore_2("start", [], paths, adjecent_caves, False)
+    queue = [("start", ["start"], False)]
+    i = 0
+
+    while len(queue) > 0:
+        cave, path, twice = queue.pop()
+
+        for adjecent_cave in adjecent_caves[cave]:
+            adjecent_path = path + [adjecent_cave]
+
+            if adjecent_cave == "end":
+                paths.append(adjecent_path)
+            else:
+                if adjecent_cave.is_lower() and adjecent_cave in path:
+                    if not twice and adjecent_cave != "start":
+                        queue.append((adjecent_cave, adjecent_path, True))
+                else:
+                    queue.append((adjecent_cave, adjecent_path, twice))
 
     return i64(len(paths))
 

@@ -25,4 +25,4 @@ jobs:
         python -m pip install mys
     - name: Test year ${{matrix.year}}
       run: |
-        mys -C ${{matrix.year}} test
+        mys -C ${{matrix.year}} test -o speed
