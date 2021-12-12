@@ -54,12 +54,10 @@ def part_2(filename: string) -> i64:
         for adjecent_cave in adjecent_caves[path[-1]]:
             if adjecent_cave == "end":
                 number_of_paths += 1
-            else:
-                if adjecent_cave.is_lower() and adjecent_cave in path:
-                    if not twice and adjecent_cave != "start":
-                        paths.append((path + [adjecent_cave], True))
-                else:
-                    paths.append((path + [adjecent_cave], twice))
+            elif adjecent_cave.is_upper() or adjecent_cave not in path:
+                paths.append((path + [adjecent_cave], twice))
+            elif not twice and adjecent_cave != "start":
+                paths.append((path + [adjecent_cave], True))
 
     return number_of_paths
 
