@@ -17,38 +17,38 @@ def get_input(filename: string) -> ([(i64, i64)], [(string, i64)]):
 
     return (coordinates, folds)
 
-def fold(coordinates: [(i64, i64)], folds: [(string, i64)]) -> [(i64, i64)]:
-    for direction, offset in folds:
-        new_coordinates: [(i64, i64)] = []
+def fold(coordinates: [(i64, i64)], direction: string, offset: i64) -> [(i64, i64)]:
+    new_coordinates: [(i64, i64)] = []
 
-        for coordinate in coordinates:
-            match direction:
-                case "x":
-                    delta = coordinate[0] - offset
+    for coordinate in coordinates:
+        match direction:
+            case "x":
+                delta = coordinate[0] - offset
 
-                    if delta > 0:
-                        coordinate[0] = (offset - delta)
-                case "y":
-                    delta = coordinate[1] - offset
+                if delta > 0:
+                    coordinate[0] = (offset - delta)
+            case "y":
+                delta = coordinate[1] - offset
 
-                    if delta > 0:
-                        coordinate[1] = (offset - delta)
+                if delta > 0:
+                    coordinate[1] = (offset - delta)
 
-            if coordinate not in new_coordinates:
-                new_coordinates.append(coordinate)
+        if coordinate not in new_coordinates:
+            new_coordinates.append(coordinate)
 
-        coordinates = new_coordinates
-
-    return coordinates
+    return new_coordinates
 
 def part_1(filename: string) -> i64:
     coordinates, folds = get_input(filename)
 
-    return i64(len(fold(coordinates, [folds[0]])))
+    return i64(len(fold(coordinates, folds[0][0], folds[0][1])))
 
 def part_2(filename: string) -> string:
     coordinates, folds = get_input(filename)
-    coordinates = fold(coordinates, folds)
+
+    for direction, offset in folds:
+        coordinates = fold(coordinates, direction, offset)
+
     marks: [[string]] = []
 
     for _ in range(20):
