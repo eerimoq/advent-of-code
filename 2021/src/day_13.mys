@@ -1,33 +1,34 @@
 from os import TextFile
 
-def get_input(filename: string) -> ([(i64, i64)], [(char, i64)]):
+def get_input(filename: string) -> ([(i64, i64)], [(string, i64)]):
     coordinates: [(i64, i64)] = []
-    folds: [(char, i64)] = []
+    folds: [(string, i64)] = []
 
-    parts = TextFile(f"{__assets__}/day_13/{filename}").read().strip().split("\n\n")
+    for line in TextFile(f"{__assets__}/day_13/{filename}").read().split('\n'):
+        mo = line.match(re"(\d+),(\d+)")
 
-    for line in parts[0].split('\n'):
-        values = line.split(',')
-        coordinates.append((i64(values[0]), i64(values[1])))
+        if mo is not None:
+            coordinates.append((i64(mo.group(1)), i64(mo.group(2))))
 
-    for line in parts[1].split('\n'):
-        value = line[11:]
-        folds.append((value[0], i64(value[2:])))
+        mo = line.match(re".*(.)=(\d+)")
+
+        if mo is not None:
+            folds.append((mo.group(1), i64(mo.group(2))))
 
     return (coordinates, folds)
 
-def fold(coordinates: [(i64, i64)], folds: [(char, i64)]) -> [(i64, i64)]:
+def fold(coordinates: [(i64, i64)], folds: [(string, i64)]) -> [(i64, i64)]:
     for direction, offset in folds:
         new_coordinates: [(i64, i64)] = []
 
         for coordinate in coordinates:
             match direction:
-                case 'x':
+                case "x":
                     delta = coordinate[0] - offset
 
                     if delta > 0:
                         coordinate[0] = (offset - delta)
-                case 'y':
+                case "y":
                     delta = coordinate[1] - offset
 
                     if delta > 0:
