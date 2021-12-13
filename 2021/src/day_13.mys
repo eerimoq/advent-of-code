@@ -1,22 +1,67 @@
 from os import TextFile
 
-def get_input(filename: string) -> [string]:
-    items: [string] = []
+def get_input(filename: string) -> ([(i64, i64)], [(char, i64)]):
+    coordinates: [(i64, i64)] = []
+    folds: [(char, i64)] = []
 
-    for line in TextFile(f"{__assets__}/day_13/{filename}").read().strip().split("\n"):
-        items.append(line)
+    parts = TextFile(f"{__assets__}/day_13/{filename}").read().strip().split("\n\n")
 
-    return items
+    for line in parts[0].split('\n'):
+        values = line.split(',')
+        coordinates.append((i64(values[0]), i64(values[1])))
+
+    for line in parts[1].split('\n'):
+        value = line[11:]
+        folds.append((value[0], i64(value[2:])))
+
+    return (coordinates, folds)
+
+def fold(coordinates: [(i64, i64)], folds: [(char, i64)]) -> [(i64, i64)]:
+    for direction, offset in folds:
+        new_coordinates: [(i64, i64)] = []
+
+        for coordinate in coordinates:
+            match direction:
+                case 'x':
+                    delta = coordinate[0] - offset
+
+                    if delta > 0:
+                        coordinate[0] = (offset - delta)
+                case 'y':
+                    delta = coordinate[1] - offset
+
+                    if delta > 0:
+                        coordinate[1] = (offset - delta)
+
+            if coordinate not in new_coordinates:
+                new_coordinates.append(coordinate)
+
+        coordinates = new_coordinates
+
+    return coordinates
 
 def part_1(filename: string) -> i64:
-    lines = get_input(filename)
+    coordinates, folds = get_input(filename)
 
-    return 0
+    return i64(len(fold(coordinates, [folds[0]])))
 
-def part_2(filename: string) -> i64:
-    lines = get_input(filename)
+def part_2(filename: string) -> string:
+    coordinates, folds = get_input(filename)
+    coordinates = fold(coordinates, folds)
+    marks: [[string]] = []
 
-    return 0
+    for _ in range(20):
+        marks.append([" " for _ in range(80)])
+
+    for x, y in coordinates:
+        marks[y][x] = "#"
+
+    code = ""
+
+    for row in marks:
+        code += "".join(row).strip() + "\n"
+
+    return code.strip()
 
 def day_13():
     print(part_1("input.txt"))
@@ -24,7 +69,17 @@ def day_13():
 
 @test
 def test_all():
-    assert part_1("example.txt") == 0
-    assert part_2("example.txt") == 0
-    # assert part_1("input.txt") == 0
-    # assert part_2("input.txt") == 0
+    assert part_1("example.txt") == 17
+    assert part_2("example.txt") == ("#####\n"
+                                     "#   #\n"
+                                     "#   #\n"
+                                     "#   #\n"
+                                     "#####")
+    assert part_1("input.txt") == 706
+    assert part_2("input.txt") == (
+        "#    ###  ####   ## ###    ## #### #  #\n"
+        "#    #  # #       # #  #    # #    #  #\n"
+        "#    #  # ###     # ###     # ###  ####\n"
+        "#    ###  #       # #  #    # #    #  #\n"
+        "#    # #  #    #  # #  # #  # #    #  #\n"
+        "#### #  # #     ##  ###   ##  #### #  #")
