@@ -1,0 +1,144 @@
+from os import TextFile
+
+def get_input(filename: string) -> [[i64]]:
+    items: [[i64]] = []
+
+    for line in TextFile(f"{__assets__}/day_15/{filename}").read().strip().split("\n"):
+        l: [i64] = []
+
+        for i in line:
+            l.append(i64(string(i)))
+
+        items.append(l)
+
+    return items
+
+class Matrix:
+    data: [[i64]]
+    height: i64
+    width: i64
+
+    def __init__(self, data: [[i64]]):
+        self.data = data
+        self.height = i64(len(data))
+        self.width = i64(len(data[0]))
+
+    def get(self, r: i64, c: i64) -> i64:
+        return self.data[r][c]
+
+    def set(self, r: i64, c: i64, v: i64):
+        self.data[r][c] = v
+
+    def neighbours(self, r: i64, c: i64) -> [(i64, i64)]:
+        neighbours: [(i64, i64)] = []
+
+        if c < self.width - 1:
+            neighbours.append((r, c + 1))
+
+        if r < self.height - 1:
+            neighbours.append((r + 1, c))
+            
+        #if c > 0:
+        #    neighbours.append((r, c - 1))
+        #
+        #if r > 0:
+        #    neighbours.append((r - 1, c))
+
+        return neighbours
+
+def is_in(r: i64, c: i64, path: [(i64, i64, i64)]) -> bool:
+    for pr, pc, _ in path:
+        if r == pr and c == pc:
+            return True
+
+    return False
+
+def calc_minimum_risk(r: i64, c: i64, minimum_risks: [[i64]], m: Matrix):
+    """Calculate and set the minimum risk for given position to the end,
+    including given position.
+
+    """
+
+    if minimum_risks[r][c] != -1:
+        return
+
+    minimum_risk = -1
+
+    for nr, nc in m.neighbours(r, c):
+        if minimum_risks[nr][nc] == -1:
+            calc_minimum_risk(nr, nc, minimum_risks, m)
+
+        if minimum_risk == -1 or minimum_risks[nr][nc] < minimum_risk:
+            minimum_risk = minimum_risks[nr][nc]
+
+    minimum_risks[r][c] = minimum_risk + m.get(r, c)
+
+def part_1(filename: string) -> i64:
+    lines = get_input(filename)
+    m = Matrix(lines)
+    minimum_risks: [[i64]] = []
+
+    for _ in range(m.height):
+        minimum_risks.append([-1 for _ in range(m.width)])
+
+    minimum_risks[m.height - 1][m.width - 1] = m.get(m.height - 1, m.width - 1)
+        
+    for r in range(m.height - 1, -1, -1):
+        for c in range(m.width - 1, -1, -1):
+            calc_minimum_risk(r, c, minimum_risks, m)
+
+    return minimum_risks[0][0] - m.get(0, 0)
+
+def part_2(filename: string) -> i64:
+    lines = get_input(filename)
+    m = Matrix(lines)
+    big: [[i64]] = []
+
+    for r in range(m.height * 5): 
+        big.append([0 for _ in range(m.width * 5)])
+
+    for r in range(5):
+        for c in range(5):
+            if c > 0:
+                for r1 in range(m.height):
+                    for c1 in range(m.width):
+                        big[r * m.height + r1][c * m.width + c1] = big[r * m.height + r1][(c - 1) * m.width + c1] + 1
+
+                        if big[r * m.height + r1][c * m.width + c1] == 10:
+                            big[r * m.height + r1][c * m.width + c1] = 1
+            elif r > 0:
+                for r1 in range(m.height):
+                    for c1 in range(m.width):
+                        big[r * m.height + r1][c * m.width + c1] = big[(r-1) * m.height + r1][c * m.width + c1] + 1
+
+                        if big[r * m.height + r1][c * m.width + c1] == 10:
+                            big[r * m.height + r1][c * m.width + c1] = 1
+            else:
+                for r1 in range(m.height):
+                    for c1 in range(m.width):
+                        big[r1][c1] = lines[r1][c1]
+                        
+    m = Matrix(big)
+    minimum_risks: [[i64]] = []
+
+    for _ in range(m.height):
+        minimum_risks.append([-1 for _ in range(m.width)])
+
+    minimum_risks[m.height - 1][m.width - 1] = m.get(m.height - 1, m.width - 1)
+        
+    for r in range(m.height - 1, -1, -1):
+        for c in range(m.width - 1, -1, -1):
+            calc_minimum_risk(r, c, minimum_risks, m)
+
+    return minimum_risks[0][0] - m.get(0, 0)
+
+def day_15():
+    print(part_1("input.txt"))
+    print(part_2("input.txt"))
+
+@test
+def test_all():
+    assert part_1("example.txt") == 40
+    assert part_2("example.txt") == 315
+    #assert part_1("input.txt") == 3000
+    #assert part_2("input.txt") == 74222
