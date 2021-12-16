@@ -1,0 +1,232 @@
+from os import TextFile
+
+def get_input(filename: string) -> string:
+    return TextFile(f"{__assets__}/day_16/{filename}").read().strip()
+
+HEX_TO_BIN: {char: string} = {
+    '0': "0000",
+    '1': "0001",
+    '2': "0010",
+    '3': "0011",
+    '4': "0100",
+    '5': "0101",
+    '6': "0110",
+    '7': "0111",
+    '8': "1000",
+    '9': "1001",
+    'A': "1010",
+    'B': "1011",
+    'C': "1100",
+    'D': "1101",
+    'E': "1110",
+    'F': "1111"
+}
+
+class Reader:
+    bits: string
+    offset: i64
+
+    def read(self, size: i64) -> string:
+        bits = self.bits[self.offset:self.offset + size]
+        self.offset += size
+
+        return bits
+
+@trait
+class Packet:
+
+    def result(self) -> i64:
+        pass
+
+class LiteralValuePacket(Packet):
+    version: i64
+    value: i64
+
+    def result(self) -> i64:
+        return self.value
+
+class SumPacket(Packet):
+    version: i64
+    packets: [Packet]
+
+    def result(self) -> i64:
+        return sum([packet.result() for packet in self.packets])
+
+class ProductPacket(Packet):
+    version: i64
+    packets: [Packet]
+
+    def result(self) -> i64:
+        value = 1
+
+        for packet in self.packets:
+            value *= packet.result()
+
+        return value
+
+class MinimumPacket(Packet):
+    version: i64
+    packets: [Packet]
+
+    def result(self) -> i64:
+        return min([packet.result() for packet in self.packets])
+
+class MaximumPacket(Packet):
+    version: i64
+    packets: [Packet]
+
+    def result(self) -> i64:
+        return max([packet.result() for packet in self.packets])
+
+class GreaterThanPacket(Packet):
+    version: i64
+    packets: [Packet]
+
+    def result(self) -> i64:
+        if self.packets[0].result() > self.packets[1].result():
+            return 1
+        else:
+            return 0
+
+class LessThanPacket(Packet):
+    version: i64
+    packets: [Packet]
+
+    def result(self) -> i64:
+        if self.packets[0].result() < self.packets[1].result():
+            return 1
+        else:
+            return 0
+
+class EqualToPacket(Packet):
+    version: i64
+    packets: [Packet]
+
+    def result(self) -> i64:
+        if self.packets[0].result() == self.packets[1].result():
+            return 1
+        else:
+            return 0
+
+def decode_literal_value(reader: Reader) -> i64:
+    value = ""
+    more = '1'
+
+    while more == '1':
+        more = reader.read(1)[0]
+        value += reader.read(4)
+
+    return i64(value, 2)
+
+def decode_operator(reader: Reader) -> [Packet]:
+    match reader.read(1):
+        case "0":
+            return decode_packets(Reader(reader.read(i64(reader.read(15), 2)), 0))
+        case "1":
+            return decode_packets(reader, i64(reader.read(11), 2))
+
+    raise UnreachableError("The impossible happened")
+
+def decode_packets(reader: Reader, count: i64 = -1) -> [Packet]:
+    packets: [Packet] = []
+
+    try:
+        while count == -1 or count > 0:
+            version = i64(reader.read(3), 2)
+            type = i64(reader.read(3), 2)
+
+            match type:
+                case 0:
+                    packets.append(SumPacket(version,
+                                             decode_operator(reader)))
+                case 1:
+                    packets.append(ProductPacket(version,
+                                                 decode_operator(reader)))
+                case 2:
+                    packets.append(MinimumPacket(version,
+                                                 decode_operator(reader)))
+                case 3:
+                    packets.append(MaximumPacket(version,
+                                                 decode_operator(reader)))
+                case 4:
+                    packets.append(LiteralValuePacket(version,
+                                                      decode_literal_value(reader)))
+                case 5:
+                    packets.append(GreaterThanPacket(version,
+                                                     decode_operator(reader)))
+                case 6:
+                    packets.append(LessThanPacket(version,
+                                                  decode_operator(reader)))
+                case 7:
+                    packets.append(EqualToPacket(version,
+                                                 decode_operator(reader)))
+
+            if count > 0:
+                count -= 1
+    except:
+        pass
+
+    return packets
+
+def add_versions(packets: [Packet]) -> i64:
+    total = 0
+
+    for packet in packets:
+        match packet:
+            case SumPacket() as sum_packet:
+                total += sum_packet.version
+                total += add_versions(sum_packet.packets)
+            case ProductPacket() as product_packet:
+                total += product_packet.version
+                total += add_versions(product_packet.packets)
+            case MinimumPacket() as minimum_packet:
+                total += minimum_packet.version
+                total += add_versions(minimum_packet.packets)
+            case MaximumPacket() as maximum_packet:
+                total += maximum_packet.version
+                total += add_versions(maximum_packet.packets)
+            case LiteralValuePacket() as literal_value_packet:
+                total += literal_value_packet.version
+            case GreaterThanPacket() as greater_than_packet:
+                total += greater_than_packet.version
+                total += add_versions(greater_than_packet.packets)
+            case LessThanPacket() as less_than_packet:
+                total += less_than_packet.version
+                total += add_versions(less_than_packet.packets)
+            case EqualToPacket() as equal_to_packet:
+                total += equal_to_packet.version
+                total += add_versions(equal_to_packet.packets)
+
+    return total
+
+def part_1(filename: string) -> i64:
+    data = get_input(filename)
+    bits = ""
+
+    for ch in data:
+        bits += HEX_TO_BIN[ch]
+
+    return add_versions(decode_packets(Reader(bits, 0)))
+
+def part_2(filename: string) -> i64:
+    data = get_input(filename)
+    bits = ""
+
+    for ch in data:
+        bits += HEX_TO_BIN[ch]
+
+    return decode_packets(Reader(bits, 0))[0].result()
+
+def day_16():
+    print(part_1("input.txt"))
+    print(part_2("input.txt"))
+
+@test
+def test_all():
+    assert part_1("example.txt") == 6
+    assert part_1("example_2.txt") == 16
+    assert part_1("example_3.txt") == 12
+    assert part_1("example_4.txt") == 23
+    assert part_1("example_5.txt") == 31
+    assert part_1("input.txt") == 949
+    assert part_2("input.txt") == 1114600142730
