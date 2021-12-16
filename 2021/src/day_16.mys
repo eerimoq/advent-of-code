@@ -45,68 +45,43 @@ class LiteralValuePacket(Packet):
     def result(self) -> i64:
         return self.value
 
-class SumPacket(Packet):
+class OperatorPacket(Packet):
     version: i64
+    type: i64
     packets: [Packet]
 
     def result(self) -> i64:
-        return sum([packet.result() for packet in self.packets])
+        match self.type:
+            case 0:
+                return sum([packet.result() for packet in self.packets])
+            case 1:
+                value = 1
 
-class ProductPacket(Packet):
-    version: i64
-    packets: [Packet]
+                for packet in self.packets:
+                    value *= packet.result()
 
-    def result(self) -> i64:
-        value = 1
+                return value
+            case 2:
+                return min([packet.result() for packet in self.packets])
+            case 3:
+                return max([packet.result() for packet in self.packets])
+            case 5:
+                if self.packets[0].result() > self.packets[1].result():
+                    return 1
+                else:
+                    return 0
+            case 6:
+                if self.packets[0].result() < self.packets[1].result():
+                    return 1
+                else:
+                    return 0
+            case 7:
+                if self.packets[0].result() == self.packets[1].result():
+                    return 1
+                else:
+                    return 0
 
-        for packet in self.packets:
-            value *= packet.result()
-
-        return value
-
-class MinimumPacket(Packet):
-    version: i64
-    packets: [Packet]
-
-    def result(self) -> i64:
-        return min([packet.result() for packet in self.packets])
-
-class MaximumPacket(Packet):
-    version: i64
-    packets: [Packet]
-
-    def result(self) -> i64:
-        return max([packet.result() for packet in self.packets])
-
-class GreaterThanPacket(Packet):
-    version: i64
-    packets: [Packet]
-
-    def result(self) -> i64:
-        if self.packets[0].result() > self.packets[1].result():
-            return 1
-        else:
-            return 0
-
-class LessThanPacket(Packet):
-    version: i64
-    packets: [Packet]
-
-    def result(self) -> i64:
-        if self.packets[0].result() < self.packets[1].result():
-            return 1
-        else:
-            return 0
-
-class EqualToPacket(Packet):
-    version: i64
-    packets: [Packet]
-
-    def result(self) -> i64:
-        if self.packets[0].result() == self.packets[1].result():
-            return 1
-        else:
-            return 0
+    raise UnreachableError("The impossible happened")
 
 def decode_literal_value(reader: Reader) -> i64:
     value = ""
@@ -136,30 +111,13 @@ def decode_packets(reader: Reader, count: i64 = -1) -> [Packet]:
             type = i64(reader.read(3), 2)
 
             match type:
-                case 0:
-                    packets.append(SumPacket(version,
-                                             decode_operator(reader)))
-                case 1:
-                    packets.append(ProductPacket(version,
-                                                 decode_operator(reader)))
-                case 2:
-                    packets.append(MinimumPacket(version,
-                                                 decode_operator(reader)))
-                case 3:
-                    packets.append(MaximumPacket(version,
-                                                 decode_operator(reader)))
                 case 4:
                     packets.append(LiteralValuePacket(version,
                                                       decode_literal_value(reader)))
-                case 5:
-                    packets.append(GreaterThanPacket(version,
-                                                     decode_operator(reader)))
-                case 6:
-                    packets.append(LessThanPacket(version,
+                case _:
+                    packets.append(OperatorPacket(version,
+                                                  type,
                                                   decode_operator(reader)))
-                case 7:
-                    packets.append(EqualToPacket(version,
-                                                 decode_operator(reader)))
 
             if count > 0:
                 count -= 1
@@ -173,29 +131,11 @@ def add_versions(packets: [Packet]) -> i64:
 
     for packet in packets:
         match packet:
-            case SumPacket() as sum_packet:
-                total += sum_packet.version
-                total += add_versions(sum_packet.packets)
-            case ProductPacket() as product_packet:
-                total += product_packet.version
-                total += add_versions(product_packet.packets)
-            case MinimumPacket() as minimum_packet:
-                total += minimum_packet.version
-                total += add_versions(minimum_packet.packets)
-            case MaximumPacket() as maximum_packet:
-                total += maximum_packet.version
-                total += add_versions(maximum_packet.packets)
             case LiteralValuePacket() as literal_value_packet:
                 total += literal_value_packet.version
-            case GreaterThanPacket() as greater_than_packet:
-                total += greater_than_packet.version
-                total += add_versions(greater_than_packet.packets)
-            case LessThanPacket() as less_than_packet:
-                total += less_than_packet.version
-                total += add_versions(less_than_packet.packets)
-            case EqualToPacket() as equal_to_packet:
-                total += equal_to_packet.version
-                total += add_versions(equal_to_packet.packets)
+            case OperatorPacket() as operator_packet:
+                total += operator_packet.version
+                total += add_versions(operator_packet.packets)
 
     return total
 
