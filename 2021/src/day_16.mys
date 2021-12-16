@@ -1,8 +1,5 @@
 from os import TextFile
 
-def get_input(filename: string) -> string:
-    return TextFile(f"{__assets__}/day_16/{filename}").read().strip()
-
 HEX_TO_BIN: {char: string} = {
     '0': "0000",
     '1': "0001",
@@ -21,6 +18,14 @@ HEX_TO_BIN: {char: string} = {
     'E': "1110",
     'F': "1111"
 }
+
+def get_input(filename: string) -> string:
+    bits = ""
+
+    for ch in TextFile(f"{__assets__}/day_16/{filename}").read().strip():
+        bits += HEX_TO_BIN[ch]
+
+    return bits
 
 class Reader:
     bits: string
@@ -140,20 +145,12 @@ def add_versions(packets: [Packet]) -> i64:
     return total
 
 def part_1(filename: string) -> i64:
-    data = get_input(filename)
-    bits = ""
-
-    for ch in data:
-        bits += HEX_TO_BIN[ch]
+    bits = get_input(filename)
 
     return add_versions(decode_packets(Reader(bits, 0)))
 
 def part_2(filename: string) -> i64:
-    data = get_input(filename)
-    bits = ""
-
-    for ch in data:
-        bits += HEX_TO_BIN[ch]
+    bits = get_input(filename)
 
     return decode_packets(Reader(bits, 0))[0].result()
 
