@@ -1,22 +1,25 @@
 from os import TextFile
 
-def get_input(filename: string) -> [string]:
-    lines: [string] = []
+def get_input(filename: string) -> (i64, i64, i64, i64):
+    line = TextFile(f"{__assets__}/day_17/{filename}").read().strip()
+    mo = line.match(re"target area: x=([-\d]+)..([-\d]+), y=([-\d]+)..([-\d]+)")
 
-    for line in TextFile(f"{__assets__}/day_17/{filename}").read().strip().split('\n'):
-        lines.append(line)
+    return (i64(mo.group(1)), i64(mo.group(2)), i64(mo.group(3)), i64(mo.group(4)))
 
-    return lines
-
-def find_max(v_x: i64, v_y: i64) -> i64:
+def find_max(v_x: i64,
+             v_y: i64,
+             x_low: i64,
+             x_high: i64,
+             y_low: i64,
+             y_high: i64) -> i64:
     x = 0
     y = 0
-    y_max = -100000
-    
-    for _ in range(1000):
+    y_max = y_low - 1
+
+    while y >= y_low:
         x += v_x
         y += v_y
-    
+
         if v_x > 0:
             v_x -= 1
         elif v_x < 0:
@@ -24,52 +27,32 @@ def find_max(v_x: i64, v_y: i64) -> i64:
 
         v_y -= 1
         y_max = max(y_max, y)
-        #if x <= 30 and x >= 20 and y <= -5 and y >= -10:
-        if x <= 161 and x >= 111 and y <= -101 and y >= -154:
+
+        if x <= x_high and x >= x_low and y <= y_high and y >= y_low:
             return y_max
-        
-    return -10000
+
+    return y_low - 1
 
 def part_1(filename: string) -> i64:
-    lines = get_input(filename)
-    y_max = -1
-    
-    for v_x in range(3000):
-        for v_y in range(3000):
-            y_max = max(y_max, find_max(v_x, v_y))
-            
+    x_low, x_high, y_low, y_high = get_input(filename)
+    y_max = y_low - 1
+
+    for v_x in range(200):
+        for v_y in range(200):
+            y_max = max(y_max, find_max(v_x, v_y, x_low, x_high, y_low, y_high))
+
     return y_max
 
-def is_hit(v_x: i64, v_y: i64) -> bool:
-    x = 0
-    y = 0
-    
-    for _ in range(1000):
-        x += v_x
-        y += v_y
-    
-        if v_x > 0:
-            v_x -= 1
-        elif v_x < 0:
-            v_x += 1
-
-        v_y -= 1
-
-        #if x <= 30 and x >= 20 and y <= -5 and y >= -10:
-        if x <= 161 and x >= 111 and y <= -101 and y >= -154:
-            return True
-        
-    return False
-
 def part_2(filename: string) -> i64:
+    x_low, x_high, y_low, y_high = get_input(filename)
     lines = get_input(filename)
     hits = 0
-    
-    for v_x in range(1000):
-        for v_y in range(-1000, 1000):
-            if is_hit(v_x, v_y):
+
+    for v_x in range(200):
+        for v_y in range(-200, 200):
+            if find_max(v_x, v_y, x_low, x_high, y_low, y_high) != y_low - 1:
                 hits += 1
-            
+
     return hits
 
 def day_17():
@@ -78,6 +61,7 @@ def day_17():
 
 @test
 def test_all():
-    pass
-    #assert part_1("input.txt") == 11781
-    #assert part_2("input.txt") == 4531
+    assert part_1("example.txt") == 45
+    assert part_2("example.txt") == 112
+    assert part_1("input.txt") == 11781
+    assert part_2("input.txt") == 4531
