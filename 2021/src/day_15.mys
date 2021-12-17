@@ -46,78 +46,34 @@ class Matrix:
 
         return neighbours
 
-def find_minimum_risk(r: i64,
-                      c: i64,
-                      fr: i64,
-                      fc: i64,
-                      minimum_risks: [[i64]],
-                      m: Matrix,
-                      risk: i64,
-                      minimum_risk: i64,
-                      visited: [(i64, i64)]) -> i64:
-    for nr, nc in m.neighbours(fr, fc):
-        if minimum_risks[nr][nc] != -1:
+def find_lowest_risk(locations: [(i64, i64)],
+                     minimum_risks: [[i64]],
+                     m: Matrix) -> i64:
+    minimum_risk_index = -1
+    minimum_risk = -1
+    index = 0
+
+    while index < i64(len(locations)):
+        location = locations[index]
+        r, c = location
+        skip = True
+
+        for nr, nc in m.neighbours(r, c):
+            if minimum_risks[nr][nc] == -1:
+                skip = False
+                break
+
+        if skip:
+            locations.pop(index)
             continue
 
-        if (nr, nc) in visited:
-            continue
+        if minimum_risk == -1 or minimum_risks[r][c] < minimum_risk:
+            minimum_risk_index = index
+            minimum_risk = minimum_risks[r][c]
 
-        if risk + m.get(nr, nc) >= minimum_risk:
-            continue
+        index += 1
 
-        if nr == r and nc == c:
-            return risk + m.get(nr, nc)
-
-        minimum_risk = find_minimum_risk(r,
-                                         c,
-                                         nr,
-                                         nc,
-                                         minimum_risks,
-                                         m,
-                                         risk + m.get(nr, nc),
-                                         minimum_risk,
-                                         visited + [(nr, nc)])
-
-    return minimum_risk
-
-def calc_minimum_risk(r: i64, c: i64, minimum_risks: [[i64]], m: Matrix):
-    if r == 0 and c == 0:
-        return
-
-    if r == 0:
-        minimum_risk = minimum_risks[r][c - 1]
-    else:
-        minimum_risk = minimum_risks[r - 1][c]
-
-    minimum_risk += m.get(r, c)
-
-    for fr in range(m.height):
-        for fc in range(m.width):
-            if minimum_risks[fr][fc] == -1:
-                continue
-
-            if minimum_risks[fr][fc] >= minimum_risk:
-                continue
-
-            skip = True
-
-            for nr, nc in m.neighbours(fr, fc):
-                if minimum_risks[nr][nc] == -1:
-                    skip = False
-                    break
-
-            if not skip:
-                minimum_risk = find_minimum_risk(r,
-                                                 c,
-                                                 fr,
-                                                 fc,
-                                                 minimum_risks,
-                                                 m,
-                                                 minimum_risks[fr][fc],
-                                                 minimum_risk,
-                                                 [])
-
-    minimum_risks[r][c] = minimum_risk
+    return minimum_risk_index
 
 def part_1(filename: string) -> i64:
     lines = get_input(filename)
@@ -128,14 +84,21 @@ def part_1(filename: string) -> i64:
         minimum_risks.append([-1 for _ in range(m.width)])
 
     minimum_risks[0][0] = 0
-    
+    locations = [(0, 0)]
+
     while True:
-        # Look for the lowest minimum risk with neighbours that are
-        # not calculated. It's neighbours minimum risk are just that
-        # risk plus their own.
-        pass
-        #calc_minimum_risk(r, c, minimum_risks, m)
-        
+        index = find_lowest_risk(locations, minimum_risks, m)
+        #print(index, flush=True)
+
+        if index == -1:
+            break
+
+        r, c = locations.pop(index)
+
+        for nr, nc in m.neighbours(r, c):
+            if minimum_risks[nr][nc] == -1:
+                minimum_risks[nr][nc] = minimum_risks[r][c] + m.get(nr, nc)
+                locations.append((nr, nc))
 
     return minimum_risks[m.height - 1][m.width - 1]
 
@@ -175,11 +138,21 @@ def part_2(filename: string) -> i64:
         minimum_risks.append([-1 for _ in range(m.width)])
 
     minimum_risks[0][0] = 0
+    locations = [(0, 0)]
 
-    for r in range(m.height):
-        for c in range(m.width):
-            print(r, c, flush=True)
-            calc_minimum_risk(r, c, minimum_risks, m)
+    while True:
+        index = find_lowest_risk(locations, minimum_risks, m)
+        #print(index, flush=True)
+
+        if index == -1:
+            break
+
+        r, c = locations.pop(index)
+
+        for nr, nc in m.neighbours(r, c):
+            if minimum_risks[nr][nc] == -1:
+                minimum_risks[nr][nc] = minimum_risks[r][c] + m.get(nr, nc)
+                locations.append((nr, nc))
 
     return minimum_risks[m.height - 1][m.width - 1]
 
@@ -189,8 +162,5 @@ def day_15():
 
 @test
 def test_all():
-    pass
-    #assert part_1("example.txt") == 40
-    #assert part_2("example.txt") == 315
-    #assert part_1("input.txt") == 3000
-    #assert part_2("input.txt") == 74222
+    assert part_1("example.txt") == 40
+    assert part_2("example.txt") == 315
