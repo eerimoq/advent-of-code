@@ -88,7 +88,6 @@ def part_1(filename: string) -> i64:
 
     while True:
         index = find_lowest_risk(locations, minimum_risks, m)
-        #print(index, flush=True)
 
         if index == -1:
             break
@@ -142,7 +141,6 @@ def part_2(filename: string) -> i64:
 
     while True:
         index = find_lowest_risk(locations, minimum_risks, m)
-        #print(index, flush=True)
 
         if index == -1:
             break
