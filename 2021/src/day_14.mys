@@ -1,22 +1,81 @@
 from os import TextFile
 
-def get_input(filename: string) -> [string]:
-    lines: [string] = []
+def get_input(filename: string) -> ([char], {char: {char: char}}):
+    polymer: [char] = []
+    insert: {char: {char: char}} = {}
 
     for line in TextFile(f"{__assets__}/day_14/{filename}").read().strip().split("\n"):
-        lines.append(line)
+        mo = line.match(re"^(\w+)$")
 
-    return lines
+        if mo is not None:
+            for ch in mo.group(1):
+                polymer.append(ch)
+
+        mo = line.match(re"(\w+) -> (\w)")
+
+        if mo is not None:
+            insert.get(mo.group(1)[0], {}, True)[mo.group(1)[1]] = mo.group(2)[0]
+
+    return (polymer, insert)
+
+def count_steps(pairs: {char: {char: i64}},
+                steps: i64,
+                insert: {char: {char: char}},
+                counts: {char: i64}):
+    children_pairs: {char: {char: i64}} = {}
+
+    for left, value in pairs:
+        for right, count in value:
+            ch = insert[left][right]
+
+            if ch not in counts:
+                counts[ch] = 0
+
+            counts[ch] += count
+            children_pairs_inner = children_pairs.get(left, {}, True)
+
+            if ch not in children_pairs_inner:
+                children_pairs_inner[ch] = 0
+
+            children_pairs_inner[ch] += count
+            children_pairs_inner = children_pairs.get(ch, {}, True)
+
+            if right not in children_pairs_inner:
+                children_pairs_inner[right] = 0
+
+            children_pairs_inner[right] += count
+
+    if steps > 1:
+        count_steps(children_pairs, steps - 1, insert, counts)
+
+def both_parts(filename: string, steps: i64) -> i64:
+    polymer, insert = get_input(filename)
+    pairs: {char: {char: i64}} = {}
+    counts: {char: i64} = {}
+
+    for i in range(i64(len(polymer) - 1)):
+        pairs_inner = pairs.get(polymer[i], {}, True)
+
+        if polymer[i + 1] not in pairs_inner:
+            pairs_inner[polymer[i + 1]] = 0
+
+        pairs_inner[polymer[i + 1]] += 1
+
+    for ch in polymer:
+        if ch not in counts:
+            counts[ch] = 0
+
+        counts[ch] += 1
+
+    count_steps(pairs, steps, insert, counts)
+
+    return max(counts.values()) - min(counts.values())
 
 def part_1(filename: string) -> i64:
-    lines = get_input(filename)
-
-    return 0
+    return both_parts(filename, 10)
 
 def part_2(filename: string) -> i64:
-    lines = get_input(filename)
-
-    return 0
+    return both_parts(filename, 40)
 
 def day_14():
     print(part_1("input.txt"))
@@ -24,7 +83,7 @@ def day_14():
 
 @test
 def test_all():
-    assert part_1("example.txt") == 0
-    assert part_2("example.txt") == 0
-    #assert part_1("input.txt") == 706
-    #assert part_2("input.txt") == 8
+    assert part_1("example.txt") == 1588
+    assert part_2("example.txt") == 2188189693529
+    assert part_1("input.txt") == 3095
+    assert part_2("input.txt") == 3152788426516
