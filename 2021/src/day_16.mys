@@ -1,4 +1,5 @@
 from os import TextFile
+from string import StringReader
 
 HEX_TO_BIN: {char: string} = {
     '0': "0000",
@@ -26,16 +27,6 @@ def get_input(filename: string) -> string:
         bits += HEX_TO_BIN[ch]
 
     return bits
-
-class Reader:
-    bits: string
-    offset: i64
-
-    def read(self, size: i64) -> string:
-        bits = self.bits[self.offset:self.offset + size]
-        self.offset += size
-
-        return bits
 
 @trait
 class Packet:
@@ -88,26 +79,26 @@ class OperatorPacket(Packet):
 
     raise UnreachableError("The impossible happened")
 
-def decode_literal_value(reader: Reader) -> i64:
+def decode_literal_value(reader: StringReader) -> i64:
     value = ""
     more = '1'
 
     while more == '1':
-        more = reader.read(1)[0]
+        more = reader.get()
         value += reader.read(4)
 
     return i64(value, 2)
 
-def decode_operator(reader: Reader) -> [Packet]:
-    match reader.read(1):
-        case "0":
-            return decode_packets(Reader(reader.read(i64(reader.read(15), 2)), 0))
-        case "1":
+def decode_operator(reader: StringReader) -> [Packet]:
+    match reader.get():
+        case '0':
+            return decode_packets(StringReader(reader.read(i64(reader.read(15), 2))))
+        case '1':
             return decode_packets(reader, i64(reader.read(11), 2))
 
     raise UnreachableError("The impossible happened")
 
-def decode_packets(reader: Reader, count: i64 = -1) -> [Packet]:
+def decode_packets(reader: StringReader, count: i64 = -1) -> [Packet]:
     packets: [Packet] = []
 
     try:
@@ -147,12 +138,12 @@ def add_versions(packets: [Packet]) -> i64:
 def part_1(filename: string) -> i64:
     bits = get_input(filename)
 
-    return add_versions(decode_packets(Reader(bits, 0)))
+    return add_versions(decode_packets(StringReader(bits)))
 
 def part_2(filename: string) -> i64:
     bits = get_input(filename)
 
-    return decode_packets(Reader(bits, 0))[0].result()
+    return decode_packets(StringReader(bits))[0].result()
 
 def day_16():
     print(part_1("input.txt"))
