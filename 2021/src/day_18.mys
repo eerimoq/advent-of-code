@@ -1,20 +1,12 @@
 from os import TextFile
 
 def get_input(filename: string) -> [string]:
-    lines: [string] = []
+    return TextFile(f"{__assets__}/day_18/{filename}").read().strip().split("\n")
 
-    for line in TextFile(f"{__assets__}/day_18/{filename}").read().strip().split("\n"):
-        mo = line.match(re"^(.*)$")
-
-        if mo is not None:
-            lines.append(mo.group(1))
-
-    return lines
-
-def find_explode_index(v: string) -> i64:
+def find_explode_index(number: string) -> i64:
     count = 0
 
-    for index, ch in enumerate(v):
+    for index, ch in enumerate(number):
         match ch:
             case '[':
                 count += 1
@@ -26,73 +18,83 @@ def find_explode_index(v: string) -> i64:
 
     return -1
 
-def find_split_index(v: string) -> i64:
-    for index in range(i64(len(v) - 1)):
-        if v[index] in "1234567890":
-            if v[index + 1] in "1234567890":
+def find_split_index(number: string) -> i64:
+    for index in range(i64(len(number) - 1)):
+        if number[index] in "1234567890":
+            if number[index + 1] in "1234567890":
                 return index
 
     return -1
 
-def explode(v: string, index: i64) -> string:
-    mo = v[index:].match(re"^\[(\d+),(\d+)\]")
-    left_number = i64(mo.group(1))
-    right_number = i64(mo.group(2))
-    v = f"{v[0:index + mo.start(0)]}0{v[index + mo.end(0):]}"
-    mo = v[index + 1:].match(re"^[\[\],]*(\d+)")
+def explode(number: string, index: i64) -> string:
+    mo = number[index:].match(re"^\[(\d+),(\d+)\]")
+    left_regular_number = i64(mo.group(1))
+    right_regular_number = i64(mo.group(2))
+    number = f"{number[0:index + mo.start(0)]}0{number[index + mo.end(0):]}"
+
+    # Next regular_number.
+    mo = number[index + 1:].match(re"^[\[\],]*(\d+)")
 
     if mo is not None:
-        number = i64(mo.group(1)) + right_number
-        v = f"{v[0:index + 1 + mo.start(1)]}{number}{v[index + 1 + mo.end(1):]}"
+        regular_number = i64(mo.group(1)) + right_regular_number
+        before = number[0:index + 1 + mo.start(1)]
+        after = number[index + 1 + mo.end(1):]
+        number = f"{before}{regular_number}{after}"
 
-    mo = v[0:index].match(re"(\d+)[\[\],]*$")
+    # Prev regular number.
+    mo = number[0:index].match(re"(\d+)[\[\],]*$")
 
     if mo is not None:
-        number = i64(mo.group(1)) + left_number
-        v = f"{v[0:mo.start(1)]}{number}{v[mo.end(1):]}"
+        regular_number = i64(mo.group(1)) + left_regular_number
+        before = number[0:mo.start(1)]
+        after = number[mo.end(1):]
+        number = f"{before}{regular_number}{after}"
 
-    return v
+    return number
 
-def split(v: string, index: i64) -> string:
-    mo = v[index:].match(re"^(\d+)")
-    number = i64(mo.group(1))
-    left_number = number / 2
-    right_number = (number + 1) / 2
+def split(number: string, index: i64) -> string:
+    mo = number[index:].match(re"^(\d+)")
+    regular_number = i64(mo.group(1))
+    left_regular_number = regular_number / 2
+    right_regular_number = (regular_number + 1) / 2
+    before = number[0:index]
+    after = number[index + mo.end(1):]
+    number = f"[{left_regular_number},{right_regular_number}]"
 
-    return f"{v[0:index]}[{left_number},{right_number}]{v[index + mo.end(1):]}"
+    return f"{before}{number}{after}"
 
-def reduce(v: string) -> string:
+def reduce(number: string) -> string:
     while True:
-        index = find_explode_index(v)
+        index = find_explode_index(number)
 
         if index != -1:
-            v = explode(v, index)
+            number = explode(number, index)
             continue
 
-        index = find_split_index(v)
+        index = find_split_index(number)
 
         if index != -1:
-            v = split(v, index)
+            number = split(number, index)
             continue
 
         break
 
-    return v
+    return number
 
-def add(v1: string, v2: string) -> string:
-    return reduce(f"[{v1},{v2}]")
+def add(number_1: string, number_2: string) -> string:
+    return reduce(f"[{number_1},{number_2}]")
 
-def magnitude(v: string) -> i64:
+def magnitude(number: string) -> i64:
     m = 0
 
     while True:
-        mo = v.match(re"\[(\d+),(\d+)\]")
+        mo = number.match(re"\[(\d+),(\d+)\]")
         m = 3 * i64(mo.group(1)) + 2 * i64(mo.group(2))
 
-        if len(mo.group(0)) == len(v):
+        if len(mo.group(0)) == len(number):
             break
 
-        v = f"{v[0:mo.start(0)]}{m}{v[mo.end(0):]}"
+        number = f"{number[0:mo.start(0)]}{m}{number[mo.end(0):]}"
 
     return m
 
