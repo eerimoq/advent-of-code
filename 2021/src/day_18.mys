@@ -1,5 +1,11 @@
 from os import TextFile
 
+RE_EXPLODE: regex = re"^\[(\d+),(\d+)\]"
+RE_EXPLODE_NEXT: regex = re"^[\[\],]*(\d+)"
+RE_EXPLODE_PREV: regex = re"(\d+)[\[\],]*$"
+RE_SPLIT: regex = re"^(\d+)"
+RE_MAGNITUDE: regex = re"\[(\d+),(\d+)\]"
+
 def get_input(filename: string) -> [string]:
     return TextFile(f"{__assets__}/day_18/{filename}").read().strip().split("\n")
 
@@ -27,13 +33,13 @@ def find_split_index(number: string) -> i64:
     return -1
 
 def explode(number: string, index: i64) -> string:
-    mo = number[index:].match(re"^\[(\d+),(\d+)\]")
+    mo = number[index:].match(RE_EXPLODE)
     left_regular_number = i64(mo.group(1))
     right_regular_number = i64(mo.group(2))
     number = f"{number[0:index + mo.start(0)]}0{number[index + mo.end(0):]}"
 
     # Next regular_number.
-    mo = number[index + 1:].match(re"^[\[\],]*(\d+)")
+    mo = number[index + 1:].match(RE_EXPLODE_NEXT)
 
     if mo is not None:
         regular_number = i64(mo.group(1)) + right_regular_number
@@ -42,7 +48,7 @@ def explode(number: string, index: i64) -> string:
         number = f"{before}{regular_number}{after}"
 
     # Prev regular number.
-    mo = number[0:index].match(re"(\d+)[\[\],]*$")
+    mo = number[0:index].match(RE_EXPLODE_PREV)
 
     if mo is not None:
         regular_number = i64(mo.group(1)) + left_regular_number
@@ -53,7 +59,7 @@ def explode(number: string, index: i64) -> string:
     return number
 
 def split(number: string, index: i64) -> string:
-    mo = number[index:].match(re"^(\d+)")
+    mo = number[index:].match(RE_SPLIT)
     regular_number = i64(mo.group(1))
     left_regular_number = regular_number / 2
     right_regular_number = (regular_number + 1) / 2
@@ -88,7 +94,7 @@ def magnitude(number: string) -> i64:
     m = 0
 
     while True:
-        mo = number.match(re"\[(\d+),(\d+)\]")
+        mo = number.match(RE_MAGNITUDE)
         m = 3 * i64(mo.group(1)) + 2 * i64(mo.group(2))
 
         if len(mo.group(0)) == len(number):
