@@ -36,7 +36,7 @@ def explode(number: string, index: i64) -> string:
     mo = number[index:].match(RE_EXPLODE)
     left_regular_number = i64(mo.group(1))
     right_regular_number = i64(mo.group(2))
-    before = number[:index + mo.start(0)]
+    before = number[:index + mo.begin(0)]
     after = number[index + mo.end(0):]
     number = f"{before}0{after}"
 
@@ -45,7 +45,7 @@ def explode(number: string, index: i64) -> string:
 
     if mo is not None:
         regular_number = i64(mo.group(1)) + right_regular_number
-        before = number[:index + 1 + mo.start(1)]
+        before = number[:index + 1 + mo.begin(1)]
         after = number[index + 1 + mo.end(1):]
         number = f"{before}{regular_number}{after}"
 
@@ -54,7 +54,7 @@ def explode(number: string, index: i64) -> string:
 
     if mo is not None:
         regular_number = i64(mo.group(1)) + left_regular_number
-        before = number[:mo.start(1)]
+        before = number[:mo.begin(1)]
         after = number[mo.end(1):]
         number = f"{before}{regular_number}{after}"
 
@@ -102,7 +102,7 @@ def magnitude(number: string) -> i64:
         if len(mo.group(0)) == len(number):
             break
 
-        before = number[:mo.start(0)]
+        before = number[:mo.begin(0)]
         after = number[mo.end(0):]
         number = f"{before}{mag}{after}"
 
