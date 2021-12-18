@@ -33,40 +33,40 @@ def find_split_index(number: string) -> i64:
     return -1
 
 def explode(number: string, index: i64) -> string:
-    mo = number[index:].match(RE_EXPLODE)
-    left_regular_number = i64(mo.group(1))
-    right_regular_number = i64(mo.group(2))
-    before = number[:index + mo.begin(0)]
-    after = number[index + mo.end(0):]
+    mr = number[index:].match(RE_EXPLODE)
+    left_regular_number = i64(mr.group(1))
+    right_regular_number = i64(mr.group(2))
+    before = number[:index + mr.begin(0)]
+    after = number[index + mr.end(0):]
     number = f"{before}0{after}"
 
     # Next regular number.
-    mo = number[index + 1:].match(RE_EXPLODE_NEXT)
+    mr = number[index + 1:].match(RE_EXPLODE_NEXT)
 
-    if mo is not None:
-        regular_number = i64(mo.group(1)) + right_regular_number
-        before = number[:index + 1 + mo.begin(1)]
-        after = number[index + 1 + mo.end(1):]
+    if mr is not None:
+        regular_number = i64(mr.group(1)) + right_regular_number
+        before = number[:index + 1 + mr.begin(1)]
+        after = number[index + 1 + mr.end(1):]
         number = f"{before}{regular_number}{after}"
 
     # Prev regular number.
-    mo = number[:index].match(RE_EXPLODE_PREV)
+    mr = number[:index].match(RE_EXPLODE_PREV)
 
-    if mo is not None:
-        regular_number = i64(mo.group(1)) + left_regular_number
-        before = number[:mo.begin(1)]
-        after = number[mo.end(1):]
+    if mr is not None:
+        regular_number = i64(mr.group(1)) + left_regular_number
+        before = number[:mr.begin(1)]
+        after = number[mr.end(1):]
         number = f"{before}{regular_number}{after}"
 
     return number
 
 def split(number: string, index: i64) -> string:
-    mo = number[index:].match(RE_SPLIT)
-    regular_number = i64(mo.group(1))
+    mr = number[index:].match(RE_SPLIT)
+    regular_number = i64(mr.group(1))
     left_regular_number = regular_number / 2
     right_regular_number = (regular_number + 1) / 2
     before = number[:index]
-    after = number[index + mo.end(1):]
+    after = number[index + mr.end(1):]
     number = f"[{left_regular_number},{right_regular_number}]"
 
     return f"{before}{number}{after}"
@@ -96,14 +96,14 @@ def magnitude(number: string) -> i64:
     mag = 0
 
     while True:
-        mo = number.match(RE_MAGNITUDE)
-        mag = 3 * i64(mo.group(1)) + 2 * i64(mo.group(2))
+        mr = number.match(RE_MAGNITUDE)
+        mag = 3 * i64(mr.group(1)) + 2 * i64(mr.group(2))
 
-        if len(mo.group(0)) == len(number):
+        if len(mr.group(0)) == len(number):
             break
 
-        before = number[:mo.begin(0)]
-        after = number[mo.end(0):]
+        before = number[:mr.begin(0)]
+        after = number[mr.end(0):]
         number = f"{before}{mag}{after}"
 
     return mag

@@ -5,15 +5,15 @@ def get_input(filename: string) -> ([(i64, i64)], [(string, i64)]):
     folds: [(string, i64)] = []
 
     for line in TextFile(f"{__assets__}/day_13/{filename}").read().split('\n'):
-        mo = line.match(re"(\d+),(\d+)")
+        mr = line.match(re"(\d+),(\d+)")
 
-        if mo is not None:
-            coordinates.append((i64(mo.group(1)), i64(mo.group(2))))
+        if mr is not None:
+            coordinates.append((i64(mr.group(1)), i64(mr.group(2))))
 
-        mo = line.match(re".*(.)=(\d+)")
+        mr = line.match(re".*(.)=(\d+)")
 
-        if mo is not None:
-            folds.append((mo.group(1), i64(mo.group(2))))
+        if mr is not None:
+            folds.append((mr.group(1), i64(mr.group(2))))
 
     return (coordinates, folds)
 

@@ -2,9 +2,9 @@ from os import TextFile
 
 def get_input(filename: string) -> (i64, i64, i64, i64):
     line = TextFile(f"{__assets__}/day_17/{filename}").read().strip()
-    mo = line.match(re"target area: x=([-\d]+)..([-\d]+), y=([-\d]+)..([-\d]+)")
+    mr = line.match(re"target area: x=([-\d]+)..([-\d]+), y=([-\d]+)..([-\d]+)")
 
-    return (i64(mo.group(1)), i64(mo.group(2)), i64(mo.group(3)), i64(mo.group(4)))
+    return (i64(mr.group(1)), i64(mr.group(2)), i64(mr.group(3)), i64(mr.group(4)))
 
 def find_max(v_x: i64,
              v_y: i64,
