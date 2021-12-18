@@ -26,26 +26,26 @@ def count_steps(pairs: {char: {char: i64}},
                 insert: {char: {char: char}},
                 counts: {char: i64}):
     for _ in range(steps):
-        children_pairs: {char: {char: i64}} = {}
+        next_pairs: {char: {char: i64}} = {}
 
         for left, value in pairs:
             for right, count in value:
                 ch = insert[left][right]
                 increment(counts, ch, count)
-                children_pairs_inner = children_pairs.get(left, {}, True)
+                next_pairs_inner = next_pairs.get(left, {}, True)
 
-                if ch not in children_pairs_inner:
-                    children_pairs_inner[ch] = 0
+                if ch not in next_pairs_inner:
+                    next_pairs_inner[ch] = 0
 
-                children_pairs_inner[ch] += count
-                children_pairs_inner = children_pairs.get(ch, {}, True)
+                next_pairs_inner[ch] += count
+                next_pairs_inner = next_pairs.get(ch, {}, True)
 
-                if right not in children_pairs_inner:
-                    children_pairs_inner[right] = 0
+                if right not in next_pairs_inner:
+                    next_pairs_inner[right] = 0
 
-                children_pairs_inner[right] += count
+                next_pairs_inner[right] += count
 
-        pairs = children_pairs
+        pairs = next_pairs
 
 def both_parts(filename: string, steps: i64) -> i64:
     polymer, insert = get_input(filename)
