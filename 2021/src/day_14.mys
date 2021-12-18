@@ -1,7 +1,6 @@
 from os import TextFile
 
 def get_input(filename: string) -> ([char], {char: {char: char}}):
-
     lines = TextFile(f"{__assets__}/day_14/{filename}").read().strip().split("\n")
     polymer: [char] = []
 
