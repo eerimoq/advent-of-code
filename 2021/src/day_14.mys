@@ -15,7 +15,18 @@ def get_input(filename: string) -> ([char], {char: {char: char}}):
 
     return (polymer, insert)
 
-def increment(counts: {char: i64}, ch: char, count: i64):
+def increment_pair(pairs: {char: {char: i64}},
+                   left: char,
+                   right: char,
+                   count: i64):
+    pairs_inner = pairs.get(left, {}, True)
+
+    if right not in pairs_inner:
+        pairs_inner[right] = 0
+
+    pairs_inner[right] += count
+
+def increment_count(counts: {char: i64}, ch: char, count: i64):
     if ch not in counts:
         counts[ch] = 0
 
@@ -31,19 +42,9 @@ def count_steps(pairs: {char: {char: i64}},
         for left, value in pairs:
             for right, count in value:
                 ch = insert[left][right]
-                increment(counts, ch, count)
-                next_pairs_inner = next_pairs.get(left, {}, True)
-
-                if ch not in next_pairs_inner:
-                    next_pairs_inner[ch] = 0
-
-                next_pairs_inner[ch] += count
-                next_pairs_inner = next_pairs.get(ch, {}, True)
-
-                if right not in next_pairs_inner:
-                    next_pairs_inner[right] = 0
-
-                next_pairs_inner[right] += count
+                increment_count(counts, ch, count)
+                increment_pair(next_pairs, left, ch, count)
+                increment_pair(next_pairs, ch, right, count)
 
         pairs = next_pairs
 
@@ -53,15 +54,10 @@ def both_parts(filename: string, steps: i64) -> i64:
     counts: {char: i64} = {}
 
     for i in range(i64(len(polymer) - 1)):
-        pairs_inner = pairs.get(polymer[i], {}, True)
-
-        if polymer[i + 1] not in pairs_inner:
-            pairs_inner[polymer[i + 1]] = 0
-
-        pairs_inner[polymer[i + 1]] += 1
+        increment_pair(pairs, polymer[i], polymer[i + 1], 1)
 
     for ch in polymer:
-        increment(counts, ch, 1)
+        increment_count(counts, ch, 1)
 
     count_steps(pairs, steps, insert, counts)
 
