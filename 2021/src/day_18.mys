@@ -40,7 +40,7 @@ def explode(number: string, index: i64) -> string:
     after = number[index + mo.end(0):]
     number = f"{before}0{after}"
 
-    # Next regular_number.
+    # Next regular number.
     mo = number[index + 1:].match(RE_EXPLODE_NEXT)
 
     if mo is not None:
@@ -102,7 +102,9 @@ def magnitude(number: string) -> i64:
         if len(mo.group(0)) == len(number):
             break
 
-        number = f"{number[:mo.start(0)]}{mag}{number[mo.end(0):]}"
+        before = number[:mo.start(0)]
+        after = number[mo.end(0):]
+        number = f"{before}{mag}{after}"
 
     return mag
 
