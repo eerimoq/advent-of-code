@@ -31,22 +31,6 @@ def increment_count(counts: {char: i64}, ch: char, count: i64):
 
     counts[ch] += count
 
-def count_steps(pairs: {char: {char: i64}},
-                steps: i64,
-                insert: {char: {char: char}},
-                counts: {char: i64}):
-    for _ in range(steps):
-        next_pairs: {char: {char: i64}} = {}
-
-        for left, value in pairs:
-            for right, count in value:
-                ch = insert[left][right]
-                increment_count(counts, ch, count)
-                increment_pair(next_pairs, left, ch, count)
-                increment_pair(next_pairs, ch, right, count)
-
-        pairs = next_pairs
-
 def both_parts(filename: string, steps: i64) -> i64:
     polymer, insert = get_input(filename)
     pairs: {char: {char: i64}} = {}
@@ -58,7 +42,17 @@ def both_parts(filename: string, steps: i64) -> i64:
     for ch in polymer:
         increment_count(counts, ch, 1)
 
-    count_steps(pairs, steps, insert, counts)
+    for _ in range(steps):
+        next_pairs: {char: {char: i64}} = {}
+
+        for left, value in pairs:
+            for right, count in value:
+                ch = insert[left][right]
+                increment_count(counts, ch, count)
+                increment_pair(next_pairs, left, ch, count)
+                increment_pair(next_pairs, ch, right, count)
+
+        pairs = next_pairs
 
     return max(counts.values()) - min(counts.values())
 
