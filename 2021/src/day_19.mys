@@ -1,22 +1,28 @@
 from os import TextFile
 
-def get_input(filename: string) -> [[(i64, i64, i64)]]:
-    scanners: [[(i64, i64, i64)]] = []
-    scanner: [(i64, i64, i64)] = None
+def get_input(filename: string) -> [Scanner]:
+    scanners: [Scanner] = []
+    scanner: Scanner = None
 
     for line in TextFile(f"{__assets__}/day_19/{filename}").read().strip().split("\n"):
         rm = line.match(re"--- scanner \d+ ---")
 
         if rm is not None:
-            scanner = []
+            scanner = Scanner([], (0, 0, 0))
             scanners.append(scanner)
 
         rm = line.match(re"([-\d]+),([-\d]+),([-\d]+)")
 
         if rm is not None:
-            scanner.append((i64(rm.group(1)), i64(rm.group(2)), i64(rm.group(3))))
+            scanner.beacons.append((i64(rm.group(1)),
+                                    i64(rm.group(2)),
+                                    i64(rm.group(3))))
 
     return scanners
+
+class Scanner:
+    beacons: [(i64, i64, i64)]
+    position: (i64, i64, i64)
 
 ROTATIONS: [(i64, i64, i64)] = [
     # x front (x)
@@ -56,39 +62,35 @@ ROTATIONS: [(i64, i64, i64)] = [
     (-2, -3, 1)
 ]
 
-def find_beacons(scanner_1: [(i64, i64, i64)],
-                 scanner_2: [(i64, i64, i64)]) -> ([(i64, i64, i64)], [(i64, i64, i64)], (i64, i64, i64)):
-    #print(scanner_1)
-    #print(scanner_2)
-
-    for bx1, by1, bz1 in scanner_1:
-        for bx2, by2, bz2 in scanner_2:
-            bscanner_2 = [
-                (x - bx2 + bx1, y - by2 + by1, z - bz2 + bz1)
-                for x, y, z in scanner_2
+def match_scanners(scanner_1: Scanner, scanner_2: Scanner) -> Scanner:
+    for bx1, by1, bz1 in scanner_1.beacons:
+        for bx2, by2, bz2 in scanner_2.beacons:
+            scanner_2_x = bx1 - bx2
+            scanner_2_y = by1 - by2
+            scanner_2_z = bz1 - bz2
+            beacons = [
+                (x + scanner_2_x, y + scanner_2_y, z + scanner_2_z)
+                for x, y, z in scanner_2.beacons
             ]
-            beacons: [(i64, i64, i64)] = []
-            
-            for x1, y1, z1 in scanner_1:
-                for x2, y2, z2 in bscanner_2:
-                    if x1 == x2 and y1 == y2 and z1 == z2:
-                        beacons.append((x1, y1, z1))
+            number_of_matches = 0
 
-            if len(beacons) >= 12:
-                #print("xxx", beacons)
-                return beacons, bscanner_2, (-bx2 + bx1, -by2 + by1, -bz2 + bz1)
-        
-    return [], scanner_2, None
+            for b1 in scanner_1.beacons:
+                for b2 in beacons:
+                    if b1 == b2:
+                        number_of_matches += 1
 
-def find_beacons(known_scanners: [[(i64, i64, i64)]],
-                 scanner: [(i64, i64, i64)]) -> ([(i64, i64, i64)], [(i64, i64, i64)], (i64, i64, i64)):
+                        if number_of_matches >= 12:
+                            return Scanner(beacons,
+                                           (scanner_2_x, scanner_2_y, scanner_2_z))
+
+    return None
+
+def find_beacons(known_scanners: [Scanner], scanner: Scanner) -> Scanner:
     for known_scanner in known_scanners:
-        #print(known_scanner)
         for rx, ry, rz in ROTATIONS:
-            #print("rot", rx, ry, rz)
-            rotated_scanner: [(i64, i64, i64)] = []
-            
-            for x, y, z in scanner:
+            rotated_scanner = Scanner([], None)
+
+            for x, y, z in scanner.beacons:
                 xyz = [x, y, z]
 
                 if rx > 0:
@@ -106,98 +108,65 @@ def find_beacons(known_scanners: [[(i64, i64, i64)]],
                 else:
                     z = -xyz[-rz - 1]
 
-                rotated_scanner.append((x, y, z))
+                rotated_scanner.beacons.append((x, y, z))
 
-            beacons, rotated_scanner, scanner_pos = find_beacons(known_scanner, rotated_scanner)
-            
-            if len(beacons) >= 12:
-                return beacons, rotated_scanner, scanner_pos
+            rotated_scanner = match_scanners(known_scanner, rotated_scanner)
 
-    return [], scanner, None
+            if rotated_scanner is not None:
+                return rotated_scanner
+
+    return None
 
 def part_1(filename: string) -> i64:
     scanners = get_input(filename)
+    beacons = [beacon for beacon in scanners[0].beacons]
     known_scanners = [scanners.pop(0)]
-    beacons: [(i64, i64, i64)] = []
-    
+
     while len(scanners) > 0:
         for index, scanner in enumerate(scanners):
-            scanner_beacons, scanner, scanner_pos = find_beacons(known_scanners, scanner)
+            scanner = find_beacons(known_scanners, scanner)
 
-            if scanner_beacons == []:
-                continue
+            if scanner is not None:
+                scanners.pop(index)
+                known_scanners.append(scanner)
 
-            #print(scanner_beacons)
-            print(scanner_pos)
-            scanners.pop(index)
-            known_scanners.append(scanner)
+                for beacon in scanner.beacons:
+                    if beacon not in beacons:
+                        beacons.append(beacon)
 
-            for beacon in scanner:
-                if beacon not in beacons:
-                    beacons.append(beacon)
-
-            break
-
-    print((0, 0, 0))
-        
-    for beacon in known_scanners[0]:
-        if beacon not in beacons:
-            beacons.append(beacon)
+                break
 
     return i64(len(beacons))
 
 def part_2(filename: string) -> i64:
-    lines = get_input(filename)
+    scanners = get_input(filename)
+    known_scanners = [scanners.pop(0)]
 
-    distance = 0
-    beacons = [
-        (-1384, -51, -28),
-        (-2459, 20, -28),
-        (-2423, -82, 1293),
-        (1068, -28, 46),
-        (1079, 1050, 25),
-        (1057, -1345, -11),
-        (2256, -1265, 80),
-        (2379, -1302, -1231),
-        (2225, -113, 122),
-        (-2423, 1137, 148),
-        (-3670, 1047, 5),
-        (2229, 1227, -1),
-        (-1324, -1197, 69),
-        (-1369, -2427, 131),
-        (-1203, -1282, -1192),
-        (-6, 1158, -3),
-        (-115, 2420, 57),
-        (-130, 2317, 1215),
-        (-54, 1154, -1091),
-        (-1247, 2338, -35),
-        (-1348, 3620, 92),
-        (-1211, 4725, -29),
-        (-1208, 3526, -1199),
-        (-2498, 4808, 99),
-        (-1211, 2280, 1298),
-        (-86, 1126, 1316),
-        (1070, -154, -1168),
-        (0, 0, 0)
-    ]
+    while len(scanners) > 0:
+        for index, scanner in enumerate(scanners):
+            scanner = find_beacons(known_scanners, scanner)
 
-    for i in range(i64(len(beacons))):
-        for j in range(i64(len(beacons))):
-            if i == j:
-                continue
-             
-            x1, y1, z1 = beacons[i]
-            x2, y2, z2 = beacons[j]
-             
-            distance = max(distance, abs(x1 - x2) + abs(z1 - z2) + abs(y1 - y2))
-    
-    return distance
+            if scanner is not None:
+                scanners.pop(index)
+                known_scanners.append(scanner)
+                break
+
+    maximum_distance = 0
+
+    for scanner_1 in known_scanners:
+        for scanner_2 in known_scanners:
+            x1, y1, z1 = scanner_1.position
+            x2, y2, z2 = scanner_2.position
+            maximum_distance = max(maximum_distance,
+                                   abs(x1 - x2) + abs(z1 - z2) + abs(y1 - y2))
+
+    return maximum_distance
 
 def day_19():
-    # print(part_1("input.txt"))
+    print(part_1("input.txt"))
     print(part_2("input.txt"))
 
 @test
 def test_all():
     assert part_1("example.txt") == 79
-    #assert part_2("example.txt") == 0
+    assert part_2("example.txt") == 3621
