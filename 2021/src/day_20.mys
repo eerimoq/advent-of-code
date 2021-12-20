@@ -1,22 +1,97 @@
 from os import TextFile
 
-def get_input(filename: string) -> [string]:
-    lines: [string] = []
+def get_input(filename: string) -> (string, [string]):
+    lines = TextFile(f"{__assets__}/day_20/{filename}").read().strip().split("\n")
+    algorithm = lines[0]
+    image: [string] = []
 
-    for line in TextFile(f"{__assets__}/day_19/{filename}").read().strip().split("\n"):
-        lines.append(line)
+    for line in slice(lines, 2, i64(len(lines))):
+        image.append(line)
 
-    return lines
+    return (algorithm, image)
+
+def add(number: i64, ch: char) -> i64:
+    number <<= 1
+
+    if ch == '#':
+        number += 1
+
+    return number
+
+def enhance_pixel(image: [[char]], r: i64, c: i64, algorithm: string) -> char:
+    number = add(0, image[r - 1][c - 1])
+    number = add(number, image[r - 1][c])
+    number = add(number, image[r - 1][c + 1])
+    number = add(number, image[r][c - 1])
+    number = add(number, image[r][c])
+    number = add(number, image[r][c + 1])
+    number = add(number, image[r + 1][c - 1])
+    number = add(number, image[r + 1][c])
+    number = add(number, image[r + 1][c + 1])
+
+    return algorithm[number]
+
+def enhance(lines: [string], algorithm: string, number_of_iterations: i64) -> [[char]]:
+    rbegin = 3 * number_of_iterations
+    rend = rbegin + i64(len(lines))
+    cbegin = 3 * number_of_iterations
+    cend = cbegin + i64(len(lines[0]))
+    image: [[char]] = []
+
+    for _ in range(rend + rbegin):
+        image.append(['.' for _ in range(cend + cbegin)])
+
+    for r, line in enumerate(lines, rbegin):
+        for c, ch in enumerate(line, cbegin):
+            image[r][c] = ch
+
+    for _ in range(number_of_iterations):
+        new_image: [[char]] = []
+
+        for r in range(i64(len(image))):
+            new_image.append(['.' for _ in range(i64(len(image[0])))])
+
+        for r in range(1, i64(len(image) - 1)):
+            for c in range(1, i64(len(image[0]) - 1)):
+                new_image[r][c] = enhance_pixel(image, r, c, algorithm)
+
+        image = new_image
+        rbegin -= 1
+        rend += 1
+        cbegin -= 1
+        cend += 1
+
+    cropped_image: [[char]] = []
+
+    for r in range(rbegin, rend):
+        cropped_row: [char] = []
+
+        for c in range(cbegin, cend):
+            cropped_row.append(image[r][c])
+
+        cropped_image.append(cropped_row)
+
+    return cropped_image
+
+def number_of_lit_pixels(image: [[char]]) -> i64:
+    total = 0
+
+    for r in range(i64(len(image))):
+        for ch in image[r]:
+            if ch == '#':
+                total += 1
+
+    return total
 
 def part_1(filename: string) -> i64:
-    lines = get_input(filename)
+    algorithm, image = get_input(filename)
 
-    return 0
+    return number_of_lit_pixels(enhance(image, algorithm, 2))
 
 def part_2(filename: string) -> i64:
-    lines = get_input(filename)
+    algorithm, image = get_input(filename)
 
-    return 0
+    return number_of_lit_pixels(enhance(image, algorithm, 50))
 
 def day_20():
     print(part_1("input.txt"))
@@ -24,5 +99,7 @@ def day_20():
 
 @test
 def test_all():
-    assert part_1("example.txt") == 0
-    assert part_2("example.txt") == 0
+    assert part_1("example.txt") == 35
+    assert part_2("example.txt") == 3351
+    assert part_1("input.txt") == 5203
+    assert part_2("input.txt") == 18806
