@@ -9,7 +9,7 @@ def get_input(filename: string) -> ([char], {char: {char: char}}):
 
     insert: {char: {char: char}} = {}
 
-    for line in slice(lines, 2, i64(len(lines))):
+    for line in slice(lines, 2):
         insert.get(line[0], {}, True)[line[1]] = line[6]
 
     return (polymer, insert)
