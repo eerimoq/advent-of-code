@@ -36,10 +36,12 @@ def enhance(lines: [string], algorithm: string, number_of_iterations: i64) -> [[
     rend = rbegin + i64(len(lines))
     cbegin = 3 * number_of_iterations
     cend = cbegin + i64(len(lines[0]))
+    height = rend + rbegin
+    width = cend + cbegin
     image: [[char]] = []
 
-    for _ in range(rend + rbegin):
-        image.append(['.' for _ in range(cend + cbegin)])
+    for _ in range(height):
+        image.append(['.' for _ in range(width)])
 
     for r, line in enumerate(lines, rbegin):
         for c, ch in enumerate(line, cbegin):
@@ -48,11 +50,11 @@ def enhance(lines: [string], algorithm: string, number_of_iterations: i64) -> [[
     for _ in range(number_of_iterations):
         new_image: [[char]] = []
 
-        for r in range(i64(len(image))):
-            new_image.append(['.' for _ in range(i64(len(image[0])))])
+        for r in range(height):
+            new_image.append(['.' for _ in range(width)])
 
-        for r in range(1, i64(len(image) - 1)):
-            for c in range(1, i64(len(image[0]) - 1)):
+        for r in range(1, height - 1):
+            for c in range(1, width - 1):
                 new_image[r][c] = enhance_pixel(image, r, c, algorithm)
 
         image = new_image
@@ -77,9 +79,7 @@ def number_of_lit_pixels(image: [[char]]) -> i64:
     total = 0
 
     for r in range(i64(len(image))):
-        for ch in image[r]:
-            if ch == '#':
-                total += 1
+        total += image[r].count('#')
 
     return total
 
