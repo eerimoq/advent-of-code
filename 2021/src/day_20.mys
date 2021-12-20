@@ -66,11 +66,7 @@ def enhance(lines: [string], algorithm: string, number_of_iterations: i64) -> [[
     cropped_image: [[char]] = []
 
     for r in range(rbegin, rend):
-        cropped_row: [char] = []
-
-        for c in range(cbegin, cend):
-            cropped_row.append(image[r][c])
-
+        cropped_row = [image[r][c] for c in range(cbegin, cend)]
         cropped_image.append(cropped_row)
 
     return cropped_image
