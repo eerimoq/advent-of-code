@@ -71,23 +71,23 @@ def enhance(lines: [string], algorithm: string, number_of_iterations: i64) -> [[
 
     return cropped_image
 
-def number_of_lit_pixels(image: [[char]]) -> i64:
+def count_number_of_lit_pixels(image: [[char]]) -> i64:
     total = 0
 
-    for r in range(i64(len(image))):
-        total += image[r].count('#')
+    for row in image:
+        total += row.count('#')
 
     return total
 
 def part_1(filename: string) -> i64:
     algorithm, image = get_input(filename)
 
-    return number_of_lit_pixels(enhance(image, algorithm, 2))
+    return count_number_of_lit_pixels(enhance(image, algorithm, 2))
 
 def part_2(filename: string) -> i64:
     algorithm, image = get_input(filename)
 
-    return number_of_lit_pixels(enhance(image, algorithm, 50))
+    return count_number_of_lit_pixels(enhance(image, algorithm, 50))
 
 def day_20():
     print(part_1("input.txt"))
