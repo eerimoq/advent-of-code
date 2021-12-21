@@ -1,22 +1,95 @@
 from os import TextFile
 
-def get_input(filename: string) -> [string]:
-    lines: [string] = []
+def get_input(filename: string) -> (i64, i64):
+    lines = TextFile(f"{__assets__}/day_21/{filename}").read().strip().split("\n")
 
-    for line in TextFile(f"{__assets__}/day_21/{filename}").read().strip().split("\n"):
-        lines.append(line)
+    return (i64(lines[0][-1:]), i64(lines[1][-1:]))
 
-    return lines
+
+def roll_three_times(next_dice_value: i64) -> (i64, i64):
+    moves = 0
+
+    for _ in range(3):
+        moves += next_dice_value
+        next_dice_value += 1
+
+        if next_dice_value > 100:
+            next_dice_value = 1
+
+    return (next_dice_value, moves)
+
+def play_1_100_dice(positions: [i64]) -> i64:
+    next_dice_value = 1
+    total_rolls = 0
+    scores = [0, 0]
+    next_players_turn = 0
+
+    while True:
+        next_dice_value, moves = roll_three_times(next_dice_value)
+        total_rolls += 3
+        positions[next_players_turn] += moves
+        positions[next_players_turn] %= 10
+        scores[next_players_turn] += positions[next_players_turn] + 1
+
+        if scores[next_players_turn] >= 1000:
+            return scores[next_players_turn ^ 1] * total_rolls
+
+        next_players_turn ^= 1
 
 def part_1(filename: string) -> i64:
-    lines = get_input(filename)
+    position_1, position_2 = get_input(filename)
 
-    return 0
+    return play_1_100_dice([position_1 - 1, position_2 - 1])
+
+# Sum of three rolls is 3 to 9.
+# 1 x 3
+# 3 x 4
+# 6 x 5
+# 7 x 6
+# 6 x 7
+# 3 x 8
+# 1 x 9
+COUNTS: [i64] = [1, 3, 6, 7, 6, 3, 1]
+
+def play_dirac_dice(wins: [i64],
+                    position_1: i64,
+                    position_2: i64,
+                    score_1: i64 = 0,
+                    score_2: i64 = 0,
+                    count: i64 = 1):
+    # First player rolls.
+    for roll_1 in range(3, 10):
+        next_position_1 = position_1 + roll_1
+        next_position_1 %= 10
+        next_score_1 = score_1 + next_position_1 + 1
+
+        if next_score_1 >= 21:
+            wins[0] += count * COUNTS[roll_1 - 3]
+            continue
+
+        # Second player rolls.
+        for roll_2 in range(3, 10):
+            next_position_2 = position_2 + roll_2
+            next_position_2 %= 10
+            next_score_2 = score_2 + next_position_2 + 1
+
+            if next_score_2 >= 21:
+                wins[1] += count * COUNTS[roll_2 - 3]
+                continue
+
+            play_dirac_dice(wins,
+                            next_position_1,
+                            next_position_2,
+                            next_score_1,
+                            next_score_2,
+                            count * COUNTS[roll_1 - 3] * COUNTS[roll_2 - 3])
 
 def part_2(filename: string) -> i64:
-    lines = get_input(filename)
+    position_1, position_2 = get_input(filename)
+    wins = [0, 0]
+    play_dirac_dice(wins, position_1 - 1, position_2 - 1)
 
-    return 0
+    return max(wins)
 
 def day_21():
     print(part_1("input.txt"))
@@ -24,5 +97,7 @@ def day_21():
 
 @test
 def test_all():
-    assert part_1("example.txt") == 0
-    assert part_2("example.txt") == 0
+    assert part_1("example.txt") == 739785
+    assert part_1("input.txt") == 679329
+    assert part_2("example.txt") == 444356092776315
+    assert part_2("input.txt") == 433315766324816
