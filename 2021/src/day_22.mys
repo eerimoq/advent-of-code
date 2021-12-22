@@ -1,44 +1,5 @@
 from os import TextFile
 
-class Command:
-    action: string
-    x_min: i64
-    x_max: i64
-    y_min: i64
-    y_max: i64
-    z_min: i64
-    z_max: i64
-
-def clone(command: Command) -> Command:
-    return Command(command.action,
-                   command.x_min,
-                   command.x_max,
-                   command.y_min,
-                   command.y_max,
-                   command.z_min,
-                   command.z_max)
-
-def clone_x(command: Command, x_min: i64, x_max: i64) -> Command:
-    command = clone(command)
-    command.x_min = x_min
-    command.x_max = x_max
-
-    return command
-
-def clone_y(command: Command, y_min: i64, y_max: i64) -> Command:
-    command = clone(command)
-    command.y_min = y_min
-    command.y_max = y_max
-
-    return command
-
-def clone_z(command: Command, z_min: i64, z_max: i64) -> Command:
-    command = clone(command)
-    command.z_min = z_min
-    command.z_max = z_max
-
-    return command
-
 def get_input(filename: string) -> [Command]:
     commands: [Command] = []
 
@@ -88,6 +49,45 @@ def part_1(filename: string) -> i64:
                     count += 1
 
     return count
+
+class Command:
+    action: string
+    x_min: i64
+    x_max: i64
+    y_min: i64
+    y_max: i64
+    z_min: i64
+    z_max: i64
+
+def clone(command: Command) -> Command:
+    return Command(command.action,
+                   command.x_min,
+                   command.x_max,
+                   command.y_min,
+                   command.y_max,
+                   command.z_min,
+                   command.z_max)
+
+def clone_x(command: Command, x_min: i64, x_max: i64) -> Command:
+    command = clone(command)
+    command.x_min = x_min
+    command.x_max = x_max
+
+    return command
+
+def clone_y(command: Command, y_min: i64, y_max: i64) -> Command:
+    command = clone(command)
+    command.y_min = y_min
+    command.y_max = y_max
+
+    return command
+
+def clone_z(command: Command, z_min: i64, z_max: i64) -> Command:
+    command = clone(command)
+    command.z_min = z_min
+    command.z_max = z_max
+
+    return command
 
 def are_not_overlapping(cube_1: Command, cube_2: Command) -> bool:
     return (cube_1.x_max < cube_2.x_min
