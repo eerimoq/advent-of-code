@@ -1,5 +1,14 @@
 from os import TextFile
 
+class Command:
+    action: string
+    x_min: i64
+    x_max: i64
+    y_min: i64
+    y_max: i64
+    z_min: i64
+    z_max: i64
+
 def get_input(filename: string) -> [Command]:
     commands: [Command] = []
 
@@ -49,15 +58,6 @@ def part_1(filename: string) -> i64:
                     count += 1
 
     return count
-
-class Command:
-    action: string
-    x_min: i64
-    x_max: i64
-    y_min: i64
-    y_max: i64
-    z_min: i64
-    z_max: i64
 
 def clone(command: Command) -> Command:
     return Command(command.action,
