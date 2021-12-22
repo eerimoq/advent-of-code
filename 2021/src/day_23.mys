@@ -3,7 +3,7 @@ from os import TextFile
 def get_input(filename: string) -> [string]:
     lines: [string] = []
 
-    for line in TextFile(f"{__assets__}/day_22/{filename}").read().strip().split("\n"):
+    for line in TextFile(f"{__assets__}/day_23/{filename}").read().strip().split("\n"):
         lines.append(line)
 
     return lines
