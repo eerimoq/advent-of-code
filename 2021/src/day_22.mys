@@ -9,6 +9,36 @@ class Command:
     z_min: i64
     z_max: i64
 
+    def clone(self) -> Command:
+        return Command(self.action,
+                       self.x_min,
+                       self.x_max,
+                       self.y_min,
+                       self.y_max,
+                       self.z_min,
+                       self.z_max)
+
+    def clone_x(self, x_min: i64, x_max: i64) -> Command:
+        command = self.clone()
+        command.x_min = x_min
+        command.x_max = x_max
+
+        return command
+
+    def clone_y(self, y_min: i64, y_max: i64) -> Command:
+        command = self.clone()
+        command.y_min = y_min
+        command.y_max = y_max
+
+        return command
+
+    def clone_z(self, z_min: i64, z_max: i64) -> Command:
+        command = self.clone()
+        command.z_min = z_min
+        command.z_max = z_max
+
+        return command
+
 def get_input(filename: string) -> [Command]:
     commands: [Command] = []
 
@@ -59,36 +89,6 @@ def part_1(filename: string) -> i64:
 
     return count
 
-def clone(command: Command) -> Command:
-    return Command(command.action,
-                   command.x_min,
-                   command.x_max,
-                   command.y_min,
-                   command.y_max,
-                   command.z_min,
-                   command.z_max)
-
-def clone_x(command: Command, x_min: i64, x_max: i64) -> Command:
-    command = clone(command)
-    command.x_min = x_min
-    command.x_max = x_max
-
-    return command
-
-def clone_y(command: Command, y_min: i64, y_max: i64) -> Command:
-    command = clone(command)
-    command.y_min = y_min
-    command.y_max = y_max
-
-    return command
-
-def clone_z(command: Command, z_min: i64, z_max: i64) -> Command:
-    command = clone(command)
-    command.z_min = z_min
-    command.z_max = z_max
-
-    return command
-
 def are_not_overlapping(cube_1: Command, cube_2: Command) -> bool:
     return (cube_1.x_max < cube_2.x_min
             or cube_1.x_min > cube_2.x_max
@@ -106,15 +106,15 @@ def split_x(sub_cube: Command, cube: Command) -> [Command]:
     sub_cubes: [Command] = []
 
     if sub_cube.x_min < cube.x_min and sub_cube.x_max > cube.x_max:
-        sub_cubes.append(clone_x(sub_cube, sub_cube.x_min, cube.x_min - 1))
-        sub_cubes.append(clone_x(sub_cube, cube.x_min, cube.x_max))
-        sub_cubes.append(clone_x(sub_cube, cube.x_max + 1, sub_cube.x_max))
+        sub_cubes.append(sub_cube.clone_x(sub_cube.x_min, cube.x_min - 1))
+        sub_cubes.append(sub_cube.clone_x(cube.x_min, cube.x_max))
+        sub_cubes.append(sub_cube.clone_x(cube.x_max + 1, sub_cube.x_max))
     elif sub_cube.x_min < cube.x_min:
-        sub_cubes.append(clone_x(sub_cube, sub_cube.x_min, cube.x_min - 1))
-        sub_cubes.append(clone_x(sub_cube, cube.x_min, sub_cube.x_max))
+        sub_cubes.append(sub_cube.clone_x(sub_cube.x_min, cube.x_min - 1))
+        sub_cubes.append(sub_cube.clone_x(cube.x_min, sub_cube.x_max))
     elif sub_cube.x_max > cube.x_max:
-        sub_cubes.append(clone_x(sub_cube, sub_cube.x_min, cube.x_max))
-        sub_cubes.append(clone_x(sub_cube, cube.x_max + 1, sub_cube.x_max))
+        sub_cubes.append(sub_cube.clone_x(sub_cube.x_min, cube.x_max))
+        sub_cubes.append(sub_cube.clone_x(cube.x_max + 1, sub_cube.x_max))
     else:
         sub_cubes.append(sub_cube)
 
@@ -125,15 +125,15 @@ def split_y(sub_cubes: [Command], cube: Command) -> [Command]:
 
     for sub_cube in sub_cubes:
         if sub_cube.y_min < cube.y_min and sub_cube.y_max > cube.y_max:
-            new_sub_cubes.append(clone_y(sub_cube, sub_cube.y_min, cube.y_min - 1))
-            new_sub_cubes.append(clone_y(sub_cube, cube.y_min, cube.y_max))
-            new_sub_cubes.append(clone_y(sub_cube, cube.y_max + 1, sub_cube.y_max))
+            new_sub_cubes.append(sub_cube.clone_y(sub_cube.y_min, cube.y_min - 1))
+            new_sub_cubes.append(sub_cube.clone_y(cube.y_min, cube.y_max))
+            new_sub_cubes.append(sub_cube.clone_y(cube.y_max + 1, sub_cube.y_max))
         elif sub_cube.y_min < cube.y_min:
-            new_sub_cubes.append(clone_y(sub_cube, sub_cube.y_min, cube.y_min - 1))
-            new_sub_cubes.append(clone_y(sub_cube, cube.y_min, sub_cube.y_max))
+            new_sub_cubes.append(sub_cube.clone_y(sub_cube.y_min, cube.y_min - 1))
+            new_sub_cubes.append(sub_cube.clone_y(cube.y_min, sub_cube.y_max))
         elif sub_cube.y_max > cube.y_max:
-            new_sub_cubes.append(clone_y(sub_cube, sub_cube.y_min, cube.y_max))
-            new_sub_cubes.append(clone_y(sub_cube, cube.y_max + 1, sub_cube.y_max))
+            new_sub_cubes.append(sub_cube.clone_y(sub_cube.y_min, cube.y_max))
+            new_sub_cubes.append(sub_cube.clone_y(cube.y_max + 1, sub_cube.y_max))
         else:
             new_sub_cubes.append(sub_cube)
 
@@ -144,15 +144,15 @@ def split_z(sub_cubes: [Command], cube: Command) -> [Command]:
 
     for sub_cube in sub_cubes:
         if sub_cube.z_min < cube.z_min and sub_cube.z_max > cube.z_max:
-            new_sub_cubes.append(clone_z(sub_cube, sub_cube.z_min, cube.z_min - 1))
-            new_sub_cubes.append(clone_z(sub_cube, cube.z_min, cube.z_max))
-            new_sub_cubes.append(clone_z(sub_cube, cube.z_max + 1, sub_cube.z_max))
+            new_sub_cubes.append(sub_cube.clone_z(sub_cube.z_min, cube.z_min - 1))
+            new_sub_cubes.append(sub_cube.clone_z(cube.z_min, cube.z_max))
+            new_sub_cubes.append(sub_cube.clone_z(cube.z_max + 1, sub_cube.z_max))
         elif sub_cube.z_min < cube.z_min:
-            new_sub_cubes.append(clone_z(sub_cube, sub_cube.z_min, cube.z_min - 1))
-            new_sub_cubes.append(clone_z(sub_cube, cube.z_min, sub_cube.z_max))
+            new_sub_cubes.append(sub_cube.clone_z(sub_cube.z_min, cube.z_min - 1))
+            new_sub_cubes.append(sub_cube.clone_z(cube.z_min, sub_cube.z_max))
         elif sub_cube.z_max > cube.z_max:
-            new_sub_cubes.append(clone_z(sub_cube, sub_cube.z_min, cube.z_max))
-            new_sub_cubes.append(clone_z(sub_cube, cube.z_max + 1, sub_cube.z_max))
+            new_sub_cubes.append(sub_cube.clone_z(sub_cube.z_min, cube.z_max))
+            new_sub_cubes.append(sub_cube.clone_z(cube.z_max + 1, sub_cube.z_max))
         else:
             new_sub_cubes.append(sub_cube)
 
