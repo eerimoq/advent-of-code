@@ -1,28 +1,67 @@
-from os import TextFile
+# Manually solved.
 
-def get_input(filename: string) -> [string]:
-    lines: [string] = []
+A: i64 = 1
+B: i64 = 10
+C: i64 = 100
+D: i64 = 1000
 
-    for line in TextFile(f"{__assets__}/day_23/{filename}").read().strip().split("\n"):
-        lines.append(line)
+# #############
+# #...........#
+# ###D#A#C#D###
+#   #C#A#B#B#
+#   #########
+def part_1() -> i64:
+    return (5 * A
+            + 5 * A
+            + 2 * D
+            + 8 * B
+            + 3 * D
+            + 8 * D
+            + 2 * C
+            + 5 * B
+            + 3 * C
+            + 7 * C
+            + 3 * A
+            + 3 * A)
 
-    return lines
-
-def part_1(filename: string) -> i64:
-    lines = get_input(filename)
-
-    return 0
-
-def part_2(filename: string) -> i64:
-    lines = get_input(filename)
-
-    return 0
+# #############
+# #...........#
+# ###D#A#C#D###
+#   #D#C#B#A#
+#   #D#B#A#C#
+#   #C#A#B#B#
+#   #########
+def part_2() -> i64:
+    return (7 * A
+            + 7 * C
+            + 4 * B
+            + 8 * A
+            + 5 * B
+            + 2 * C
+            + 7 * B
+            + 8 * A
+            + 8 * B
+            + 5 * C
+            + 6 * C
+            + 6 * D
+            + 3 * A
+            + 7 * C
+            + 9 * B
+            + 9 * D
+            + 10 * D
+            + 10 * D
+            + 10 * D
+            + 9 * C
+            + 5 * A
+            + 5 * A
+            + 9 * A
+            + 9 * A)
 
 def day_23():
-    print(part_1("input.txt"))
-    print(part_2("input.txt"))
+    print(part_1())
+    print(part_2())
 
 @test
 def test_all():
-    assert part_1("example.txt") == 0
-    assert part_2("example.txt") == 0
+    assert part_1() == 14346
+    assert part_2() == 48984
