@@ -1,0 +1,64 @@
+from os import TextFile
+
+def get_input(filename: string) -> [[char]]:
+    map: [[char]] = []
+
+    for line in TextFile(f"{__assets__}/day_25/{filename}").read().strip().split("\n"):
+        row: [char] = []
+
+        for ch in line:
+            row.append(ch)
+
+        map.append(row)
+
+    return map
+
+def step_once(map: [[char]]) -> bool:
+    height = i64(len(map))
+    width = i64(len(map[0]))
+    moved = False
+
+    for r in range(height):
+        can_move_east: [i64] = []
+
+        for c in range(width):
+            if map[r][c] == '>' and map[r][(c + 1) % width] == '.':
+                can_move_east.append(c)
+
+        for c in can_move_east:
+            map[r][c] = '.'
+            map[r][(c + 1) % width] = '>'
+            moved = True
+
+    for c in range(width):
+        can_move_south: [i64] = []
+
+        for r in range(height):
+            if map[r][c] == 'v' and map[(r + 1) % height][c] == '.':
+                can_move_south.append(r)
+
+        for r in can_move_south:
+            map[r][c] = '.'
+            map[(r + 1) % height][c] = 'v'
+            moved = True
+
+    return moved
+
+def part_1(filename: string) -> i64:
+    map = get_input(filename)
+    step = 0
+
+    while True:
+        step += 1
+
+        if not step_once(map):
+            break
+
+    return step
+
+def day_25():
+    print(part_1("input.txt"))
+
+@test
+def test_all():
+    assert part_1("example.txt") == 58
