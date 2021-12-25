@@ -158,7 +158,7 @@ def run(z: i64,
                         else:
                             z = 0
             case _:
-                raise NotImplementedError("Bad instruction.")
+                raise UnreachableError("Bad instruction.")
 
     return z
 

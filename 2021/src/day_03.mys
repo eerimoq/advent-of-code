@@ -46,7 +46,7 @@ def calc_oxygen_generator_rating(report: [string]) -> i64:
         if len(report) == 1:
             return i64(report[0], 2)
 
-    raise NotImplementedError()
+    raise UnreachableError()
 
 def calc_co2_scrubber_rating(report: [string]) -> i64:
     for index in range(i64(len(report[0]))):
@@ -61,7 +61,7 @@ def calc_co2_scrubber_rating(report: [string]) -> i64:
         if len(report) == 1:
             return i64(report[0], 2)
 
-    raise NotImplementedError()
+    raise UnreachableError()
 
 def part_2(filename: string) -> i64:
     report = get_input(filename)

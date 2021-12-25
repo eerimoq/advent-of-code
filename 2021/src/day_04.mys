@@ -62,7 +62,7 @@ def part_1(filename: string) -> i64:
             if has_bingo(mark):
                 return calc_unmarked_numbers(board, mark) * number
 
-    raise NotImplementedError("No bingo")
+    raise UnreachableError("No bingo")
 
 def part_2(filename: string) -> i64:
     numbers, boards = get_input(filename)
@@ -82,7 +82,7 @@ def part_2(filename: string) -> i64:
                 if len(boards_with_bingo) == len(boards):
                     return calc_unmarked_numbers(board, mark) * number
 
-    raise NotImplementedError("No bingo")
+    raise UnreachableError("No bingo")
 
 def day_04():
     print(part_1("input.txt"))

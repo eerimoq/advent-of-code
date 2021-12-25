@@ -86,7 +86,7 @@ def part_2(filename: string) -> i64:
         if flashes == 100:
             return step + 1
 
-    raise NotImplementedError("Never.")
+    raise UnreachableError("Never.")
 
 def day_11():
     print(part_1("input.txt"))
