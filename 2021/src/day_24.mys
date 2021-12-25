@@ -1,18 +1,50 @@
 from os import TextFile
 
-def get_input(filename: string) -> [[(string, string, string)]]:
-    instruction_groups: [[(string, string, string)]] = []
-    instructions: [(string, string, string)] = None
+@enum
+class Op:
+    Inp
+    Add
+    Mul
+    Div
+    Mod
+    Eql
+
+class Instruction:
+    op: Op
+    v1: char
+    v2_1: char
+    v2_2: i64
+
+def get_input(filename: string) -> [[Instruction]]:
+    instruction_groups: [[Instruction]] = []
+    instructions: [Instruction] = None
 
     for line in TextFile(f"{__assets__}/day_24/{filename}").read().strip().split("\n"):
         parts = line.split(' ')
 
-        if len(parts) == 2:
-            instruction = (parts[0], parts[1], "")
-        else:
-            instruction = (parts[0], parts[1], parts[2])
+        match parts[0]:
+            case "inp":
+                op = Op.Inp
+            case "add":
+                op = Op.Add
+            case "mul":
+                op = Op.Mul
+            case "div":
+                op = Op.Div
+            case "mod":
+                op = Op.Mod
+            case "eql":
+                op = Op.Eql
 
-        if instruction[0] == "inp":
+        if len(parts) == 2:
+            instruction = Instruction(op, parts[1][0], '', 0)
+        else:
+            if parts[2][0] in "wxyz":
+                instruction = Instruction(op, parts[1][0], parts[2][0], 0)
+            else:
+                instruction = Instruction(op, parts[1][0], '', i64(parts[2]))
+
+        if instruction.op == Op.Inp:
             if instructions is not None:
                 instruction_groups.append(instructions)
 
@@ -24,91 +56,91 @@ def get_input(filename: string) -> [[(string, string, string)]]:
 
     return instruction_groups
 
-def get(v: string, w: i64, x: i64, y: i64, z: i64) -> i64:
-    match v:
-        case "w":
+def get(ch: char, v: i64, w: i64, x: i64, y: i64, z: i64) -> i64:
+    match ch:
+        case 'w':
             b = w
-        case "x":
+        case 'x':
             b = x
-        case "y":
+        case 'y':
             b = y
-        case "z":
+        case 'z':
             b = z
         case _:
-            b = i64(v)
+            b = v
 
     return b
 
 def run(z: i64,
-        instructions: [(string, string, string)],
+        instructions: [Instruction],
         input: i64) -> i64:
     w = 0
     x = 0
     y = 0
 
-    for op, v1, v2 in instructions:
-        match op:
-            case "inp":
+    for instruction in instructions:
+        match instruction.op:
+            case Op.Inp:
                 w = input
-            case "add":
-                b = get(v2, w, x, y, z)
+            case Op.Add:
+                b = get(instruction.v2_1, instruction.v2_2, w, x, y, z)
 
-                match v1:
-                    case "w":
+                match instruction.v1:
+                    case 'w':
                         w += b
-                    case "x":
+                    case 'x':
                         x += b
-                    case "y":
+                    case 'y':
                         y += b
-                    case "z":
+                    case 'z':
                         z += b
-            case "mul":
-                b = get(v2, w, x, y, z)
+            case Op.Mul:
+                b = get(instruction.v2_1, instruction.v2_2, w, x, y, z)
 
-                match v1:
-                    case "w":
+                match instruction.v1:
+                    case 'w':
                         w *= b
-                    case "x":
+                    case 'x':
                         x *= b
-                    case "y":
+                    case 'y':
                         y *= b
-                    case "z":
+                    case 'z':
                         z *= b
-            case "div":
-                b = get(v2, w, x, y, z)
+            case Op.Div:
+                b = get(instruction.v2_1, instruction.v2_2, w, x, y, z)
 
-                match v1:
-                    case "w":
+                match instruction.v1:
+                    case 'w':
                         w /= b
-                    case "x":
+                    case 'x':
                         x /= b
-                    case "y":
+                    case 'y':
                         y /= b
-                    case "z":
+                    case 'z':
                         z /= b
-            case "mod":
-                b = get(v2, w, x, y, z)
+            case Op.Mod:
+                b = get(instruction.v2_1, instruction.v2_2, w, x, y, z)
 
-                match v1:
-                    case "w":
+                match instruction.v1:
+                    case 'w':
                         w %= b
-                    case "x":
+                    case 'x':
                         x %= b
-                    case "y":
+                    case 'y':
                         y %= b
-                    case "z":
+                    case 'z':
                         z %= b
-            case "eql":
-                b = get(v2, w, x, y, z)
+            case Op.Eql:
+                b = get(instruction.v2_1, instruction.v2_2, w, x, y, z)
 
-                match v1:
-                    case "w":
+                match instruction.v1:
+                    case 'w':
                         w = 1 if w == b else 0
-                    case "x":
+                    case 'x':
                         x = 1 if x == b else 0
-                    case "y":
+                    case 'y':
                         y = 1 if y == b else 0
-                    case "z":
+                    case 'z':
                         z = 1 if z == b else 0
             case _:
                 raise UnreachableError("Bad instruction.")
