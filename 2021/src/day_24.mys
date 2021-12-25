@@ -1,17 +1,340 @@
 from os import TextFile
 
-def get_input(filename: string) -> [string]:
-    lines: [string] = []
+def get_input(filename: string) -> [[(string, string, string)]]:
+    instruction_groups: [[(string, string, string)]] = []
+    instructions: [(string, string, string)] = None
 
-    for line in TextFile(f"{__assets__}/day_22/{filename}").read().strip().split("\n"):
-        lines.append(line)
+    for line in TextFile(f"{__assets__}/day_24/{filename}").read().strip().split("\n"):
+        parts = line.split(' ')
 
-    return lines
+        if len(parts) == 2:
+            instruction = (parts[0], parts[1], "")
+        else:
+            instruction = (parts[0], parts[1], parts[2])
+
+        if instruction[0] == "inp":
+            if instructions is not None:
+                instruction_groups.append(instructions)
+
+            instructions = []
+
+        instructions.append(instruction)
+
+    instruction_groups.append(instructions)
+
+    return instruction_groups
+
+def pack_state(state: (i64, i64, i64, i64)) -> i64:
+    w, x, y, z = state
+
+    if w < 0 or w > 0x2ff:
+        print("w", w)
+        raise NotImplementedError("bad w")
+    if x < 0 or x > 0x2ff:
+        print("x", x)
+        raise NotImplementedError("bad x")
+    if y < 0 or y > 0x2ff:
+        print("y", y)
+        raise NotImplementedError("bad y")
+    if z < 0 or z > 0xffffffff:
+        print("z", z)
+        raise NotImplementedError("bad z")
+    
+    return (((w & 0x2ff) << 52)
+            + ((x & 0x2ff) << 42)
+            + ((y & 0x2ff) << 32)
+            + (z & 0xffffffff))
+
+def unpack_state(v: i64) -> (i64, i64, i64, i64):
+    w = (v >> 52) & 0x2ff
+    x = (v >> 42) & 0x2ff
+    y = (v >> 32) & 0x2ff
+    z = (v >> 0) & 0xffffffff
+
+    return (w, x, y, z)
+
+def run(w: i64,
+        x: i64,
+        y: i64,
+        z: i64,
+        instruction_groups: [[(string, string, string)]],
+        depth: i64,
+        model_number_digit: i64) -> (i64, i64, i64, i64):
+    for op, v1, v2 in instruction_groups[depth]:
+        match op:
+            case "inp":
+                v = model_number_digit
+
+                match v1:
+                    case "w":
+                        w = v
+                    case "x":
+                        x = v
+                    case "y":
+                        y = v
+                    case "z":
+                        z = v
+            case "add":
+                match v2:
+                    case "w":
+                        b = w
+                    case "x":
+                        b = x
+                    case "y":
+                        b = y
+                    case "z":
+                        b = z
+                    case _:
+                        b = i64(v2)
+
+                match v1:
+                    case "w":
+                        w += b
+                    case "x":
+                        x += b
+                    case "y":
+                        y += b
+                    case "z":
+                        z += b
+            case "mul":
+                match v2:
+                    case "w":
+                        b = w
+                    case "x":
+                        b = x
+                    case "y":
+                        b = y
+                    case "z":
+                        b = z
+                    case _:
+                        b = i64(v2)
+
+                match v1:
+                    case "w":
+                        w *= b
+                    case "x":
+                        x *= b
+                    case "y":
+                        y *= b
+                    case "z":
+                        z *= b
+            case "div":
+                match v2:
+                    case "w":
+                        b = w
+                    case "x":
+                        b = x
+                    case "y":
+                        b = y
+                    case "z":
+                        b = z
+                    case _:
+                        b = i64(v2)
+
+                match v1:
+                    case "w":
+                        w /= b
+                    case "x":
+                        x /= b
+                    case "y":
+                        y /= b
+                    case "z":
+                        z /= b
+            case "mod":
+                match v2:
+                    case "w":
+                        b = w
+                    case "x":
+                        b = x
+                    case "y":
+                        b = y
+                    case "z":
+                        b = z
+                    case _:
+                        b = i64(v2)
+
+                match v1:
+                    case "w":
+                        w %= b
+                    case "x":
+                        x %= b
+                    case "y":
+                        y %= b
+                    case "z":
+                        z %= b
+            case "eql":
+                match v2:
+                    case "w":
+                        b = w
+                    case "x":
+                        b = x
+                    case "y":
+                        b = y
+                    case "z":
+                        b = z
+                    case _:
+                        b = i64(v2)
+
+                match v1:
+                    case "w":
+                        if w == b:
+                            w = 1
+                        else:
+                            w = 0
+                    case "x":
+                        if x == b:
+                            x = 1
+                        else:
+                            x = 0
+                    case "y":
+                        if y == b:
+                            y = 1
+                        else:
+                            y = 0
+                    case "z":
+                        if z == b:
+                            z = 1
+                        else:
+                            z = 0
+            case _:
+                raise NotImplementedError("Bad instruction.")
+
+    return w, x, y, z
 
 def part_1(filename: string) -> i64:
-    lines = get_input(filename)
+    instruction_groups = get_input(filename)
+    states_1: {i64: i64} = {}
 
-    return 0
+    for digit in range(1, 10):
+        state = pack_state(run(0, 0, 0, 0, instruction_groups, 0, digit))
+        states_1[state] = digit
+
+    print(len(states_1))
+    states_2: {i64: i64} = {}
+
+    for digit in range(1, 10):
+        for v, m in states_1:
+            w, x, y, z = unpack_state(v)
+            state = pack_state(run(w, x, y, z, instruction_groups, 1, digit))
+            states_2[state] = min(m * 10 + digit, states_2.get(state, 999999999999999))
+
+    print(len(states_2))
+    states_1 = {}
+
+    for digit in range(1, 10):
+        for v, m in states_2:
+            w, x, y, z = unpack_state(v)
+            state = pack_state(run(w, x, y, z, instruction_groups, 2, digit))
+            states_1[state] = min(m * 10 + digit, states_1.get(state, 999999999999999))
+
+    print(len(states_1))
+    states_2 = {}
+
+    for digit in range(1, 10):
+        for v, m in states_1:
+            w, x, y, z = unpack_state(v)
+            state = pack_state(run(w, x, y, z, instruction_groups, 3, digit))
+            states_2[state] = min(m * 10 + digit, states_2.get(state, 999999999999999))
+
+    print(len(states_2))
+    states_1 = {}
+
+    for digit in range(1, 10):
+        for v, m in states_2:
+            w, x, y, z = unpack_state(v)
+            state = pack_state(run(w, x, y, z, instruction_groups, 4, digit))
+            states_1[state] = min(m * 10 + digit, states_1.get(state, 999999999999999))
+
+    print(len(states_1))
+    states_2 = {}
+
+    for digit in range(1, 10):
+        for v, m in states_1:
+            w, x, y, z = unpack_state(v)
+            state = pack_state(run(w, x, y, z, instruction_groups, 5, digit))
+            states_2[state] = min(m * 10 + digit, states_2.get(state, 999999999999999))
+
+    print(len(states_2))
+    states_1 = {}
+
+    for digit in range(1, 10):
+        for v, m in states_2:
+            w, x, y, z = unpack_state(v)
+            state = pack_state(run(w, x, y, z, instruction_groups, 6, digit))
+            states_1[state] = min(m * 10 + digit, states_1.get(state, 999999999999999))
+
+    print(len(states_1))
+    states_2 = {}
+
+    for digit in range(1, 10):
+        for v, m in states_1:
+            w, x, y, z = unpack_state(v)
+            state = pack_state(run(w, x, y, z, instruction_groups, 7, digit))
+            states_2[state] = min(m * 10 + digit, states_2.get(state, 999999999999999))
+
+    print(len(states_2))
+    states_1 = {}
+
+    for digit in range(1, 10):
+        for v, m in states_2:
+            w, x, y, z = unpack_state(v)
+            state = pack_state(run(w, x, y, z, instruction_groups, 8, digit))
+            states_1[state] = min(m * 10 + digit, states_1.get(state, 999999999999999))
+
+    print(len(states_1))
+    states_2 = {}
+
+    for digit in range(1, 10):
+        for v, m in states_1:
+            w, x, y, z = unpack_state(v)
+            state = pack_state(run(w, x, y, z, instruction_groups, 9, digit))
+            states_2[state] = min(m * 10 + digit, states_2.get(state, 999999999999999))
+
+    print(len(states_2))
+    states_1 = {}
+
+    for digit in range(1, 10):
+        for v, m in states_2:
+            w, x, y, z = unpack_state(v)
+            state = pack_state(run(w, x, y, z, instruction_groups, 10, digit))
+            states_1[state] = min(m * 10 + digit, states_1.get(state, 999999999999999))
+
+    print(len(states_1))
+    states_2 = {}
+
+    for digit in range(1, 10):
+        for v, m in states_1:
+            w, x, y, z = unpack_state(v)
+            state = pack_state(run(w, x, y, z, instruction_groups, 11, digit))
+            states_2[state] = min(m * 10 + digit, states_2.get(state, 999999999999999))
+
+    print(len(states_2))
+    states_1 = {}
+
+    for digit in range(1, 10):
+        for v, m in states_2:
+            w, x, y, z = unpack_state(v)
+            state = pack_state(run(w, x, y, z, instruction_groups, 12, digit))
+            states_1[state] = min(m * 10 + digit, states_1.get(state, 999999999999999))
+
+    print(len(states_1))
+    states_2 = {}
+
+    for digit in range(1, 10):
+        for v, m in states_1:
+            w, x, y, z = unpack_state(v)
+            state = pack_state(run(w, x, y, z, instruction_groups, 13, digit))
+            states_2[state] = min(m * 10 + digit, states_2.get(state, 999999999999999))
+
+    print(len(states_2))
+
+    for v, m in states_2:
+        _, _, _, z = unpack_state(v)
+        
+        if z == 0:
+            print("z == 0", m)
+
+    raise NotImplementedError("No model number found.")
 
 def part_2(filename: string) -> i64:
     lines = get_input(filename)
@@ -20,9 +343,4 @@ def part_2(filename: string) -> i64:
 
 def day_24():
     print(part_1("input.txt"))
-    print(part_2("input.txt"))
-
-@test
-def test_all():
-    assert part_1("example.txt") == 0
-    assert part_2("example.txt") == 0
+    #print(part_2("input.txt"))
