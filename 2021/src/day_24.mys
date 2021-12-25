@@ -115,7 +115,32 @@ def run(z: i64,
 
     return z
 
-def part_1(filename: string) -> i64:
+@trait
+class Algoritm:
+
+    def compare(self, model_number_1: i64, model_number_2: i64) -> i64:
+        pass
+
+    def result(self, model_numbers: [i64]) -> i64:
+        pass
+
+class Minimum(Algoritm):
+
+    def compare(self, model_number_1: i64, model_number_2: i64) -> i64:
+        return min(model_number_1, model_number_2)
+
+    def result(self, model_numbers: [i64]) -> i64:
+        return min(model_numbers)
+
+class Maximum(Algoritm):
+
+    def compare(self, model_number_1: i64, model_number_2: i64) -> i64:
+        return max(model_number_1, model_number_2)
+
+    def result(self, model_numbers: [i64]) -> i64:
+        return max(model_numbers)
+
+def both_parts(filename: string, algoritm: Algoritm) -> i64:
     instruction_groups = get_input(filename)
     states_in = {0: 0}
     states_out: {i64: i64} = {}
@@ -125,29 +150,19 @@ def part_1(filename: string) -> i64:
             for z, model_number in states_in:
                 z = run(z, instruction_group, digit)
                 model_number = model_number * 10 + digit
-                states_out[z] = max(model_number, states_out.get(z, model_number))
+                states_out[z] = algoritm.compare(model_number,
+                                                 states_out.get(z, model_number))
 
         states_in = states_out
         states_out = {}
 
-    return max([model_number for z, model_number in states_in if z == 0])
+    return algoritm.result([model_number for z, model_number in states_in if z == 0])
+
+def part_1(filename: string) -> i64:
+    return both_parts(filename, Maximum())
 
 def part_2(filename: string) -> i64:
-    instruction_groups = get_input(filename)
-    states_in = {0: 0}
-    states_out: {i64: i64} = {}
-
-    for instruction_group in instruction_groups:
-        for digit in range(1, 10):
-            for z, model_number in states_in:
-                z = run(z, instruction_group, digit)
-                model_number = model_number * 10 + digit
-                states_out[z] = min(model_number, states_out.get(z, model_number))
-
-        states_in = states_out
-        states_out = {}
-
-    return min([model_number for z, model_number in states_in if z == 0])
+    return both_parts(filename, Minimum())
 
 def day_24():
     print(part_1("input.txt"))
