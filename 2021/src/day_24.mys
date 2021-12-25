@@ -24,9 +24,24 @@ def get_input(filename: string) -> [[(string, string, string)]]:
 
     return instruction_groups
 
+def get(v: string, w: i64, x: i64, y: i64, z: i64) -> i64:
+    match v:
+        case "w":
+            b = w
+        case "x":
+            b = x
+        case "y":
+            b = y
+        case "z":
+            b = z
+        case _:
+            b = i64(v)
+
+    return b
+
 def run(z: i64,
         instructions: [(string, string, string)],
-        model_number_digit: i64) -> i64:
+        input: i64) -> i64:
     w = 0
     x = 0
     y = 0
@@ -34,19 +49,9 @@ def run(z: i64,
     for op, v1, v2 in instructions:
         match op:
             case "inp":
-                w = model_number_digit
+                w = input
             case "add":
-                match v2:
-                    case "w":
-                        b = w
-                    case "x":
-                        b = x
-                    case "y":
-                        b = y
-                    case "z":
-                        b = z
-                    case _:
-                        b = i64(v2)
+                b = get(v2, w, x, y, z)
 
                 match v1:
                     case "w":
@@ -58,17 +63,7 @@ def run(z: i64,
                     case "z":
                         z += b
             case "mul":
-                match v2:
-                    case "w":
-                        b = w
-                    case "x":
-                        b = x
-                    case "y":
-                        b = y
-                    case "z":
-                        b = z
-                    case _:
-                        b = i64(v2)
+                b = get(v2, w, x, y, z)
 
                 match v1:
                     case "w":
@@ -80,17 +75,7 @@ def run(z: i64,
                     case "z":
                         z *= b
             case "div":
-                match v2:
-                    case "w":
-                        b = w
-                    case "x":
-                        b = x
-                    case "y":
-                        b = y
-                    case "z":
-                        b = z
-                    case _:
-                        b = i64(v2)
+                b = get(v2, w, x, y, z)
 
                 match v1:
                     case "w":
@@ -102,17 +87,7 @@ def run(z: i64,
                     case "z":
                         z /= b
             case "mod":
-                match v2:
-                    case "w":
-                        b = w
-                    case "x":
-                        b = x
-                    case "y":
-                        b = y
-                    case "z":
-                        b = z
-                    case _:
-                        b = i64(v2)
+                b = get(v2, w, x, y, z)
 
                 match v1:
                     case "w":
@@ -124,39 +99,17 @@ def run(z: i64,
                     case "z":
                         z %= b
             case "eql":
-                match v2:
-                    case "w":
-                        b = w
-                    case "x":
-                        b = x
-                    case "y":
-                        b = y
-                    case "z":
-                        b = z
-                    case _:
-                        b = i64(v2)
+                b = get(v2, w, x, y, z)
 
                 match v1:
                     case "w":
-                        if w == b:
-                            w = 1
-                        else:
-                            w = 0
+                        w = 1 if w == b else 0
                     case "x":
-                        if x == b:
-                            x = 1
-                        else:
-                            x = 0
+                        x = 1 if x == b else 0
                     case "y":
-                        if y == b:
-                            y = 1
-                        else:
-                            y = 0
+                        y = 1 if y == b else 0
                     case "z":
-                        if z == b:
-                            z = 1
-                        else:
-                            z = 0
+                        z = 1 if z == b else 0
             case _:
                 raise UnreachableError("Bad instruction.")
 
