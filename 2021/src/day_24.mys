@@ -24,56 +24,17 @@ def get_input(filename: string) -> [[(string, string, string)]]:
 
     return instruction_groups
 
-def pack_state(state: (i64, i64, i64, i64)) -> i64:
-    w, x, y, z = state
+def run(z: i64,
+        instructions: [(string, string, string)],
+        model_number_digit: i64) -> i64:
+    w = 0
+    x = 0
+    y = 0
 
-    if w < 0 or w > 0x2ff:
-        print("w", w)
-        raise NotImplementedError("bad w")
-    if x < 0 or x > 0x2ff:
-        print("x", x)
-        raise NotImplementedError("bad x")
-    if y < 0 or y > 0x2ff:
-        print("y", y)
-        raise NotImplementedError("bad y")
-    if z < 0 or z > 0xffffffff:
-        print("z", z)
-        raise NotImplementedError("bad z")
-    
-    return (((w & 0x2ff) << 52)
-            + ((x & 0x2ff) << 42)
-            + ((y & 0x2ff) << 32)
-            + (z & 0xffffffff))
-
-def unpack_state(v: i64) -> (i64, i64, i64, i64):
-    w = (v >> 52) & 0x2ff
-    x = (v >> 42) & 0x2ff
-    y = (v >> 32) & 0x2ff
-    z = (v >> 0) & 0xffffffff
-
-    return (w, x, y, z)
-
-def run(w: i64,
-        x: i64,
-        y: i64,
-        z: i64,
-        instruction_groups: [[(string, string, string)]],
-        depth: i64,
-        model_number_digit: i64) -> (i64, i64, i64, i64):
-    for op, v1, v2 in instruction_groups[depth]:
+    for op, v1, v2 in instructions:
         match op:
             case "inp":
-                v = model_number_digit
-
-                match v1:
-                    case "w":
-                        w = v
-                    case "x":
-                        x = v
-                    case "y":
-                        y = v
-                    case "z":
-                        z = v
+                w = model_number_digit
             case "add":
                 match v2:
                     case "w":
@@ -199,148 +160,42 @@ def run(w: i64,
             case _:
                 raise NotImplementedError("Bad instruction.")
 
-    return w, x, y, z
+    return z
 
 def part_1(filename: string) -> i64:
     instruction_groups = get_input(filename)
-    states_1: {i64: i64} = {}
+    states_in = {0: 0}
+    states_out: {i64: i64} = {}
 
-    for digit in range(1, 10):
-        state = pack_state(run(0, 0, 0, 0, instruction_groups, 0, digit))
-        states_1[state] = digit
+    for instruction_group in instruction_groups:
+        for digit in range(1, 10):
+            for z, model_number in states_in:
+                z = run(z, instruction_group, digit)
+                model_number = model_number * 10 + digit
+                states_out[z] = max(model_number, states_out.get(z, model_number))
 
-    print(len(states_1))
-    states_2: {i64: i64} = {}
+        states_in = states_out
+        states_out = {}
 
-    for digit in range(1, 10):
-        for v, m in states_1:
-            w, x, y, z = unpack_state(v)
-            state = pack_state(run(w, x, y, z, instruction_groups, 1, digit))
-            states_2[state] = min(m * 10 + digit, states_2.get(state, 999999999999999))
-
-    print(len(states_2))
-    states_1 = {}
-
-    for digit in range(1, 10):
-        for v, m in states_2:
-            w, x, y, z = unpack_state(v)
-            state = pack_state(run(w, x, y, z, instruction_groups, 2, digit))
-            states_1[state] = min(m * 10 + digit, states_1.get(state, 999999999999999))
-
-    print(len(states_1))
-    states_2 = {}
-
-    for digit in range(1, 10):
-        for v, m in states_1:
-            w, x, y, z = unpack_state(v)
-            state = pack_state(run(w, x, y, z, instruction_groups, 3, digit))
-            states_2[state] = min(m * 10 + digit, states_2.get(state, 999999999999999))
-
-    print(len(states_2))
-    states_1 = {}
-
-    for digit in range(1, 10):
-        for v, m in states_2:
-            w, x, y, z = unpack_state(v)
-            state = pack_state(run(w, x, y, z, instruction_groups, 4, digit))
-            states_1[state] = min(m * 10 + digit, states_1.get(state, 999999999999999))
-
-    print(len(states_1))
-    states_2 = {}
-
-    for digit in range(1, 10):
-        for v, m in states_1:
-            w, x, y, z = unpack_state(v)
-            state = pack_state(run(w, x, y, z, instruction_groups, 5, digit))
-            states_2[state] = min(m * 10 + digit, states_2.get(state, 999999999999999))
-
-    print(len(states_2))
-    states_1 = {}
-
-    for digit in range(1, 10):
-        for v, m in states_2:
-            w, x, y, z = unpack_state(v)
-            state = pack_state(run(w, x, y, z, instruction_groups, 6, digit))
-            states_1[state] = min(m * 10 + digit, states_1.get(state, 999999999999999))
-
-    print(len(states_1))
-    states_2 = {}
-
-    for digit in range(1, 10):
-        for v, m in states_1:
-            w, x, y, z = unpack_state(v)
-            state = pack_state(run(w, x, y, z, instruction_groups, 7, digit))
-            states_2[state] = min(m * 10 + digit, states_2.get(state, 999999999999999))
-
-    print(len(states_2))
-    states_1 = {}
-
-    for digit in range(1, 10):
-        for v, m in states_2:
-            w, x, y, z = unpack_state(v)
-            state = pack_state(run(w, x, y, z, instruction_groups, 8, digit))
-            states_1[state] = min(m * 10 + digit, states_1.get(state, 999999999999999))
-
-    print(len(states_1))
-    states_2 = {}
-
-    for digit in range(1, 10):
-        for v, m in states_1:
-            w, x, y, z = unpack_state(v)
-            state = pack_state(run(w, x, y, z, instruction_groups, 9, digit))
-            states_2[state] = min(m * 10 + digit, states_2.get(state, 999999999999999))
-
-    print(len(states_2))
-    states_1 = {}
-
-    for digit in range(1, 10):
-        for v, m in states_2:
-            w, x, y, z = unpack_state(v)
-            state = pack_state(run(w, x, y, z, instruction_groups, 10, digit))
-            states_1[state] = min(m * 10 + digit, states_1.get(state, 999999999999999))
-
-    print(len(states_1))
-    states_2 = {}
-
-    for digit in range(1, 10):
-        for v, m in states_1:
-            w, x, y, z = unpack_state(v)
-            state = pack_state(run(w, x, y, z, instruction_groups, 11, digit))
-            states_2[state] = min(m * 10 + digit, states_2.get(state, 999999999999999))
-
-    print(len(states_2))
-    states_1 = {}
-
-    for digit in range(1, 10):
-        for v, m in states_2:
-            w, x, y, z = unpack_state(v)
-            state = pack_state(run(w, x, y, z, instruction_groups, 12, digit))
-            states_1[state] = min(m * 10 + digit, states_1.get(state, 999999999999999))
-
-    print(len(states_1))
-    states_2 = {}
-
-    for digit in range(1, 10):
-        for v, m in states_1:
-            w, x, y, z = unpack_state(v)
-            state = pack_state(run(w, x, y, z, instruction_groups, 13, digit))
-            states_2[state] = min(m * 10 + digit, states_2.get(state, 999999999999999))
-
-    print(len(states_2))
-
-    for v, m in states_2:
-        _, _, _, z = unpack_state(v)
-        
-        if z == 0:
-            print("z == 0", m)
-
-    raise NotImplementedError("No model number found.")
+    return max([model_number for z, model_number in states_in if z == 0])
 
 def part_2(filename: string) -> i64:
-    lines = get_input(filename)
+    instruction_groups = get_input(filename)
+    states_in = {0: 0}
+    states_out: {i64: i64} = {}
 
-    return 0
+    for instruction_group in instruction_groups:
+        for digit in range(1, 10):
+            for z, model_number in states_in:
+                z = run(z, instruction_group, digit)
+                model_number = model_number * 10 + digit
+                states_out[z] = min(model_number, states_out.get(z, model_number))
+
+        states_in = states_out
+        states_out = {}
+
+    return min([model_number for z, model_number in states_in if z == 0])
 
 def day_24():
     print(part_1("input.txt"))
-    #print(part_2("input.txt"))
+    print(part_2("input.txt"))
