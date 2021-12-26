@@ -1,149 +1,391 @@
 from os import TextFile
 
-@enum
-class Op:
-    Inp
-    Add
-    Mul
-    Div
-    Mod
-    Eql
+@trait
+class Code:
 
-class Instruction:
-    op: Op
-    v1: char
-    v2_1: char
-    v2_2: i64
+    def run(self, w: i64, z: i64) -> i64:
+        pass
 
-def get_input(filename: string) -> [[Instruction]]:
-    instruction_groups: [[Instruction]] = []
-    instructions: [Instruction] = None
+class Code1(Code):
 
-    for line in TextFile(f"{__assets__}/day_24/{filename}").read().strip().split("\n"):
-        parts = line.split(' ')
+    def run(self, w: i64, z: i64) -> i64:
+        x = 0
+        y = 0
 
-        match parts[0]:
-            case "inp":
-                op = Op.Inp
-            case "add":
-                op = Op.Add
-            case "mul":
-                op = Op.Mul
-            case "div":
-                op = Op.Div
-            case "mod":
-                op = Op.Mod
-            case "eql":
-                op = Op.Eql
+        x *= 0
+        x += z
+        x %= 26
+        z /= 1
+        x += 12
+        x = 1 if w == x else 0
+        x = 1 if 0 == x else 0
+        y *= 0
+        y += 25
+        y *= x
+        y += 1
+        z *= y
+        y *= 0
+        y += w
+        y += 1
+        y *= x
+        z += y
 
-        if len(parts) == 2:
-            instruction = Instruction(op, parts[1][0], '', 0)
-        else:
-            if parts[2][0] in "wxyz":
-                instruction = Instruction(op, parts[1][0], parts[2][0], 0)
-            else:
-                instruction = Instruction(op, parts[1][0], '', i64(parts[2]))
+        return z
 
-        if instruction.op == Op.Inp:
-            if instructions is not None:
-                instruction_groups.append(instructions)
+class Code2(Code):
 
-            instructions = []
+    def run(self, w: i64, z: i64) -> i64:
+        x = 0
+        y = 0
 
-        instructions.append(instruction)
+        x *= 0
+        x += z
+        x %= 26
+        z /= 1
+        x += 12
+        x = 1 if w == x else 0
+        x = 1 if 0 == x else 0
+        y *= 0
+        y += 25
+        y *= x
+        y += 1
+        z *= y
+        y *= 0
+        y += w
+        y += 1
+        y *= x
+        z += y
 
-    instruction_groups.append(instructions)
+        return z
 
-    return instruction_groups
+class Code3(Code):
 
-def get(v_1: char, v_2: i64, w: i64, x: i64, y: i64, z: i64) -> i64:
-    match v_1:
-        case 'w':
-            b = w
-        case 'x':
-            b = x
-        case 'y':
-            b = y
-        case 'z':
-            b = z
-        case _:
-            b = v_2
+    def run(self, w: i64, z: i64) -> i64:
+        x = 0
+        y = 0
 
-    return b
+        x *= 0
+        x += z
+        x %= 26
+        z /= 1
+        x += 15
+        x = 1 if w == x else 0
+        x = 1 if 0 == x else 0
+        y *= 0
+        y += 25
+        y *= x
+        y += 1
+        z *= y
+        y *= 0
+        y += w
+        y += 16
+        y *= x
+        z += y
 
-def run(z: i64, instructions: [Instruction], input: i64) -> i64:
-    w = 0
-    x = 0
-    y = 0
+        return z
 
-    for instruction in instructions:
-        match instruction.op:
-            case Op.Inp:
-                w = input
-            case Op.Add:
-                b = get(instruction.v2_1, instruction.v2_2, w, x, y, z)
+class Code4(Code):
 
-                match instruction.v1:
-                    case 'w':
-                        w += b
-                    case 'x':
-                        x += b
-                    case 'y':
-                        y += b
-                    case 'z':
-                        z += b
-            case Op.Mul:
-                b = get(instruction.v2_1, instruction.v2_2, w, x, y, z)
+    def run(self, w: i64, z: i64) -> i64:
+        x = 0
+        y = 0
 
-                match instruction.v1:
-                    case 'w':
-                        w *= b
-                    case 'x':
-                        x *= b
-                    case 'y':
-                        y *= b
-                    case 'z':
-                        z *= b
-            case Op.Div:
-                b = get(instruction.v2_1, instruction.v2_2, w, x, y, z)
+        x *= 0
+        x += z
+        x %= 26
+        z /= 26
+        x += -8
+        x = 1 if w == x else 0
+        x = 1 if 0 == x else 0
+        y *= 0
+        y += 25
+        y *= x
+        y += 1
+        z *= y
+        y *= 0
+        y += w
+        y += 5
+        y *= x
+        z += y
 
-                match instruction.v1:
-                    case 'w':
-                        w /= b
-                    case 'x':
-                        x /= b
-                    case 'y':
-                        y /= b
-                    case 'z':
-                        z /= b
-            case Op.Mod:
-                b = get(instruction.v2_1, instruction.v2_2, w, x, y, z)
+        return z
 
-                match instruction.v1:
-                    case 'w':
-                        w %= b
-                    case 'x':
-                        x %= b
-                    case 'y':
-                        y %= b
-                    case 'z':
-                        z %= b
-            case Op.Eql:
-                b = get(instruction.v2_1, instruction.v2_2, w, x, y, z)
+class Code5(Code):
 
-                match instruction.v1:
-                    case 'w':
-                        w = 1 if w == b else 0
-                    case 'x':
-                        x = 1 if x == b else 0
-                    case 'y':
-                        y = 1 if y == b else 0
-                    case 'z':
-                        z = 1 if z == b else 0
-            case _:
-                raise UnreachableError("Bad instruction.")
+    def run(self, w: i64, z: i64) -> i64:
+        x = 0
+        y = 0
 
-    return z
+        x *= 0
+        x += z
+        x %= 26
+        z /= 26
+        x += -4
+        x = 1 if w == x else 0
+        x = 1 if 0 == x else 0
+        y *= 0
+        y += 25
+        y *= x
+        y += 1
+        z *= y
+        y *= 0
+        y += w
+        y += 9
+        y *= x
+        z += y
+
+        return z
+
+class Code6(Code):
+
+    def run(self, w: i64, z: i64) -> i64:
+        x = 0
+        y = 0
+
+        x *= 0
+        x += z
+        x %= 26
+        z /= 1
+        x += 15
+        x = 1 if w == x else 0
+        x = 1 if 0 == x else 0
+        y *= 0
+        y += 25
+        y *= x
+        y += 1
+        z *= y
+        y *= 0
+        y += w
+        y += 3
+        y *= x
+        z += y
+
+        return z
+
+class Code7(Code):
+
+    def run(self, w: i64, z: i64) -> i64:
+        x = 0
+        y = 0
+
+        x *= 0
+        x += z
+        x %= 26
+        z /= 1
+        x += 14
+        x = 1 if w == x else 0
+        x = 1 if 0 == x else 0
+        y *= 0
+        y += 25
+        y *= x
+        y += 1
+        z *= y
+        y *= 0
+        y += w
+        y += 2
+        y *= x
+        z += y
+
+        return z
+
+class Code8(Code):
+
+    def run(self, w: i64, z: i64) -> i64:
+        x = 0
+        y = 0
+
+        x *= 0
+        x += z
+        x %= 26
+        z /= 1
+        x += 14
+        x = 1 if w == x else 0
+        x = 1 if 0 == x else 0
+        y *= 0
+        y += 25
+        y *= x
+        y += 1
+        z *= y
+        y *= 0
+        y += w
+        y += 15
+        y *= x
+        z += y
+
+        return z
+
+class Code9(Code):
+
+    def run(self, w: i64, z: i64) -> i64:
+        x = 0
+        y = 0
+
+        x *= 0
+        x += z
+        x %= 26
+        z /= 26
+        x += -13
+        x = 1 if w == x else 0
+        x = 1 if 0 == x else 0
+        y *= 0
+        y += 25
+        y *= x
+        y += 1
+        z *= y
+        y *= 0
+        y += w
+        y += 5
+        y *= x
+        z += y
+
+        return z
+
+class Code10(Code):
+
+    def run(self, w: i64, z: i64) -> i64:
+        x = 0
+        y = 0
+
+        x *= 0
+        x += z
+        x %= 26
+        z /= 26
+        x += -3
+        x = 1 if w == x else 0
+        x = 1 if 0 == x else 0
+        y *= 0
+        y += 25
+        y *= x
+        y += 1
+        z *= y
+        y *= 0
+        y += w
+        y += 11
+        y *= x
+        z += y
+
+        return z
+
+class Code11(Code):
+
+    def run(self, w: i64, z: i64) -> i64:
+        x = 0
+        y = 0
+
+        x *= 0
+        x += z
+        x %= 26
+        z /= 26
+        x += -7
+        x = 1 if w == x else 0
+        x = 1 if 0 == x else 0
+        y *= 0
+        y += 25
+        y *= x
+        y += 1
+        z *= y
+        y *= 0
+        y += w
+        y += 7
+        y *= x
+        z += y
+
+        return z
+
+class Code12(Code):
+
+    def run(self, w: i64, z: i64) -> i64:
+        x = 0
+        y = 0
+
+        x *= 0
+        x += z
+        x %= 26
+        z /= 1
+        x += 10
+        x = 1 if w == x else 0
+        x = 1 if 0 == x else 0
+        y *= 0
+        y += 25
+        y *= x
+        y += 1
+        z *= y
+        y *= 0
+        y += w
+        y += 1
+        y *= x
+        z += y
+
+        return z
+
+class Code13(Code):
+
+    def run(self, w: i64, z: i64) -> i64:
+        x = 0
+        y = 0
+
+        x *= 0
+        x += z
+        x %= 26
+        z /= 26
+        x += -6
+        x = 1 if w == x else 0
+        x = 1 if 0 == x else 0
+        y *= 0
+        y += 25
+        y *= x
+        y += 1
+        z *= y
+        y *= 0
+        y += w
+        y += 10
+        y *= x
+        z += y
+
+        return z
+
+class Code14(Code):
+
+    def run(self, w: i64, z: i64) -> i64:
+        x = 0
+        y = 0
+
+        x *= 0
+        x += z
+        x %= 26
+        z /= 26
+        x += -8
+        x = 1 if w == x else 0
+        x = 1 if 0 == x else 0
+        y *= 0
+        y += 25
+        y *= x
+        y += 1
+        z *= y
+        y *= 0
+        y += w
+        y += 3
+        y *= x
+        z += y
+
+        return z
+
+CODES: [Code] = [
+    Code1(),
+    Code2(),
+    Code3(),
+    Code4(),
+    Code5(),
+    Code6(),
+    Code7(),
+    Code8(),
+    Code9(),
+    Code10(),
+    Code11(),
+    Code12(),
+    Code13(),
+    Code14()
+]
 
 @trait
 class Algoritm:
@@ -170,15 +412,14 @@ class Maximum(Algoritm):
     def result(self, model_numbers: [i64]) -> i64:
         return max(model_numbers)
 
-def both_parts(filename: string, algoritm: Algoritm) -> i64:
-    instruction_groups = get_input(filename)
+def both_parts(algoritm: Algoritm) -> i64:
     states_in = {0: 0}
     states_out: {i64: i64} = {}
 
-    for instruction_group in instruction_groups:
+    for code in CODES:
         for digit in range(1, 10):
             for z, model_number in states_in:
-                z = run(z, instruction_group, digit)
+                z = code.run(digit, z)
                 model_number = model_number * 10 + digit
                 states_out[z] = algoritm.compare(model_number,
                                                  states_out.get(z, model_number))
@@ -188,12 +429,12 @@ def both_parts(filename: string, algoritm: Algoritm) -> i64:
 
     return algoritm.result([model_number for z, model_number in states_in if z == 0])
 
-def part_1(filename: string) -> i64:
-    return both_parts(filename, Maximum())
+def part_1() -> i64:
+    return both_parts(Maximum())
 
-def part_2(filename: string) -> i64:
-    return both_parts(filename, Minimum())
+def part_2() -> i64:
+    return both_parts(Minimum())
 
 def day_24():
-    print(part_1("input.txt"))
-    print(part_2("input.txt"))
+    print(part_1())
+    print(part_2())
