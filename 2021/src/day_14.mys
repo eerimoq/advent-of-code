@@ -2,11 +2,7 @@ from os import TextFile
 
 def get_input(filename: string) -> ([char], {char: {char: char}}):
     lines = TextFile(f"{__assets__}/day_14/{filename}").read().strip().split("\n")
-    polymer: [char] = []
-
-    for ch in lines[0]:
-        polymer.append(ch)
-
+    polymer = list(lines[0])
     insert: {char: {char: char}} = {}
 
     for line in slice(lines, 2):

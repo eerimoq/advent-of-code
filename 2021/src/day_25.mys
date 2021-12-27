@@ -4,12 +4,7 @@ def get_input(filename: string) -> [[char]]:
     map: [[char]] = []
 
     for line in TextFile(f"{__assets__}/day_25/{filename}").read().strip().split("\n"):
-        row: [char] = []
-
-        for ch in line:
-            row.append(ch)
-
-        map.append(row)
+        map.append(list(line))
 
     return map
 
