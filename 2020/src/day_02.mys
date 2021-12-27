@@ -6,19 +6,20 @@ class Entry:
     letter: char
     password: [char]
 
-def load_entries() -> [Entry]:
+def get_input(filename: string) -> [Entry]:
     entries: [Entry] = []
 
-    for line in TextFile(f"{__assets__}/day_02.txt").read().strip().split("\n"):
+    for line in TextFile(f"{__assets__}/day_02/{filename}").read().strip().split("\n"):
         mo = line.match(re"^(\d+)-(\d+) (.): (.+)$")
         entries.append(Entry(i64(mo.group(1)),
                              i64(mo.group(2)),
                              mo.group(3)[0],
-                             [ch for ch in mo.group(4)]))
+                             list(mo.group(4))))
 
     return entries
 
-def part_1(entries: [Entry]):
+def part_1(filename: string) -> i64:
+    entries = get_input(filename)
     number_of_valid_passwords = 0
 
     for entry in entries:
@@ -27,9 +28,10 @@ def part_1(entries: [Entry]):
         if entry.low <= count and count <= entry.high:
             number_of_valid_passwords += 1
 
-    print(number_of_valid_passwords)
+    return number_of_valid_passwords
 
-def part_2(entries: [Entry]):
+def part_2(filename: string) -> i64:
+    entries = get_input(filename)
     number_of_valid_passwords = 0
 
     for entry in entries:
@@ -38,9 +40,13 @@ def part_2(entries: [Entry]):
         if selected.count(entry.letter) == 1:
             number_of_valid_passwords += 1
 
-    print(number_of_valid_passwords)
+    return number_of_valid_passwords
 
 def day_02():
-    entries = load_entries()
-    part_1(entries)
-    part_2(entries)
+    print(part_1("input.txt"))
+    print(part_2("input.txt"))
+
+@test
+def test_all():
+    assert part_1("input.txt") == 396
+    assert part_2("input.txt") == 428
