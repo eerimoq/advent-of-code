@@ -4,17 +4,17 @@ def get_input(filename: string) -> ([i64], [[i64]]):
     lines = TextFile(f"{__assets__}/day_04/{filename}").read().strip().split("\n")
     numbers = [i64(number) for number in lines[0].split(',')]
     boards: [[i64]] = []
+    board: [i64] = []
 
-    for index in range(2, i64(len(lines)), 6):
-        board: [i64] = []
+    for line in slice(lines, 2):
+        if line == "":
+            boards.append(board)
+            board = []
+        else:
+            for number in line.strip().split():
+                board.append(i64(number))
 
-        for row_index in range(5):
-            board.extend([
-                i64(number)
-                for number in lines[index + row_index].strip().split(re"\s+")
-            ])
-
-        boards.append(board)
+    boards.append(board)
 
     return numbers, boards
 
