@@ -2,13 +2,8 @@ from os import TextFile
 
 def get_input(filename: string) -> (string, [string]):
     lines = TextFile(f"{__assets__}/day_20/{filename}").read().strip().split("\n")
-    algorithm = lines[0]
-    image: [string] = []
 
-    for line in slice(lines, 2):
-        image.append(line)
-
-    return (algorithm, image)
+    return (lines[0], lines[2:])
 
 def add(number: i64, ch: char) -> i64:
     number <<= 1
