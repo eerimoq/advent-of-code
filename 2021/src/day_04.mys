@@ -1,20 +1,12 @@
 from os import TextFile
 
 def get_input(filename: string) -> ([i64], [[i64]]):
-    lines = TextFile(f"{__assets__}/day_04/{filename}").read().strip().split("\n")
-    numbers = [i64(number) for number in lines[0].split(',')]
-    boards: [[i64]] = []
-    board: [i64] = []
-
-    for line in slice(lines, 2):
-        if line == "":
-            boards.append(board)
-            board = []
-        else:
-            for number in line.strip().split():
-                board.append(i64(number))
-
-    boards.append(board)
+    chunks = TextFile(f"{__assets__}/day_04/{filename}").read().strip().split("\n\n")
+    numbers = [i64(number) for number in chunks[0].split(',')]
+    boards = [
+        [i64(number) for number in chunk.strip().split()]
+        for chunk in slice(chunks, 1)
+    ]
 
     return numbers, boards
 
