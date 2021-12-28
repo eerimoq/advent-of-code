@@ -5,24 +5,15 @@ def get_input(filename: string) -> (string, [string]):
 
     return (lines[0], lines[2:])
 
-def add(number: i64, ch: char) -> i64:
-    number <<= 1
-
-    if ch == '#':
-        number += 1
-
-    return number
-
 def enhance_pixel(image: [[char]], r: i64, c: i64, algorithm: string) -> char:
-    number = add(0, image[r - 1][c - 1])
-    number = add(number, image[r - 1][c])
-    number = add(number, image[r - 1][c + 1])
-    number = add(number, image[r][c - 1])
-    number = add(number, image[r][c])
-    number = add(number, image[r][c + 1])
-    number = add(number, image[r + 1][c - 1])
-    number = add(number, image[r + 1][c])
-    number = add(number, image[r + 1][c + 1])
+    number = 0
+
+    for ro in range(-1, 2):
+        for co in range(-1, 2):
+            number <<= 1
+
+            if image[r + ro][c + co] == '#':
+                number += 1
 
     return algorithm[number]
 
