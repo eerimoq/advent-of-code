@@ -10,61 +10,53 @@ def get_input(filename: string) -> ([i64], [[i64]]):
 
     return numbers, boards
 
-def has_bingo(marks: [bool]) -> bool:
+def has_bingo(board: [i64]) -> bool:
     for i in range(5):
-        if all(marks[5 * i:5 * i + 5]):
+        if all([number < 0 for number in board[5 * i:5 * i + 5]]):
             return True
 
-        if all(marks[i:25:5]):
+        if all([number < 0 for number in board[i:25:5]]):
             return True
 
     return False
 
-def calc_unmarked_numbers(board: [i64], marks: [bool]) -> i64:
-    unmarked_numbers_sum = 0
+def calc_unmarked_numbers(board: [i64]) -> i64:
+    return sum([number for number in board if number > 0])
 
-    for number, mark in zip(board, marks):
-        if not mark:
-            unmarked_numbers_sum += number
-
-    return unmarked_numbers_sum
-
-def mark_number(board: [i64], marks: [bool], number: i64):
+def mark_number(board: [i64], number: i64):
     index = board.find(number)
 
     if index != -1:
-        marks[index] = True
+        board[index] = -1
 
 def part_1(filename: string) -> i64:
     numbers, boards = get_input(filename)
-    marks = [[False for _ in range(25)] for _ in boards]
 
     for number in numbers:
-        for board, mark in zip(boards, marks):
-            mark_number(board, mark, number)
+        for board in boards:
+            mark_number(board, number)
 
-            if has_bingo(mark):
-                return calc_unmarked_numbers(board, mark) * number
+            if has_bingo(board):
+                return calc_unmarked_numbers(board) * number
 
     raise UnreachableError("No bingo")
 
 def part_2(filename: string) -> i64:
     numbers, boards = get_input(filename)
     boards_with_bingo: [i64] = []
-    marks = [[False for _ in range(25)] for _ in boards]
 
     for number in numbers:
-        for i, (board, mark) in enumerate(zip(boards, marks)):
+        for i, board in enumerate(boards):
             if i in boards_with_bingo:
                 continue
 
-            mark_number(board, mark, number)
+            mark_number(board, number)
 
-            if has_bingo(mark):
+            if has_bingo(board):
                 boards_with_bingo.append(i)
 
                 if len(boards_with_bingo) == len(boards):
-                    return calc_unmarked_numbers(board, mark) * number
+                    return calc_unmarked_numbers(board) * number
 
     raise UnreachableError("No bingo")
 
