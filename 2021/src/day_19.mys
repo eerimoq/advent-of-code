@@ -2,21 +2,14 @@ from os import TextFile
 
 def get_input(filename: string) -> [Scanner]:
     scanners: [Scanner] = []
-    scanner: Scanner = None
 
-    for line in TextFile(f"{__assets__}/day_19/{filename}").read().strip().split("\n"):
-        rm = line.match(re"--- scanner \d+ ---")
+    for chunk in TextFile(f"{__assets__}/day_19/{filename}").read().strip().split("\n\n"):
+        scanner = Scanner([], (0, 0, 0))
+        scanners.append(scanner)
 
-        if rm is not None:
-            scanner = Scanner([], (0, 0, 0))
-            scanners.append(scanner)
-
-        rm = line.match(re"([-\d]+),([-\d]+),([-\d]+)")
-
-        if rm is not None:
-            scanner.beacons.append((i64(rm.group(1)),
-                                    i64(rm.group(2)),
-                                    i64(rm.group(3))))
+        for line in slice(chunk.split('\n'), 1):
+            parts = line.split(',')
+            scanner.beacons.append((i64(parts[0]), i64(parts[1]), i64(parts[2])))
 
     return scanners
 
