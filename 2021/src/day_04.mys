@@ -38,10 +38,10 @@ def calc_unmarked_numbers(board: [i64], marks: [bool]) -> i64:
     return unmarked_numbers_sum
 
 def mark_number(board: [i64], marks: [bool], number: i64):
-    for index in range(25):
-        if board[index] == number:
-            marks[index] = True
-            break
+    index = board.find(number)
+
+    if index != -1:
+        marks[index] = True
 
 def part_1(filename: string) -> i64:
     numbers, boards = get_input(filename)
