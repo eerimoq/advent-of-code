@@ -20,18 +20,10 @@ def get_input(filename: string) -> ([i64], [[i64]]):
 
 def has_bingo(marks: [bool]) -> bool:
     for i in range(5):
-        if (marks[5 * i]
-            and marks[5 * i + 1]
-            and marks[5 * i + 2]
-            and marks[5 * i + 3]
-            and marks[5 * i + 4]):
+        if all(marks[5 * i:5 * i + 5]):
             return True
 
-        if (marks[i]
-            and marks[5 + i]
-            and marks[10 + i]
-            and marks[15 + i]
-            and marks[20 + i]):
+        if all(marks[i:25:5]):
             return True
 
     return False
