@@ -1,21 +1,32 @@
 from os import TextFile
 
+class Point:
+    x: i64
+    y: i64
+    z: i64
+
+    def __add__(self, other: Point) -> Point:
+        return Point(self.x + other.x, self.y + other.y, self.z + other.z)
+
+    def __sub__(self, other: Point) -> Point:
+        return Point(self.x - other.x, self.y - other.y, self.z - other.z)
+
+class Scanner:
+    beacons: [Point]
+    position: Point
+
 def get_input(filename: string) -> [Scanner]:
     scanners: [Scanner] = []
 
     for chunk in TextFile(f"{__assets__}/day_19/{filename}").read().strip().split("\n\n"):
-        scanner = Scanner([], (0, 0, 0))
+        scanner = Scanner([], Point(0, 0, 0))
         scanners.append(scanner)
 
         for line in slice(chunk.split('\n'), 1):
             parts = line.split(',')
-            scanner.beacons.append((i64(parts[0]), i64(parts[1]), i64(parts[2])))
+            scanner.beacons.append(Point(i64(parts[0]), i64(parts[1]), i64(parts[2])))
 
     return scanners
-
-class Scanner:
-    beacons: [(i64, i64, i64)]
-    position: (i64, i64, i64)
 
 ROTATIONS: [(i64, i64, i64)] = [
     # x front (x)
@@ -56,25 +67,22 @@ ROTATIONS: [(i64, i64, i64)] = [
 ]
 
 def match_scanners(scanner_1: Scanner, scanner_2: Scanner) -> Scanner:
-    for bx1, by1, bz1 in scanner_1.beacons:
-        for bx2, by2, bz2 in scanner_2.beacons:
-            scanner_2_x = bx1 - bx2
-            scanner_2_y = by1 - by2
-            scanner_2_z = bz1 - bz2
+    for b1 in scanner_1.beacons:
+        for b2 in scanner_2.beacons:
+            scanner_2_position = b1 - b2
             beacons = [
-                (x + scanner_2_x, y + scanner_2_y, z + scanner_2_z)
-                for x, y, z in scanner_2.beacons
+                beacon + scanner_2_position
+                for beacon in scanner_2.beacons
             ]
             number_of_matches = 0
 
-            for b1 in scanner_1.beacons:
-                for b2 in beacons:
-                    if b1 == b2:
+            for b3 in scanner_1.beacons:
+                for b4 in beacons:
+                    if b3 == b4:
                         number_of_matches += 1
 
                         if number_of_matches >= 12:
-                            return Scanner(beacons,
-                                           (scanner_2_x, scanner_2_y, scanner_2_z))
+                            return Scanner(beacons, scanner_2_position)
 
     return None
 
@@ -83,8 +91,8 @@ def find_beacons(known_scanners: [Scanner], scanner: Scanner) -> Scanner:
         for rx, ry, rz in ROTATIONS:
             rotated_scanner = Scanner([], None)
 
-            for x, y, z in scanner.beacons:
-                xyz = [x, y, z]
+            for beacon in scanner.beacons:
+                xyz = [beacon.x, beacon.y, beacon.z]
 
                 if rx > 0:
                     x = xyz[rx - 1]
@@ -101,7 +109,7 @@ def find_beacons(known_scanners: [Scanner], scanner: Scanner) -> Scanner:
                 else:
                     z = -xyz[-rz - 1]
 
-                rotated_scanner.beacons.append((x, y, z))
+                rotated_scanner.beacons.append(Point(x, y, z))
 
             rotated_scanner = match_scanners(known_scanner, rotated_scanner)
 
@@ -112,7 +120,7 @@ def find_beacons(known_scanners: [Scanner], scanner: Scanner) -> Scanner:
 
 def part_1(filename: string) -> i64:
     scanners = get_input(filename)
-    beacons = [beacon for beacon in scanners[0].beacons]
+    beacons = {beacon for beacon in scanners[0].beacons}
     known_scanners = [scanners.pop(0)]
 
     while len(scanners) > 0:
@@ -124,8 +132,7 @@ def part_1(filename: string) -> i64:
                 known_scanners.append(scanner)
 
                 for beacon in scanner.beacons:
-                    if beacon not in beacons:
-                        beacons.append(beacon)
+                    beacons.add(beacon)
 
                 break
 
@@ -148,10 +155,9 @@ def part_2(filename: string) -> i64:
 
     for scanner_1 in known_scanners:
         for scanner_2 in known_scanners:
-            x1, y1, z1 = scanner_1.position
-            x2, y2, z2 = scanner_2.position
+            distance = scanner_1.position - scanner_2.position
             maximum_distance = max(maximum_distance,
-                                   abs(x1 - x2) + abs(z1 - z2) + abs(y1 - y2))
+                                   abs(distance.x) + abs(distance.y) + abs(distance.z))
 
     return maximum_distance
 
