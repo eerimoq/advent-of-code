@@ -4,15 +4,15 @@ def load_ops(code: string) -> [Op]:
     ops: [Op] = []
 
     for line in code.strip().split("\n"):
-        mo = line.match(re"^mask = (\w+)$")
+        rm = line.match(re"^mask = (\w+)$")
 
-        if mo is not None:
-            ops.append(MaskOp(mo.group(1)))
+        if rm is not None:
+            ops.append(MaskOp(rm.group(1)))
 
-        mo = line.match(re"^mem\[(\d+)\] = (\d+)$")
+        rm = line.match(re"^mem\[(\d+)\] = (\d+)$")
 
-        if mo is not None:
-            ops.append(MemOp(u64(mo.group(1)), u64(mo.group(2))))
+        if rm is not None:
+            ops.append(MemOp(u64(rm.group(1)), u64(rm.group(2))))
 
     return ops
 
@@ -57,15 +57,10 @@ class Computer:
     def run(self, ops: [Op]) -> u64:
         for op in ops:
             match op:
-
                 case MaskOp() as mask_op:
                     self.set_mask = mask_op.set_mask
                     self.clear_mask = mask_op.clear_mask
-
                 case MemOp() as mem_op:
-                    if mem_op.address not in self.memory:
-                        self.memory[mem_op.address] = 0
-
                     value = mem_op.value
                     value |= self.set_mask
                     value &= self.clear_mask
