@@ -15,7 +15,7 @@ def has_bingo(board: [i64]) -> bool:
         if all([number < 0 for number in board[5 * i:5 * i + 5]]):
             return True
 
-        if all([number < 0 for number in board[i:25:5]]):
+        if all([number < 0 for number in board[i::5]]):
             return True
 
     return False
