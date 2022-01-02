@@ -1,0 +1,57 @@
+from os import TextFile
+
+def get_input(filename: string) -> [string]:
+    return TextFile(f"{__assets__}/day_02/{filename}").read().strip().split("\n")
+
+def part_1(filename: string) -> i64:
+    box_ids = get_input(filename)
+    two_times = 0
+    three_times = 0
+
+    for box_id in box_ids:
+        counts: {char: i64} = {}
+
+        for ch in box_id:
+            if ch not in counts:
+                counts[ch] = 0
+
+            counts[ch] += 1
+
+        for count in counts.values():
+            if count == 2:
+                two_times += 1
+                break
+
+        for count in counts.values():
+            if count == 3:
+                three_times += 1
+                break
+
+    return two_times * three_times
+
+def part_2(filename: string) -> string:
+    box_ids = get_input(filename)
+
+    for box_id_1 in box_ids:
+        for box_id_2 in box_ids:
+            count = 0
+            index = 0
+
+            for i, (ch_1, ch_2) in enumerate(zip(box_id_1, box_id_2)):
+                if ch_1 != ch_2:
+                    count += 1
+                    index = i
+
+            if count == 1:
+                return box_id_1[:index] + box_id_1[index + 1:]
+
+    raise UnreachableError()
+
+def day_02():
+    print(part_1("input.txt"))
+    print(part_2("input.txt"))
+
+@test
+def test_all():
+    assert part_1("input.txt") == 6000
+    assert part_2("input.txt") == "pbykrmjmizwhxlqnasfgtycdv"
