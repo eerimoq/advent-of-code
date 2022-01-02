@@ -1,0 +1,38 @@
+from os import TextFile
+
+def get_input(filename: string) -> [i64]:
+    return [
+        i64(number)
+        for number in
+        TextFile(f"{__assets__}/day_01/{filename}").read().strip().split("\n")
+    ]
+
+def part_1(filename: string) -> i64:
+    changes = get_input(filename)
+
+    return sum(changes)
+
+def part_2(filename: string) -> i64:
+    changes = get_input(filename)
+    frequencies: {i64} = {}
+    frequency = 0
+
+    while True:
+        for change in changes:
+            frequency += change
+
+            if frequency in frequencies:
+                return frequency
+
+            frequencies.add(frequency)
+
+    raise UnreachableError()
+
+def day_01():
+    print(part_1("input.txt"))
+    print(part_2("input.txt"))
+
+@test
+def test_all():
+    assert part_1("input.txt") == 500
+    assert part_2("input.txt") == 709
