@@ -1,7 +1,7 @@
 from os import TextFile
 
 def load_bags() -> {string: [(string, i64)]}:
-    bags: {string: [(string, i64)]} = {}
+    bags = {}
 
     for line in TextFile(f"{__assets__}/day_07.txt").read().strip().split("\n"):
         color, _, contains = line.partition(" bags contain ")

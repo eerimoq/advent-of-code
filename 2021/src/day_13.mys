@@ -22,7 +22,7 @@ def get_input(filename: string) -> ({Point}, [(string, i64)]):
     return (coordinates, folds)
 
 def fold(coordinates: {Point}, direction: string, offset: i64) -> {Point}:
-    new_coordinates: {Point} = {}
+    new_coordinates = {}
 
     for coordinate in coordinates:
         match direction:

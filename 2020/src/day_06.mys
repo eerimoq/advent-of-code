@@ -2,7 +2,7 @@ from os import TextFile
 
 @generic(T)
 def union(items: [{T}]) -> {T}:
-    result: {T} = {}
+    result = {}
 
     for item in items:
         result |= item
@@ -11,7 +11,7 @@ def union(items: [{T}]) -> {T}:
 
 @generic(T)
 def intersection(items: [{T}]) -> {T}:
-    result: {T} = {}
+    result = {}
 
     if len(items) > 0:
         result |= items[0]
