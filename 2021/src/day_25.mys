@@ -1,7 +1,7 @@
 from os import TextFile
 
 def get_input(filename: string) -> [[char]]:
-    map: [[char]] = []
+    map = []
 
     for line in TextFile(f"{__assets__}/day_25/{filename}").read().strip().split("\n"):
         map.append(list(line))

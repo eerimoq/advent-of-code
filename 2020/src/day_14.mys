@@ -1,7 +1,7 @@
 from os import TextFile
 
 def load_ops(code: string) -> [Op]:
-    ops: [Op] = []
+    ops = []
 
     for line in code.strip().split("\n"):
         rm = line.match(re"^mask = (\w+)$")

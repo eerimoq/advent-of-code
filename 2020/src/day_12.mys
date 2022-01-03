@@ -11,7 +11,7 @@ class Instruction:
     value: i64
 
 def load_instructions(text: string) -> [Instruction]:
-    instructions: [Instruction] = []
+    instructions = []
 
     for line in text.strip().split("\n"):
         instructions.append(Instruction(line[0], i64(line[1:])))

@@ -40,7 +40,7 @@ class Command:
         return command
 
 def get_input(filename: string) -> [Command]:
-    commands: [Command] = []
+    commands = []
 
     for line in TextFile(f"{__assets__}/day_22/{filename}").read().strip().split("\n"):
         mo = line.match(re"(\w+) "
@@ -103,7 +103,7 @@ def covers(cover: Command, part: Command) -> bool:
             and part.z_min >= cover.z_min and part.z_max <= cover.z_max)
 
 def split_x(sub_cube: Command, cube: Command) -> [Command]:
-    sub_cubes: [Command] = []
+    sub_cubes = []
 
     if sub_cube.x_min < cube.x_min and sub_cube.x_max > cube.x_max:
         sub_cubes.append(sub_cube.clone_x(sub_cube.x_min, cube.x_min - 1))
@@ -121,7 +121,7 @@ def split_x(sub_cube: Command, cube: Command) -> [Command]:
     return sub_cubes
 
 def split_y(sub_cubes: [Command], cube: Command) -> [Command]:
-    new_sub_cubes: [Command] = []
+    new_sub_cubes = []
 
     for sub_cube in sub_cubes:
         if sub_cube.y_min < cube.y_min and sub_cube.y_max > cube.y_max:
@@ -140,7 +140,7 @@ def split_y(sub_cubes: [Command], cube: Command) -> [Command]:
     return new_sub_cubes
 
 def split_z(sub_cubes: [Command], cube: Command) -> [Command]:
-    new_sub_cubes: [Command] = []
+    new_sub_cubes = []
 
     for sub_cube in sub_cubes:
         if sub_cube.z_min < cube.z_min and sub_cube.z_max > cube.z_max:
@@ -159,7 +159,7 @@ def split_z(sub_cubes: [Command], cube: Command) -> [Command]:
     return new_sub_cubes
 
 def split(sub_cubes: [Command], cube: Command) -> [Command]:
-    new_sub_cubes: [Command] = []
+    new_sub_cubes = []
 
     for sub_cube in sub_cubes:
         if are_not_overlapping(sub_cube, cube):

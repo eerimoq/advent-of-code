@@ -99,7 +99,7 @@ def decode_operator(reader: StringReader) -> [Packet]:
     raise UnreachableError("The impossible happened")
 
 def decode_packets(reader: StringReader, count: i64 = -1) -> [Packet]:
-    packets: [Packet] = []
+    packets = []
 
     try:
         while count == -1 or count > 0:

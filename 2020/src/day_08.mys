@@ -8,7 +8,7 @@ class Op:
     value: i64
 
 def load_instructions(code: string) -> [Op]:
-    instructions: [Op] = []
+    instructions = []
 
     for line in code.strip().split("\n"):
         name, _, value = line.partition(" ")

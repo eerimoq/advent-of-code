@@ -16,7 +16,7 @@ class Scanner:
     position: Point
 
 def get_input(filename: string) -> [Scanner]:
-    scanners: [Scanner] = []
+    scanners = []
 
     for chunk in TextFile(f"{__assets__}/day_19/{filename}").read().strip().split("\n\n"):
         scanner = Scanner([], Point(0, 0, 0))

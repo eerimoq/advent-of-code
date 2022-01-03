@@ -1,7 +1,7 @@
 from os import TextFile
 
 def get_input(filename: string) -> [(string, string)]:
-    items: [(string, string)] = []
+    items = []
 
     for line in TextFile(f"{__assets__}/day_12/{filename}").read().strip().split("\n"):
         parts = line.split('-')

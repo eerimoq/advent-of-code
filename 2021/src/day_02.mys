@@ -1,7 +1,7 @@
 from os import TextFile
 
 def get_input(filename: string) -> [(string, i64)]:
-    commands: [(string, i64)] = []
+    commands = []
 
     for line in TextFile(f"{__assets__}/day_02/{filename}").read().strip().split("\n"):
         parts = line.split(' ')

@@ -7,7 +7,7 @@ class Entry:
     password: [char]
 
 def get_input(filename: string) -> [Entry]:
-    entries: [Entry] = []
+    entries = []
 
     for line in TextFile(f"{__assets__}/day_02/{filename}").read().strip().split("\n"):
         mo = line.match(re"^(\d+)-(\d+) (.): (.+)$")

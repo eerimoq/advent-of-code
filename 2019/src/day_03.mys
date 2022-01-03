@@ -1,7 +1,7 @@
 from os import TextFile
 
 def get_input(filename: string) -> [[(char, i64)]]:
-    lines: [[(char, i64)]] = []
+    lines = []
 
     for line in TextFile(f"{__assets__}/day_03/{filename}").read().strip().split('\n'):
         lines.append([

@@ -49,7 +49,7 @@ def enhance(lines: [string], algorithm: string, number_of_iterations: i64) -> [[
         cbegin -= 1
         cend += 1
 
-    cropped_image: [[char]] = []
+    cropped_image = []
 
     for r in range(rbegin, rend):
         cropped_row = [image[r][c] for c in range(cbegin, cend)]

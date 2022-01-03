@@ -16,7 +16,7 @@ class Deck:
         return i64(len(self.cards))
 
 def load_decks(text: string) -> [Deck]:
-    decks: [Deck] = []
+    decks = []
 
     for deck_text in text.split("\n\n"):
         deck = Deck()

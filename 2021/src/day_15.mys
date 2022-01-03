@@ -1,7 +1,7 @@
 from os import TextFile
 
 def get_input(filename: string) -> [[i64]]:
-    items: [[i64]] = []
+    items = []
 
     for line in TextFile(f"{__assets__}/day_15/{filename}").read().strip().split("\n"):
         l: [i64] = []
@@ -30,7 +30,7 @@ class Matrix:
         self.data[r][c] = v
 
     def neighbours(self, r: i64, c: i64) -> [(i64, i64)]:
-        neighbours: [(i64, i64)] = []
+        neighbours = []
 
         if c < self.width - 1:
             neighbours.append((r, c + 1))

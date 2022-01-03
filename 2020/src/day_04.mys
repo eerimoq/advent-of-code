@@ -1,7 +1,7 @@
 from os import TextFile
 
 def load_passports() -> [{string: string}]:
-    passports: [{string: string}] = []
+    passports = []
 
     for chunk in TextFile(f"{__assets__}/day_04.txt").read().strip().split("\n\n"):
         passport: {string: string} = {}

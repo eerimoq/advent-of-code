@@ -22,7 +22,7 @@ def intersection(items: [{T}]) -> {T}:
     return result
 
 def load_answers() -> [[{char}]]:
-    answers: [[{char}]] = []
+    answers = []
 
     for group in TextFile(f"{__assets__}/day_06.txt").read().strip().split("\n\n"):
         group_answers: [{char}] = []

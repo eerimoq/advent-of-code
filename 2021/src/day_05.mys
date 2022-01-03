@@ -1,7 +1,7 @@
 from os import TextFile
 
 def get_input(filename: string) -> [Line]:
-    lines: [Line] = []
+    lines = []
 
     for line in TextFile(f"{__assets__}/day_05/{filename}").read().strip().split("\n"):
         mr = line.match(re"(\d+),(\d+) -> (\d+),(\d+)")
