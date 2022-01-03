@@ -4,11 +4,11 @@ def get_input(filename: string) -> [Line]:
     lines = []
 
     for line in TextFile(f"{__assets__}/day_05/{filename}").read().strip().split("\n"):
-        mr = line.match(re"(\d+),(\d+) -> (\d+),(\d+)")
-        lines.append((Line(i64(mr.group(1)),
-                           i64(mr.group(2)),
-                           i64(mr.group(3)),
-                           i64(mr.group(4)))))
+        rm = line.match(re"(\d+),(\d+) -> (\d+),(\d+)")
+        lines.append(Line(i64(rm.group(1)),
+                          i64(rm.group(2)),
+                          i64(rm.group(3)),
+                          i64(rm.group(4))))
 
     return lines
 
