@@ -1,7 +1,7 @@
 from os import TextFile
 
 def get_input(filename: string) -> [([string], [string])]:
-    items: [([string], [string])] = []
+    items = []
 
     for value in TextFile(f"{__assets__}/day_08/{filename}").read().strip().split("\n"):
         parts = value.split("|")
