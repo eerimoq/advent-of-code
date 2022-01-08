@@ -4,7 +4,7 @@ def get_input(filename: string) -> [[i64]]:
     items = []
 
     for line in TextFile(f"{__assets__}/day_11/{filename}").read().strip().split("\n"):
-        digits: [i64] = []
+        digits = []
 
         for ch in line:
             digits.append(i64(string(ch)))
@@ -30,7 +30,7 @@ class Matrix:
         self.data[r][c] = v
 
     def neighbours(self, r: i64, c: i64) -> [(i64, i64)]:
-        neighbours: [(i64, i64)] = []
+        neighbours = []
 
         for nr in range(r - 1, r + 2):
             for nc in range(c - 1, c + 2):
