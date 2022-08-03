@@ -1,4 +1,4 @@
-from os import TextFile
+from os.path import Path
 
 class OpError(Error):
     message: string
@@ -7,7 +7,7 @@ class Op:
     name: string
     value: i64
 
-def load_instructions(code: string) -> [Op]:
+func load_instructions(code: string) -> [Op]:
     instructions = []
 
     for line in code.strip().split("\n"):
@@ -16,14 +16,14 @@ def load_instructions(code: string) -> [Op]:
 
     return instructions
 
-def run(instructions: [Op]) -> (bool, i64):
-    count = [0 for _ in range(i64(len(instructions)))]
+func run(instructions: [Op]) -> (bool, i64):
+    count = [0 for _ in range(instructions.length())]
     ok = False
     pc = 0
     acc = 0
 
     while True:
-        if pc == i64(len(instructions)):
+        if pc == instructions.length():
             ok = True
             break
 
@@ -46,11 +46,11 @@ def run(instructions: [Op]) -> (bool, i64):
 
     return (ok, acc)
 
-def part_1(instructions: [Op]):
+func part_1(instructions: [Op]):
     print(run(instructions)[1])
 
-def part_2(instructions: [Op]):
-    for i in range(i64(len(instructions))):
+func part_2(instructions: [Op]):
+    for i in range(instructions.length()):
         op = instructions[i]
         name = op.name
 
@@ -70,13 +70,12 @@ def part_2(instructions: [Op]):
 
         op.name = name
 
-def day_08():
-    instructions = load_instructions(TextFile(f"{__assets__}/day_08.txt").read().strip())
+func day_08():
+    instructions = load_instructions(Path(f"{__assets__}/day_08.txt").read_text().strip())
     part_1(instructions)
     part_2(instructions)
 
-@test
-def test_part_1():
+test part_1():
     code = ("nop +0\n"
             "acc +1\n"
             "jmp +4\n"

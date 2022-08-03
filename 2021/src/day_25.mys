@@ -54,5 +54,5 @@ func part_1(filename: string) -> i64:
 func day_25():
     print(part_1("input.txt"))
 
-test test_all():
+test all():
     assert part_1("example.txt") == 58

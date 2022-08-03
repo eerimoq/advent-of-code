@@ -1,6 +1,6 @@
-from os import TextFile
+from os.path import Path
 
-def make_seat_id(value: string) -> i64:
+func make_seat_id(value: string) -> i64:
     number = 0
 
     for digit in value:
@@ -11,16 +11,16 @@ def make_seat_id(value: string) -> i64:
 
     return number
 
-def load_seat_ids() -> [i64]:
+func load_seat_ids() -> [i64]:
     return [
         make_seat_id(line)
-        for line in TextFile(f"{__assets__}/day_05.txt").read().strip().split("\n")
+        for line in Path(f"{__assets__}/day_05.txt").read_text().strip().split("\n")
     ]
 
-def part_1(seat_ids: [i64]):
+func part_1(seat_ids: [i64]):
     print(max(seat_ids))
 
-def part_2(seat_ids: [i64]):
+func part_2(seat_ids: [i64]):
     for seat_id in range(1024):
         if seat_id in seat_ids:
             continue
@@ -29,13 +29,12 @@ def part_2(seat_ids: [i64]):
             print(seat_id)
             break
 
-def day_05():
+func day_05():
     seat_ids = load_seat_ids()
     part_1(seat_ids)
     part_2(seat_ids)
 
-@test
-def test_all():
+test all():
     assert make_seat_id("BFFFBBFRRR") == 567
     assert make_seat_id("FFFBBBFRRR") == 119
     assert make_seat_id("BBFFBBFRLL") == 820

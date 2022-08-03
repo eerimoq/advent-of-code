@@ -1,9 +1,9 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> [i64]:
+func get_input(filename: string) -> [i64]:
     items = []
 
-    for value in TextFile(f"{__assets__}/day_01/{filename}").read().strip().split("\n"):
+    for value in Path(f"{__assets__}/day_01/{filename}").read_text().strip().split("\n"):
         if value == "":
             continue
 
@@ -11,7 +11,7 @@ def get_input(filename: string) -> [i64]:
 
     return items
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     items = get_input(filename)
     fuel_requirements = 0
 
@@ -20,7 +20,7 @@ def part_1(filename: string) -> i64:
 
     return fuel_requirements
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     items = get_input(filename)
     fuel_requirements = 0
 
@@ -35,11 +35,10 @@ def part_2(filename: string) -> i64:
 
     return fuel_requirements
 
-def day_01():
+func day_01():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test all():
     assert part_1("example.txt") == 33583
     assert part_2("example.txt") == 50346

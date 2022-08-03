@@ -61,6 +61,6 @@ func day_23():
     print(part_1())
     print(part_2())
 
-test test_all():
+test all():
     assert part_1() == 14346
     assert part_2() == 48984

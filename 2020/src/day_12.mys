@@ -1,4 +1,4 @@
-from os import TextFile
+from os.path import Path
 
 class NameError(Error):
     message: char
@@ -10,7 +10,7 @@ class Instruction:
     name: char
     value: i64
 
-def load_instructions(text: string) -> [Instruction]:
+func load_instructions(text: string) -> [Instruction]:
     instructions = []
 
     for line in text.strip().split("\n"):
@@ -23,12 +23,12 @@ class Ship:
     y: i64  # negative south and positive north
     angle: i64  # 0 is east, 90 north, 180 west and 270 south
 
-    def __init__(self):
+    func __init__(self):
         self.x = 0
         self.y = 0
         self.angle = 0
 
-    def run(self, instructions: [Instruction]):
+    func run(self, instructions: [Instruction]):
         for instruction in instructions:
             match instruction.name:
                 case 'F':
@@ -48,7 +48,7 @@ class Ship:
                 case _ as ch:
                     raise NameError(ch)
 
-    def move_forward(self, distance: i64):
+    func move_forward(self, distance: i64):
         match self.angle:
             case 0:
                 self.x += distance
@@ -61,7 +61,7 @@ class Ship:
             case _:
                 raise AngleError(self.angle)
 
-    def turn(self, angle: i64):
+    func turn(self, angle: i64):
         self.angle += angle
         self.angle %= 360
 
@@ -77,12 +77,12 @@ class ShipWithWaypoint:
     y: i64  # negative south and positive north
     waypoint: Waypoint
 
-    def __init__(self):
+    func __init__(self):
         self.x = 0
         self.y = 0
         self.waypoint = Waypoint(10, 1)
 
-    def run(self, instructions: [Instruction]):
+    func run(self, instructions: [Instruction]):
         for instruction in instructions:
             match instruction.name:
                 case 'F':
@@ -102,11 +102,11 @@ class ShipWithWaypoint:
                 case _ as ch:
                     raise NameError(ch)
 
-    def move(self, distance: i64):
+    func move(self, distance: i64):
         self.x += self.waypoint.x * distance
         self.y += self.waypoint.y * distance
 
-    def rotate(self, angle: i64):
+    func rotate(self, angle: i64):
         x = self.waypoint.x
         y = self.waypoint.y
 
@@ -126,26 +126,25 @@ class ShipWithWaypoint:
             case _:
                 raise AngleError(angle)
 
-def manhattan_distance(x: i64, y: i64) -> i64:
+func manhattan_distance(x: i64, y: i64) -> i64:
     return abs(x) + abs(y)
 
-def part_1(instructions: [Instruction]):
+func part_1(instructions: [Instruction]):
     ship = Ship()
     ship.run(instructions)
     print(manhattan_distance(ship.x, ship.y))
 
-def part_2(instructions: [Instruction]):
+func part_2(instructions: [Instruction]):
     ship = ShipWithWaypoint()
     ship.run(instructions)
     print(manhattan_distance(ship.x, ship.y))
 
-def day_12():
-    instructions = load_instructions(TextFile(f"{__assets__}/day_12.txt").read().strip())
+func day_12():
+    instructions = load_instructions(Path(f"{__assets__}/day_12.txt").read_text().strip())
     part_1(instructions)
     part_2(instructions)
 
-@test
-def test_part_1():
+test part_1():
     text = ("F10\n"
             "N3\n"
             "F7\n"
@@ -156,8 +155,7 @@ def test_part_1():
     ship.run(instructions)
     assert manhattan_distance(ship.x, ship.y) == 25
 
-@test
-def test_part_2():
+test part_2():
     text = ("F10\n"
             "N3\n"
             "F7\n"

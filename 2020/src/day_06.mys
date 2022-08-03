@@ -1,7 +1,7 @@
-from os import TextFile
+from os.path import Path
 
 @generic(T)
-def union(items: [{T}]) -> {T}:
+func union(items: [{T}]) -> {T}:
     result = {}
 
     for item in items:
@@ -10,10 +10,10 @@ def union(items: [{T}]) -> {T}:
     return result
 
 @generic(T)
-def intersection(items: [{T}]) -> {T}:
+func intersection(items: [{T}]) -> {T}:
     result = {}
 
-    if len(items) > 0:
+    if items.length() > 0:
         result |= items[0]
 
         for item in slice(items, 1):
@@ -21,10 +21,10 @@ def intersection(items: [{T}]) -> {T}:
 
     return result
 
-def load_answers() -> [[{char}]]:
+func load_answers() -> [[{char}]]:
     answers = []
 
-    for group in TextFile(f"{__assets__}/day_06.txt").read().strip().split("\n\n"):
+    for group in Path(f"{__assets__}/day_06.txt").read_text().strip().split("\n\n"):
         group_answers: [{char}] = []
 
         for person_answers_string in group.split("\n"):
@@ -39,23 +39,23 @@ def load_answers() -> [[{char}]]:
 
     return answers
 
-def part_1(answers: [[{char}]]):
-    count: u64 = 0
+func part_1(answers: [[{char}]]):
+    count: i64 = 0
 
     for group_answers in answers:
-        count += len(union[char](group_answers))
+        count += union[char](group_answers).length()
 
     print(count)
 
-def part_2(answers: [[{char}]]):
-    count: u64 = 0
+func part_2(answers: [[{char}]]):
+    count: i64 = 0
 
     for group_answers in answers:
-        count += len(intersection[char](group_answers))
+        count += intersection[char](group_answers).length()
 
     print(count)
 
-def day_06():
+func day_06():
     answers = load_answers()
     part_1(answers)
     part_2(answers)

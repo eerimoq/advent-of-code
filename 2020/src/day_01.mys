@@ -1,13 +1,13 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> [i64]:
+func get_input(filename: string) -> [i64]:
     return [
         i64(line)
         for line in
-        TextFile(f"{__assets__}/day_01/{filename}").read().strip().split("\n")
+        Path(f"{__assets__}/day_01/{filename}").read_text().strip().split("\n")
     ]
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     numbers = get_input(filename)
 
     for i, n1 in enumerate(numbers):
@@ -17,7 +17,7 @@ def part_1(filename: string) -> i64:
 
     raise UnreachableError()
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     numbers = get_input(filename)
 
     for i, n1 in enumerate(numbers):
@@ -28,11 +28,10 @@ def part_2(filename: string) -> i64:
 
     raise UnreachableError()
 
-def day_01():
+func day_01():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test all():
     assert part_1("input.txt") == 1010299
     assert part_2("input.txt") == 42140160

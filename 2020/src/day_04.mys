@@ -1,9 +1,9 @@
-from os import TextFile
+from os.path import Path
 
-def load_passports() -> [{string: string}]:
+func load_passports() -> [{string: string}]:
     passports = []
 
-    for chunk in TextFile(f"{__assets__}/day_04.txt").read().strip().split("\n\n"):
+    for chunk in Path(f"{__assets__}/day_04.txt").read_text().strip().split("\n\n"):
         passport: {string: string} = {}
 
         for item in chunk.replace("\n", " ").split(" "):
@@ -14,20 +14,20 @@ def load_passports() -> [{string: string}]:
 
     return passports
 
-def are_required_fields_present(passport: {string: string}) -> bool:
+func are_required_fields_present(passport: {string: string}) -> bool:
     for field in ["ecl", "pid", "eyr", "hcl", "byr", "iyr", "hgt"]:
         if field not in passport:
             return False
 
     return True
 
-def is_valid_ecl(value: string) -> bool:
+func is_valid_ecl(value: string) -> bool:
     return value in {"amb", "blu", "brn", "gry", "grn", "hzl", "oth"}
 
-def is_valid_pid(value: string) -> bool:
+func is_valid_pid(value: string) -> bool:
     return value.match(re"^\d{9}$") is not None
 
-def is_valid_eyr(value: string) -> bool:
+func is_valid_eyr(value: string) -> bool:
     mo = value.match(re"^(\d{4})$")
 
     if mo is None:
@@ -37,10 +37,10 @@ def is_valid_eyr(value: string) -> bool:
 
     return year >= 2020 and year <= 2030
 
-def is_valid_hcl(value: string) -> bool:
+func is_valid_hcl(value: string) -> bool:
     return value.match(re"^#[0-9a-f]{6}$") is not None
 
-def is_valid_byr(value: string) -> bool:
+func is_valid_byr(value: string) -> bool:
     mo = value.match(re"^(\d{4})$")
 
     if mo is None:
@@ -50,7 +50,7 @@ def is_valid_byr(value: string) -> bool:
 
     return year >= 1920 and year <= 2002
 
-def is_valid_iyr(value: string) -> bool:
+func is_valid_iyr(value: string) -> bool:
     mo = value.match(re"^(\d{4})$")
 
     if mo is None:
@@ -60,7 +60,7 @@ def is_valid_iyr(value: string) -> bool:
 
     return year >= 2010 and year <= 2020
 
-def is_valid_hgt(value: string) -> bool:
+func is_valid_hgt(value: string) -> bool:
     mo = value.match(re"^(\d+)(cm|in)$")
 
     if mo is None:
@@ -76,7 +76,7 @@ def is_valid_hgt(value: string) -> bool:
         case _:
             return False
 
-def part_1(passports: [{string: string}]):
+func part_1(passports: [{string: string}]):
     number_of_valid_passports = 0
 
     for passport in passports:
@@ -85,7 +85,7 @@ def part_1(passports: [{string: string}]):
 
     print(number_of_valid_passports)
 
-def is_valid_part_2(passport: {string: string}) -> bool:
+func is_valid_part_2(passport: {string: string}) -> bool:
     if not are_required_fields_present(passport):
         return False
 
@@ -113,7 +113,7 @@ def is_valid_part_2(passport: {string: string}) -> bool:
 
     return True
 
-def part_2(passports: [{string: string}]):
+func part_2(passports: [{string: string}]):
     number_of_valid_passports = 0
 
     for passport in passports:
@@ -122,7 +122,7 @@ def part_2(passports: [{string: string}]):
 
     print(number_of_valid_passports)
 
-def day_04():
+func day_04():
     passports = load_passports()
     part_1(passports)
     part_2(passports)

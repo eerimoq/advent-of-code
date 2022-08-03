@@ -1,9 +1,9 @@
-from os import TextFile
+from os.path import Path
 
-def load_bags() -> {string: [(string, i64)]}:
+func load_bags() -> {string: [(string, i64)]}:
     bags = {}
 
-    for line in TextFile(f"{__assets__}/day_07.txt").read().strip().split("\n"):
+    for line in Path(f"{__assets__}/day_07.txt").read_text().strip().split("\n"):
         color, _, contains = line.partition(" bags contain ")
         bag: [(string, i64)] = []
 
@@ -22,7 +22,7 @@ def load_bags() -> {string: [(string, i64)]}:
 class Part1:
     bags: {string: [(string, i64)]}
 
-    def find_in_bag(self, contains: [(string, i64)]) -> bool:
+    func find_in_bag(self, contains: [(string, i64)]) -> bool:
         for color, _ in contains:
             if color == "shiny gold":
                 return True
@@ -32,7 +32,7 @@ class Part1:
 
         return False
 
-    def process(self):
+    func process(self):
         count = 0
 
         for color, contains in self.bags:
@@ -44,7 +44,7 @@ class Part1:
 class Part2:
     bags: {string: [(string, i64)]}
 
-    def count_bags_in_bag(self, contains: [(string, i64)]) -> i64:
+    func count_bags_in_bag(self, contains: [(string, i64)]) -> i64:
         total_count = 0
 
         for color, count in contains:
@@ -53,10 +53,10 @@ class Part2:
 
         return total_count
 
-    def process(self):
+    func process(self):
         print(self.count_bags_in_bag(self.bags["shiny gold"]))
 
-def day_07():
+func day_07():
     bags = load_bags()
     Part1(bags).process()
     Part2(bags).process()

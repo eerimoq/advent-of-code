@@ -1,7 +1,7 @@
-from os import TextFile
+from os.path import Path
 from string import StringBuilder
 
-def load_rules_and_messages(text: string) -> ({string: string}, [string]):
+func load_rules_and_messages(text: string) -> ({string: string}, [string]):
     rules: {string: string} = {}
     messages: [string] = []
 
@@ -23,7 +23,7 @@ def load_rules_and_messages(text: string) -> ({string: string}, [string]):
 
     return rules, messages
 
-def create_regex_recurse(builder: StringBuilder,
+func create_regex_recurse(builder: StringBuilder,
                          rule: string,
                          rules: {string: string}):
     builder += '('
@@ -36,7 +36,7 @@ def create_regex_recurse(builder: StringBuilder,
 
     builder += ')'
 
-def create_regex(rules: {string: string}) -> regex:
+func create_regex(rules: {string: string}) -> regex:
     builder = StringBuilder()
     builder += '^'
     create_regex_recurse(builder, rules["0"], rules)
@@ -44,7 +44,7 @@ def create_regex(rules: {string: string}) -> regex:
 
     return regex(builder.to_string(), "")
 
-def part(rules: {string: string}, messages: [string]) -> i64:
+func part(rules: {string: string}, messages: [string]) -> i64:
     re = create_regex(rules)
     number_of_matching_messages = 0
 
@@ -54,23 +54,22 @@ def part(rules: {string: string}, messages: [string]) -> i64:
 
     return number_of_matching_messages
 
-def part_1(rules: {string: string}, messages: [string]) -> i64:
+func part_1(rules: {string: string}, messages: [string]) -> i64:
     return part(rules, messages)
 
-def part_2(rules: {string: string}, messages: [string]) -> i64:
+func part_2(rules: {string: string}, messages: [string]) -> i64:
     rules["8"] = "42 +"
     # Same number of 42:s and 31:s. Hardcoded limit of 4.
     rules["11"] = " | ".join([f"42 {{{i}}} 31 {{{i}}}" for i in range(1, 5)])
 
     return part(rules, messages)
 
-def day_19():
-    rules, messages = load_rules_and_messages(TextFile(f"{__assets__}/day_19.txt").read().strip())
+func day_19():
+    rules, messages = load_rules_and_messages(Path(f"{__assets__}/day_19.txt").read_text().strip())
     print(part_1(rules, messages))
     print(part_2(rules, messages))
 
-@test
-def test_part_1():
+test part_1():
     text = ("0: 4 1 5\n"
             "1: 2 3 | 3 2\n"
             "2: 4 4 | 5 5\n"
@@ -86,8 +85,7 @@ def test_part_1():
     rules, messages = load_rules_and_messages(text.strip())
     assert part_1(rules, messages) == 2
 
-@test
-def test_part_2():
+test part_2():
     text = ("42: 9 14 | 10 1\n"
             "9: 14 27 | 1 26\n"
             "10: 23 14 | 28 1\n"

@@ -1,6 +1,6 @@
-from os import TextFile
+from os.path import Path
 
-def load_ops(code: string) -> [Op]:
+func load_ops(code: string) -> [Op]:
     ops = []
 
     for line in code.strip().split("\n"):
@@ -16,15 +16,14 @@ def load_ops(code: string) -> [Op]:
 
     return ops
 
-@trait
-class Op:
+trait Op:
     pass
 
 class MaskOp(Op):
     set_mask: u64
     clear_mask: u64
 
-    def __init__(self, mask: string):
+    func __init__(self, mask: string):
         self.set_mask = 0
         self.clear_mask = 0
 
@@ -49,12 +48,12 @@ class Computer:
     set_mask: u64
     clear_mask: u64
 
-    def __init__(self):
+    func __init__(self):
         self.memory = {}
         self.set_mask = 0
         self.clear_mask = 0
 
-    def run(self, ops: [Op]) -> u64:
+    func run(self, ops: [Op]) -> u64:
         for op in ops:
             match op:
                 case MaskOp() as mask_op:
@@ -68,16 +67,15 @@ class Computer:
 
         return sum(self.memory.values())
 
-def part_1(ops: [Op]):
+func part_1(ops: [Op]):
     computer = Computer()
     print(computer.run(ops))
 
-def day_14():
-    ops = load_ops(TextFile(f"{__assets__}/day_14.txt").read().strip())
+func day_14():
+    ops = load_ops(Path(f"{__assets__}/day_14.txt").read_text().strip())
     part_1(ops)
 
-@test
-def test_part_1():
+test part_1():
     code = ("mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X\n"
             "mem[8] = 11\n"
             "mem[7] = 101\n"

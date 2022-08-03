@@ -1,4 +1,4 @@
-from os import TextFile
+from os.path import Path
 
 class Entry:
     low: i64
@@ -6,19 +6,19 @@ class Entry:
     letter: char
     password: [char]
 
-def get_input(filename: string) -> [Entry]:
+func get_input(filename: string) -> [Entry]:
     entries = []
 
-    for line in TextFile(f"{__assets__}/day_02/{filename}").read().strip().split("\n"):
+    for line in Path(f"{__assets__}/day_02/{filename}").read_text().strip().split("\n"):
         mo = line.match(re"^(\d+)-(\d+) (.): (.+)$")
         entries.append(Entry(i64(mo.group(1)),
                              i64(mo.group(2)),
                              mo.group(3)[0],
-                             list(mo.group(4))))
+                             [ch for ch in mo.group(4)]))
 
     return entries
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     entries = get_input(filename)
     number_of_valid_passwords = 0
 
@@ -30,7 +30,7 @@ def part_1(filename: string) -> i64:
 
     return number_of_valid_passwords
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     entries = get_input(filename)
     number_of_valid_passwords = 0
 
@@ -42,11 +42,10 @@ def part_2(filename: string) -> i64:
 
     return number_of_valid_passwords
 
-def day_02():
+func day_02():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test all():
     assert part_1("input.txt") == 396
     assert part_2("input.txt") == 428

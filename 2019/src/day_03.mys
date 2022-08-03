@@ -1,9 +1,9 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> [[(char, i64)]]:
+func get_input(filename: string) -> [[(char, i64)]]:
     lines = []
 
-    for line in TextFile(f"{__assets__}/day_03/{filename}").read().strip().split('\n'):
+    for line in Path(f"{__assets__}/day_03/{filename}").read_text().strip().split('\n'):
         lines.append([
             (command[0], i64(command[1:]))
             for command in line.split(',')
@@ -11,7 +11,7 @@ def get_input(filename: string) -> [[(char, i64)]]:
 
     return lines
 
-def deltas(direction: char) -> (i64, i64):
+func deltas(direction: char) -> (i64, i64):
     x = 0
     y = 0
 
@@ -27,7 +27,7 @@ def deltas(direction: char) -> (i64, i64):
 
     return x, y
 
-def is_intersection(x: i64, y: i64, line: [(char, i64)]) -> bool:
+func is_intersection(x: i64, y: i64, line: [(char, i64)]) -> bool:
     ox = 0
     oy = 0
 
@@ -43,7 +43,7 @@ def is_intersection(x: i64, y: i64, line: [(char, i64)]) -> bool:
 
     return False
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     lines = get_input(filename)
     line_1 = lines[0]
     line_2 = lines[1]
@@ -71,7 +71,7 @@ def part_1(filename: string) -> i64:
 
     return minimum_distance
 
-def calc_intersection(x: i64, y: i64, line: [(char, i64)]) -> i64:
+func calc_intersection(x: i64, y: i64, line: [(char, i64)]) -> i64:
     ox = 0
     oy = 0
     s = 0
@@ -89,7 +89,7 @@ def calc_intersection(x: i64, y: i64, line: [(char, i64)]) -> i64:
 
     return -1
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     lines = get_input(filename)
     line_1 = lines[0]
     line_2 = lines[1]
@@ -120,12 +120,11 @@ def part_2(filename: string) -> i64:
 
     return minimum_steps
 
-def day_03():
+func day_03():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test all():
     assert part_1("example.txt") == 6
     assert part_1("example_2.txt") == 159
     assert part_1("example_3.txt") == 135

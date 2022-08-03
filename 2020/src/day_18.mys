@@ -1,11 +1,11 @@
-from os import TextFile
+from os.path import Path
 from string import StringReader
 
-def load_expressions() -> [string]:
+func load_expressions() -> [string]:
     return [line.replace(" ", "")
-            for line in TextFile(f"{__assets__}/day_18.txt").read().strip().split("\n")]
+            for line in Path(f"{__assets__}/day_18.txt").read_text().strip().split("\n")]
 
-def evaluate_once(reader: StringReader, is_part_2: bool) -> i64:
+func evaluate_once(reader: StringReader, is_part_2: bool) -> i64:
     match reader.get():
         case '(':
             value = evaluate(reader, is_part_2)
@@ -14,7 +14,7 @@ def evaluate_once(reader: StringReader, is_part_2: bool) -> i64:
 
     return value
 
-def evaluate(reader: StringReader, is_part_2: bool) -> i64:
+func evaluate(reader: StringReader, is_part_2: bool) -> i64:
     value = 0
 
     while True:
@@ -38,7 +38,7 @@ def evaluate(reader: StringReader, is_part_2: bool) -> i64:
 
     return value
 
-def part(expressions: [string], is_part_2: bool):
+func part(expressions: [string], is_part_2: bool):
     value = 0
 
     for expression in expressions:
@@ -46,19 +46,18 @@ def part(expressions: [string], is_part_2: bool):
 
     print(value)
 
-def part_1(expressions: [string]):
+func part_1(expressions: [string]):
     part(expressions, False)
 
-def part_2(expressions: [string]):
+func part_2(expressions: [string]):
     part(expressions, True)
 
-def day_18():
+func day_18():
     expressions = load_expressions()
     part_1(expressions)
     part_2(expressions)
 
-@test
-def test_part_1():
+test part_1():
     datas = [
         ("2 * 3", 6),
         ("2 + 3", 5),
@@ -73,8 +72,7 @@ def test_part_1():
     for expression, result in datas:
         assert evaluate(StringReader(expression.replace(" ", "")), False) == result
 
-@test
-def test_part_2():
+test part_2():
     datas = [
         ("2 * 3", 6),
         ("2 + 3", 5),

@@ -1,21 +1,21 @@
-from os import TextFile
+from os.path import Path
 
 class Deck:
     cards: [i64]
 
-    def __init__(self):
+    func __init__(self):
         self.cards = []
 
-    def draw_card(self) -> i64:
+    func draw_card(self) -> i64:
         return self.cards.pop(0)
 
-    def put_card_on_bottom(self, card: i64):
+    func put_card_on_bottom(self, card: i64):
         self.cards.append(card)
 
-    def number_of_cards(self) -> i64:
-        return i64(len(self.cards))
+    func number_of_cards(self) -> i64:
+        return self.cards.length()
 
-def load_decks(text: string) -> [Deck]:
+func load_decks(text: string) -> [Deck]:
     decks = []
 
     for deck_text in text.split("\n\n"):
@@ -29,7 +29,7 @@ def load_decks(text: string) -> [Deck]:
 
     return decks
 
-def calc_score(deck: Deck) -> i64:
+func calc_score(deck: Deck) -> i64:
     score = 0
 
     for i, card in enumerate(reversed(deck.cards), 1):
@@ -37,7 +37,7 @@ def calc_score(deck: Deck) -> i64:
 
     return score
 
-def play(deck_1: Deck, deck_2: Deck) -> i64:
+func play(deck_1: Deck, deck_2: Deck) -> i64:
     while True:
         card_1 = deck_1.draw_card()
         card_2 = deck_2.draw_card()
@@ -55,15 +55,14 @@ def play(deck_1: Deck, deck_2: Deck) -> i64:
             if deck_1.number_of_cards() == 0:
                 return calc_score(deck_2)
 
-def part_1(deck_1: Deck, deck_2: Deck) -> i64:
+func part_1(deck_1: Deck, deck_2: Deck) -> i64:
     return play(deck_1, deck_2)
 
-def day_22():
-    decks = load_decks(TextFile(f"{__assets__}/day_22.txt").read().strip())
+func day_22():
+    decks = load_decks(Path(f"{__assets__}/day_22.txt").read_text().strip())
     print(part_1(decks[0], decks[1]))
 
-@test
-def test_part_1():
+test part_1():
     text = ("Player 1:\n"
             "9\n"
             "2\n"

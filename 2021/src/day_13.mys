@@ -71,7 +71,7 @@ func day_13():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-test test_all():
+test all():
     assert part_1("example.txt") == 17
     assert part_2("example.txt") == ("#####\n"
                                      "#   #\n"

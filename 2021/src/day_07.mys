@@ -43,7 +43,7 @@ func day_07():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-test test_all():
+test all():
     assert part_1("example.txt") == 37
     assert part_2("example.txt") == 168
     assert part_1("input.txt") == 326132

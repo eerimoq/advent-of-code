@@ -3,7 +3,7 @@ from .day_01 import day_01
 from .day_02 import day_02
 from .day_03 import day_03
 
-def main(argv: [string]):
+func main(argv: [string]):
     parser = Parser("aoc2019")
     parser.add_positional("days",
                           multiple_occurrences=True,
