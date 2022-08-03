@@ -1,12 +1,12 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> [i64]:
+func get_input(filename: string) -> [i64]:
     return [
         i64(value)
-        for value in TextFile(f"{__assets__}/day_07/{filename}").read().strip().split(',')
+        for value in Path(f"{__assets__}/day_07/{filename}").read_text().strip().split(',')
     ]
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     positions = get_input(filename)
     minimum_fuel = -1
 
@@ -21,7 +21,7 @@ def part_1(filename: string) -> i64:
 
     return minimum_fuel
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     positions = get_input(filename)
     minimum_fuel = -1
 
@@ -39,12 +39,11 @@ def part_2(filename: string) -> i64:
 
     return minimum_fuel
 
-def day_07():
+func day_07():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 37
     assert part_2("example.txt") == 168
     assert part_1("input.txt") == 326132

@@ -1,4 +1,4 @@
-from os import TextFile
+from os.path import Path
 
 RE_EXPLODE: regex = re"^\[(\d+),(\d+)\]"
 RE_EXPLODE_NEXT: regex = re"^[\[\],]*(\d+)"
@@ -6,10 +6,10 @@ RE_EXPLODE_PREV: regex = re"(\d+)[\[\],]*$"
 RE_SPLIT: regex = re"^(\d+)"
 RE_MAGNITUDE: regex = re"\[(\d+),(\d+)\]"
 
-def get_input(filename: string) -> [string]:
-    return TextFile(f"{__assets__}/day_18/{filename}").read().strip().split("\n")
+func get_input(filename: string) -> [string]:
+    return Path(f"{__assets__}/day_18/{filename}").read_text().strip().split("\n")
 
-def find_explode_index(number: string) -> i64:
+func find_explode_index(number: string) -> i64:
     count = 0
 
     for index, ch in enumerate(number):
@@ -24,15 +24,15 @@ def find_explode_index(number: string) -> i64:
 
     return -1
 
-def find_split_index(number: string) -> i64:
-    for index in range(i64(len(number) - 1)):
+func find_split_index(number: string) -> i64:
+    for index in range(number.length() - 1):
         if number[index + 1].is_digit():
             if number[index].is_digit():
                 return index
 
     return -1
 
-def explode(number: string, index: i64) -> string:
+func explode(number: string, index: i64) -> string:
     mr = number[index:].match(RE_EXPLODE)
     left_regular_number = i64(mr.group(1))
     right_regular_number = i64(mr.group(2))
@@ -60,7 +60,7 @@ def explode(number: string, index: i64) -> string:
 
     return number
 
-def split(number: string, index: i64) -> string:
+func split(number: string, index: i64) -> string:
     mr = number[index:].match(RE_SPLIT)
     regular_number = i64(mr.group(1))
     left_regular_number = regular_number / 2
@@ -71,7 +71,7 @@ def split(number: string, index: i64) -> string:
 
     return f"{before}{number}{after}"
 
-def reduce(number: string) -> string:
+func reduce(number: string) -> string:
     while True:
         index = find_explode_index(number)
 
@@ -89,17 +89,17 @@ def reduce(number: string) -> string:
 
     return number
 
-def add(number_1: string, number_2: string) -> string:
+func add(number_1: string, number_2: string) -> string:
     return reduce(f"[{number_1},{number_2}]")
 
-def magnitude(number: string) -> i64:
+func magnitude(number: string) -> i64:
     mag = 0
 
     while True:
         mr = number.match(RE_MAGNITUDE)
         mag = 3 * i64(mr.group(1)) + 2 * i64(mr.group(2))
 
-        if len(mr.group(0)) == len(number):
+        if mr.group(0).length() == number.length():
             break
 
         before = number[:mr.begin(0)]
@@ -108,7 +108,7 @@ def magnitude(number: string) -> i64:
 
     return mag
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     lines = get_input(filename)
     number = lines[0]
 
@@ -117,12 +117,12 @@ def part_1(filename: string) -> i64:
 
     return magnitude(number)
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     lines = get_input(filename)
     maximum_magnitude = 0
 
-    for i in range(i64(len(lines))):
-        for j in range(i64(len(lines))):
+    for i in range(lines.length()):
+        for j in range(lines.length()):
             if i == j:
                 continue
 
@@ -131,12 +131,11 @@ def part_2(filename: string) -> i64:
 
     return maximum_magnitude
 
-def day_18():
+func day_18():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 143
     assert part_1("example_2.txt") == 1384
     assert part_1("example_3.txt") == 3488

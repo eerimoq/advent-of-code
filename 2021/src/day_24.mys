@@ -1,14 +1,13 @@
-from os import TextFile
+from os.path import Path
 
-@trait
-class Code:
+trait Code:
 
-    def run(self, w: i64, z: i64) -> i64:
+    func run(self, w: i64, z: i64) -> i64:
         pass
 
 class Code1(Code):
 
-    def run(self, w: i64, z: i64) -> i64:
+    func run(self, w: i64, z: i64) -> i64:
         x = 0
         y = 0
 
@@ -34,7 +33,7 @@ class Code1(Code):
 
 class Code2(Code):
 
-    def run(self, w: i64, z: i64) -> i64:
+    func run(self, w: i64, z: i64) -> i64:
         x = 0
         y = 0
 
@@ -60,7 +59,7 @@ class Code2(Code):
 
 class Code3(Code):
 
-    def run(self, w: i64, z: i64) -> i64:
+    func run(self, w: i64, z: i64) -> i64:
         x = 0
         y = 0
 
@@ -86,7 +85,7 @@ class Code3(Code):
 
 class Code4(Code):
 
-    def run(self, w: i64, z: i64) -> i64:
+    func run(self, w: i64, z: i64) -> i64:
         x = 0
         y = 0
 
@@ -112,7 +111,7 @@ class Code4(Code):
 
 class Code5(Code):
 
-    def run(self, w: i64, z: i64) -> i64:
+    func run(self, w: i64, z: i64) -> i64:
         x = 0
         y = 0
 
@@ -138,7 +137,7 @@ class Code5(Code):
 
 class Code6(Code):
 
-    def run(self, w: i64, z: i64) -> i64:
+    func run(self, w: i64, z: i64) -> i64:
         x = 0
         y = 0
 
@@ -164,7 +163,7 @@ class Code6(Code):
 
 class Code7(Code):
 
-    def run(self, w: i64, z: i64) -> i64:
+    func run(self, w: i64, z: i64) -> i64:
         x = 0
         y = 0
 
@@ -190,7 +189,7 @@ class Code7(Code):
 
 class Code8(Code):
 
-    def run(self, w: i64, z: i64) -> i64:
+    func run(self, w: i64, z: i64) -> i64:
         x = 0
         y = 0
 
@@ -216,7 +215,7 @@ class Code8(Code):
 
 class Code9(Code):
 
-    def run(self, w: i64, z: i64) -> i64:
+    func run(self, w: i64, z: i64) -> i64:
         x = 0
         y = 0
 
@@ -242,7 +241,7 @@ class Code9(Code):
 
 class Code10(Code):
 
-    def run(self, w: i64, z: i64) -> i64:
+    func run(self, w: i64, z: i64) -> i64:
         x = 0
         y = 0
 
@@ -268,7 +267,7 @@ class Code10(Code):
 
 class Code11(Code):
 
-    def run(self, w: i64, z: i64) -> i64:
+    func run(self, w: i64, z: i64) -> i64:
         x = 0
         y = 0
 
@@ -294,7 +293,7 @@ class Code11(Code):
 
 class Code12(Code):
 
-    def run(self, w: i64, z: i64) -> i64:
+    func run(self, w: i64, z: i64) -> i64:
         x = 0
         y = 0
 
@@ -320,7 +319,7 @@ class Code12(Code):
 
 class Code13(Code):
 
-    def run(self, w: i64, z: i64) -> i64:
+    func run(self, w: i64, z: i64) -> i64:
         x = 0
         y = 0
 
@@ -346,7 +345,7 @@ class Code13(Code):
 
 class Code14(Code):
 
-    def run(self, w: i64, z: i64) -> i64:
+    func run(self, w: i64, z: i64) -> i64:
         x = 0
         y = 0
 
@@ -387,32 +386,31 @@ CODES: [Code] = [
     Code14()
 ]
 
-@trait
-class Algoritm:
+trait Algoritm:
 
-    def compare(self, model_number_1: i64, model_number_2: i64) -> i64:
+    func compare(self, model_number_1: i64, model_number_2: i64) -> i64:
         pass
 
-    def result(self, model_numbers: [i64]) -> i64:
+    func result(self, model_numbers: [i64]) -> i64:
         pass
 
 class Minimum(Algoritm):
 
-    def compare(self, model_number_1: i64, model_number_2: i64) -> i64:
+    func compare(self, model_number_1: i64, model_number_2: i64) -> i64:
         return min(model_number_1, model_number_2)
 
-    def result(self, model_numbers: [i64]) -> i64:
+    func result(self, model_numbers: [i64]) -> i64:
         return min(model_numbers)
 
 class Maximum(Algoritm):
 
-    def compare(self, model_number_1: i64, model_number_2: i64) -> i64:
+    func compare(self, model_number_1: i64, model_number_2: i64) -> i64:
         return max(model_number_1, model_number_2)
 
-    def result(self, model_numbers: [i64]) -> i64:
+    func result(self, model_numbers: [i64]) -> i64:
         return max(model_numbers)
 
-def both_parts(algoritm: Algoritm) -> i64:
+func both_parts(algoritm: Algoritm) -> i64:
     states_in = {0: 0}
     states_out: {i64: i64} = {}
 
@@ -429,12 +427,12 @@ def both_parts(algoritm: Algoritm) -> i64:
 
     return algoritm.result([model_number for z, model_number in states_in if z == 0])
 
-def part_1() -> i64:
+func part_1() -> i64:
     return both_parts(Maximum())
 
-def part_2() -> i64:
+func part_2() -> i64:
     return both_parts(Minimum())
 
-def day_24():
+func day_24():
     print(part_1())
     print(part_2())

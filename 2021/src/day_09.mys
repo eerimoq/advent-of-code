@@ -1,9 +1,9 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> [[i64]]:
+func get_input(filename: string) -> [[i64]]:
     items = []
 
-    for line in TextFile(f"{__assets__}/day_09/{filename}").read().strip().split("\n"):
+    for line in Path(f"{__assets__}/day_09/{filename}").read_text().strip().split("\n"):
         items.append([i64(string(ch)) for ch in line])
 
     return items
@@ -13,18 +13,18 @@ class Matrix:
     height: i64
     width: i64
 
-    def __init__(self, data: [[i64]]):
+    func __init__(self, data: [[i64]]):
         self.data = data
-        self.height = i64(len(data))
-        self.width = i64(len(data[0]))
+        self.height = data.length()
+        self.width = data[0].length()
 
-    def get(self, r: i64, c: i64) -> i64:
+    func get(self, r: i64, c: i64) -> i64:
         return self.data[r][c]
 
-    def set(self, r: i64, c: i64, v: i64):
+    func set(self, r: i64, c: i64, v: i64):
         self.data[r][c] = v
 
-    def neighbours(self, r: i64, c: i64) -> [(i64, i64)]:
+    func neighbours(self, r: i64, c: i64) -> [(i64, i64)]:
         neighbours = []
 
         if c > 0:
@@ -41,7 +41,7 @@ class Matrix:
 
         return neighbours
 
-def find_low_points(m: Matrix) -> [(i64, i64, i64)]:
+func find_low_points(m: Matrix) -> [(i64, i64, i64)]:
     low_points: [(i64, i64, i64)] = []
 
     for r in range(m.height):
@@ -57,7 +57,7 @@ def find_low_points(m: Matrix) -> [(i64, i64, i64)]:
 
     return low_points
 
-def calc_basin_size(r: i64, c: i64, m: Matrix) -> i64:
+func calc_basin_size(r: i64, c: i64, m: Matrix) -> i64:
     size = 1
     m.set(r, c, 9)
 
@@ -67,24 +67,23 @@ def calc_basin_size(r: i64, c: i64, m: Matrix) -> i64:
 
     return size
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     m = Matrix(get_input(filename))
 
     return sum([v + 1 for _, _, v in find_low_points(m)])
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     m = Matrix(get_input(filename))
     sizes = [calc_basin_size(r, c, m) for r, c, _ in find_low_points(m)]
     sizes.sort()
 
     return sizes[-3] * sizes[-2] * sizes[-1]
 
-def day_09():
+func day_09():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 15
     assert part_2("example.txt") == 1134
     assert part_1("input.txt") == 541

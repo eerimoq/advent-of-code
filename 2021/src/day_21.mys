@@ -1,12 +1,12 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> (i64, i64):
-    lines = TextFile(f"{__assets__}/day_21/{filename}").read().strip().split("\n")
+func get_input(filename: string) -> (i64, i64):
+    lines = Path(f"{__assets__}/day_21/{filename}").read_text().strip().split("\n")
 
     return (i64(lines[0][-1:]), i64(lines[1][-1:]))
 
 
-def roll_three_times(next_dice_value: i64) -> (i64, i64):
+func roll_three_times(next_dice_value: i64) -> (i64, i64):
     moves = 0
 
     for _ in range(3):
@@ -18,7 +18,7 @@ def roll_three_times(next_dice_value: i64) -> (i64, i64):
 
     return (next_dice_value, moves)
 
-def play_1_100_dice(positions: [i64]) -> i64:
+func play_1_100_dice(positions: [i64]) -> i64:
     next_dice_value = 1
     total_rolls = 0
     scores = [0, 0]
@@ -36,7 +36,7 @@ def play_1_100_dice(positions: [i64]) -> i64:
 
         next_players_turn ^= 1
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     position_1, position_2 = get_input(filename)
 
     return play_1_100_dice([position_1 - 1, position_2 - 1])
@@ -51,7 +51,7 @@ def part_1(filename: string) -> i64:
 # 1 x 9
 COUNTS: [i64] = [1, 3, 6, 7, 6, 3, 1]
 
-def play_dirac_dice(wins: [i64],
+func play_dirac_dice(wins: [i64],
                     position_1: i64,
                     position_2: i64,
                     score_1: i64 = 0,
@@ -84,19 +84,18 @@ def play_dirac_dice(wins: [i64],
                             next_score_2,
                             count * COUNTS[roll_1 - 3] * COUNTS[roll_2 - 3])
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     position_1, position_2 = get_input(filename)
     wins = [0, 0]
     play_dirac_dice(wins, position_1 - 1, position_2 - 1)
 
     return max(wins)
 
-def day_21():
+func day_21():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 739785
     assert part_1("input.txt") == 679329
     assert part_2("example.txt") == 444356092776315

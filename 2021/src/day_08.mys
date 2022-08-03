@@ -1,9 +1,9 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> [([string], [string])]:
+func get_input(filename: string) -> [([string], [string])]:
     items = []
 
-    for value in TextFile(f"{__assets__}/day_08/{filename}").read().strip().split("\n"):
+    for value in Path(f"{__assets__}/day_08/{filename}").read_text().strip().split("\n"):
         parts = value.split("|")
         patterns = parts[0].strip().split(" ")
         digits = parts[1].strip().split(" ")
@@ -11,25 +11,25 @@ def get_input(filename: string) -> [([string], [string])]:
 
     return items
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     items = get_input(filename)
     count = 0
 
     for item in items:
         for digit in item[1]:
-            if len(digit) in [2, 4, 3, 7]:
+            if digit.length() in [2, 4, 3, 7]:
                 count += 1
 
     return count
 
-def is_all_in(segments: string, digit: string) -> bool:
+func is_all_in(segments: string, digit: string) -> bool:
     for segment in segments:
         if segment not in digit:
             return False
 
     return True
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     items = get_input(filename)
     count = 0
 
@@ -39,7 +39,7 @@ def part_2(filename: string) -> i64:
         acf = ""
 
         for pattern in patterns:
-            match len(pattern):
+            match pattern.length():
                 case 2:
                     cf = pattern
                 case 4:
@@ -58,7 +58,7 @@ def part_2(filename: string) -> i64:
         for digit in digits:
             number *= 10
 
-            match len(digit):
+            match digit.length():
                 case 2:
                     number += 1
                 case 4:
@@ -84,12 +84,11 @@ def part_2(filename: string) -> i64:
 
     return count
 
-def day_08():
+func day_08():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 26
     assert part_2("example.txt") == 61229
     assert part_1("input.txt") == 255

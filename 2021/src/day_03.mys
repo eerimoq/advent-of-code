@@ -1,9 +1,9 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> [string]:
-    return TextFile(f"{__assets__}/day_03/{filename}").read().strip().split("\n")
+func get_input(filename: string) -> [string]:
+    return Path(f"{__assets__}/day_03/{filename}").read_text().strip().split("\n")
 
-def count_ones_and_zeros_at_index(report: [string], index: i64) -> (i64, i64):
+func count_ones_and_zeros_at_index(report: [string], index: i64) -> (i64, i64):
     number_of_ones = 0
     number_of_zeros = 0
 
@@ -15,12 +15,12 @@ def count_ones_and_zeros_at_index(report: [string], index: i64) -> (i64, i64):
 
     return number_of_ones, number_of_zeros
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     report = get_input(filename)
     gamma_rate = 0
     epsilon_rate = 0
 
-    for index in range(i64(len(report[0]))):
+    for index in range(report[0].length()):
         number_of_ones, number_of_zeros = count_ones_and_zeros_at_index(report,
                                                                         index)
         gamma_rate <<= 1
@@ -33,8 +33,8 @@ def part_1(filename: string) -> i64:
 
     return gamma_rate * epsilon_rate
 
-def calc_oxygen_generator_rating(report: [string]) -> i64:
-    for index in range(i64(len(report[0]))):
+func calc_oxygen_generator_rating(report: [string]) -> i64:
+    for index in range(report[0].length()):
         number_of_ones, number_of_zeros = count_ones_and_zeros_at_index(report,
                                                                         index)
 
@@ -43,13 +43,13 @@ def calc_oxygen_generator_rating(report: [string]) -> i64:
         else:
             report = [value for value in report if value[index] == '0']
 
-        if len(report) == 1:
+        if report.length() == 1:
             return i64(report[0], 2)
 
     raise UnreachableError()
 
-def calc_co2_scrubber_rating(report: [string]) -> i64:
-    for index in range(i64(len(report[0]))):
+func calc_co2_scrubber_rating(report: [string]) -> i64:
+    for index in range(report[0].length()):
         number_of_ones, number_of_zeros = count_ones_and_zeros_at_index(report,
                                                                         index)
 
@@ -58,22 +58,21 @@ def calc_co2_scrubber_rating(report: [string]) -> i64:
         else:
             report = [value for value in report if value[index] == '1']
 
-        if len(report) == 1:
+        if report.length() == 1:
             return i64(report[0], 2)
 
     raise UnreachableError()
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     report = get_input(filename)
 
     return calc_oxygen_generator_rating(report) * calc_co2_scrubber_rating(report)
 
-def day_03():
+func day_03():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 198
     assert part_2("example.txt") == 230
     assert part_1("input.txt") == 3923414

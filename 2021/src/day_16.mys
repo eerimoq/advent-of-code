@@ -1,4 +1,4 @@
-from os import TextFile
+from os.path import Path
 from string import StringReader
 
 HEX_TO_BIN: {char: string} = {
@@ -20,25 +20,24 @@ HEX_TO_BIN: {char: string} = {
     'F': "1111"
 }
 
-def get_input(filename: string) -> string:
+func get_input(filename: string) -> string:
     bits = ""
 
-    for ch in TextFile(f"{__assets__}/day_16/{filename}").read().strip():
+    for ch in Path(f"{__assets__}/day_16/{filename}").read_text().strip():
         bits += HEX_TO_BIN[ch]
 
     return bits
 
-@trait
-class Packet:
+trait Packet:
 
-    def result(self) -> i64:
+    func result(self) -> i64:
         pass
 
 class LiteralValuePacket(Packet):
     version: i64
     value: i64
 
-    def result(self) -> i64:
+    func result(self) -> i64:
         return self.value
 
 class OperatorPacket(Packet):
@@ -46,7 +45,7 @@ class OperatorPacket(Packet):
     type: i64
     packets: [Packet]
 
-    def result(self) -> i64:
+    func result(self) -> i64:
         match self.type:
             case 0:
                 return sum([packet.result() for packet in self.packets])
@@ -79,7 +78,7 @@ class OperatorPacket(Packet):
 
     raise UnreachableError("The impossible happened")
 
-def decode_literal_value(reader: StringReader) -> i64:
+func decode_literal_value(reader: StringReader) -> i64:
     value = ""
     more = '1'
 
@@ -89,7 +88,7 @@ def decode_literal_value(reader: StringReader) -> i64:
 
     return i64(value, 2)
 
-def decode_operator(reader: StringReader) -> [Packet]:
+func decode_operator(reader: StringReader) -> [Packet]:
     match reader.get():
         case '0':
             return decode_packets(StringReader(reader.read(i64(reader.read(15), 2))))
@@ -98,7 +97,7 @@ def decode_operator(reader: StringReader) -> [Packet]:
 
     raise UnreachableError("The impossible happened")
 
-def decode_packets(reader: StringReader, count: i64 = -1) -> [Packet]:
+func decode_packets(reader: StringReader, count: i64 = -1) -> [Packet]:
     packets = []
 
     try:
@@ -122,7 +121,7 @@ def decode_packets(reader: StringReader, count: i64 = -1) -> [Packet]:
 
     return packets
 
-def add_versions(packets: [Packet]) -> i64:
+func add_versions(packets: [Packet]) -> i64:
     total = 0
 
     for packet in packets:
@@ -135,22 +134,21 @@ def add_versions(packets: [Packet]) -> i64:
 
     return total
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     bits = get_input(filename)
 
     return add_versions(decode_packets(StringReader(bits)))
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     bits = get_input(filename)
 
     return decode_packets(StringReader(bits))[0].result()
 
-def day_16():
+func day_16():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 6
     assert part_1("example_2.txt") == 16
     assert part_1("example_3.txt") == 12

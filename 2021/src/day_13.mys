@@ -1,14 +1,14 @@
-from os import TextFile
+from os.path import Path
 
 class Point:
     x: i64
     y: i64
 
-def get_input(filename: string) -> ({Point}, [(string, i64)]):
+func get_input(filename: string) -> ({Point}, [(string, i64)]):
     coordinates: {Point} = {}
     folds: [(string, i64)] = []
 
-    for line in TextFile(f"{__assets__}/day_13/{filename}").read().split('\n'):
+    for line in Path(f"{__assets__}/day_13/{filename}").read_text().split('\n'):
         mr = line.match(re"(\d+),(\d+)")
 
         if mr is not None:
@@ -21,7 +21,7 @@ def get_input(filename: string) -> ({Point}, [(string, i64)]):
 
     return (coordinates, folds)
 
-def fold(coordinates: {Point}, direction: string, offset: i64) -> {Point}:
+func fold(coordinates: {Point}, direction: string, offset: i64) -> {Point}:
     new_coordinates = {}
 
     for coordinate in coordinates:
@@ -41,12 +41,12 @@ def fold(coordinates: {Point}, direction: string, offset: i64) -> {Point}:
 
     return new_coordinates
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     coordinates, folds = get_input(filename)
 
-    return i64(len(fold(coordinates, folds[0][0], folds[0][1])))
+    return fold(coordinates, folds[0][0], folds[0][1]).length()
 
-def part_2(filename: string) -> string:
+func part_2(filename: string) -> string:
     coordinates, folds = get_input(filename)
 
     for direction, offset in folds:
@@ -67,12 +67,11 @@ def part_2(filename: string) -> string:
 
     return code.strip()
 
-def day_13():
+func day_13():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 17
     assert part_2("example.txt") == ("#####\n"
                                      "#   #\n"

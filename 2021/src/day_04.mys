@@ -1,7 +1,7 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> ([i64], [[i64]]):
-    chunks = TextFile(f"{__assets__}/day_04/{filename}").read().strip().split("\n\n")
+func get_input(filename: string) -> ([i64], [[i64]]):
+    chunks = Path(f"{__assets__}/day_04/{filename}").read_text().strip().split("\n\n")
     numbers = [i64(number) for number in chunks[0].split(',')]
     boards = [
         [i64(number) for number in chunk.strip().split()]
@@ -10,7 +10,7 @@ def get_input(filename: string) -> ([i64], [[i64]]):
 
     return numbers, boards
 
-def has_bingo(board: [i64]) -> bool:
+func has_bingo(board: [i64]) -> bool:
     for i in range(5):
         if all([number < 0 for number in board[5 * i:5 * i + 5]]):
             return True
@@ -20,16 +20,16 @@ def has_bingo(board: [i64]) -> bool:
 
     return False
 
-def calc_unmarked_numbers(board: [i64]) -> i64:
+func calc_unmarked_numbers(board: [i64]) -> i64:
     return sum([number for number in board if number > 0])
 
-def mark_number(board: [i64], number: i64):
+func mark_number(board: [i64], number: i64):
     index = board.find(number)
 
     if index != -1:
         board[index] = -1
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     numbers, boards = get_input(filename)
 
     for number in numbers:
@@ -41,7 +41,7 @@ def part_1(filename: string) -> i64:
 
     raise UnreachableError("No bingo")
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     numbers, boards = get_input(filename)
     boards_with_bingo: [i64] = []
 
@@ -55,17 +55,16 @@ def part_2(filename: string) -> i64:
             if has_bingo(board):
                 boards_with_bingo.append(i)
 
-                if len(boards_with_bingo) == len(boards):
+                if boards_with_bingo.length() == boards.length():
                     return calc_unmarked_numbers(board) * number
 
     raise UnreachableError("No bingo")
 
-def day_04():
+func day_04():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 4512
     assert part_2("example.txt") == 1924
     assert part_1("input.txt") == 11536

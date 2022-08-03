@@ -1,9 +1,9 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> [Line]:
+func get_input(filename: string) -> [Line]:
     lines = []
 
-    for line in TextFile(f"{__assets__}/day_05/{filename}").read().strip().split("\n"):
+    for line in Path(f"{__assets__}/day_05/{filename}").read_text().strip().split("\n"):
         rm = line.match(re"(\d+),(\d+) -> (\d+),(\d+)")
         lines.append(Line(i64(rm.group(1)),
                           i64(rm.group(2)),
@@ -21,13 +21,13 @@ class Line:
 class Diagram:
     canvas: [[i64]]
 
-    def __init__(self, x_max: i64, y_max: i64):
+    func __init__(self, x_max: i64, y_max: i64):
         self.canvas = []
 
         for _ in range(x_max + 1):
             self.canvas.append([0 for _ in range(y_max + 1)])
 
-    def draw_line(self, line: Line):
+    func draw_line(self, line: Line):
         if line.x1 < line.x2:
             x_diff = 1
         elif line.x1 > line.x2:
@@ -54,7 +54,7 @@ class Diagram:
             x += x_diff
             y += y_diff
 
-    def count_number_of_overlapping_lines(self) -> i64:
+    func count_number_of_overlapping_lines(self) -> i64:
         number_of_overlapping_lines = 0
 
         for line in self.canvas:
@@ -64,7 +64,7 @@ class Diagram:
 
         return number_of_overlapping_lines
 
-def create_empty_diagram(lines: [Line]) -> Diagram:
+func create_empty_diagram(lines: [Line]) -> Diagram:
     x_max = 0
     y_max = 0
 
@@ -74,10 +74,10 @@ def create_empty_diagram(lines: [Line]) -> Diagram:
 
     return Diagram(x_max, y_max)
 
-def is_horizontal_or_vertical_line(line: Line) -> bool:
+func is_horizontal_or_vertical_line(line: Line) -> bool:
     return line.x1 == line.x2 or line.y1 == line.y2
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     lines = get_input(filename)
     diagram = create_empty_diagram(lines)
 
@@ -87,7 +87,7 @@ def part_1(filename: string) -> i64:
 
     return diagram.count_number_of_overlapping_lines()
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     lines = get_input(filename)
     diagram = create_empty_diagram(lines)
 
@@ -96,12 +96,11 @@ def part_2(filename: string) -> i64:
 
     return diagram.count_number_of_overlapping_lines()
 
-def day_05():
+func day_05():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 5
     assert part_2("example.txt") == 12
     assert part_1("input.txt") == 5145

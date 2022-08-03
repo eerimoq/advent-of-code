@@ -1,16 +1,16 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> [[char]]:
+func get_input(filename: string) -> [[char]]:
     map = []
 
-    for line in TextFile(f"{__assets__}/day_25/{filename}").read().strip().split("\n"):
+    for line in Path(f"{__assets__}/day_25/{filename}").read_text().strip().split("\n"):
         map.append(list(line))
 
     return map
 
-def step_once(map: [[char]]) -> bool:
-    height = i64(len(map))
-    width = i64(len(map[0]))
+func step_once(map: [[char]]) -> bool:
+    height = map.length()
+    width = map[0].length()
     moved = False
 
     for r in range(height):
@@ -39,7 +39,7 @@ def step_once(map: [[char]]) -> bool:
 
     return moved
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     map = get_input(filename)
     step = 0
 
@@ -51,9 +51,8 @@ def part_1(filename: string) -> i64:
 
     return step
 
-def day_25():
+func day_25():
     print(part_1("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 58

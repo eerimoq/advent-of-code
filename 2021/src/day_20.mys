@@ -1,11 +1,11 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> (string, [string]):
-    lines = TextFile(f"{__assets__}/day_20/{filename}").read().strip().split("\n")
+func get_input(filename: string) -> (string, [string]):
+    lines = Path(f"{__assets__}/day_20/{filename}").read_text().strip().split("\n")
 
     return (lines[0], lines[2:])
 
-def enhance_pixel(image: [[char]], r: i64, c: i64, algorithm: string) -> char:
+func enhance_pixel(image: [[char]], r: i64, c: i64, algorithm: string) -> char:
     number = 0
 
     for ro in range(-1, 2):
@@ -17,11 +17,11 @@ def enhance_pixel(image: [[char]], r: i64, c: i64, algorithm: string) -> char:
 
     return algorithm[number]
 
-def enhance(lines: [string], algorithm: string, number_of_iterations: i64) -> [[char]]:
+func enhance(lines: [string], algorithm: string, number_of_iterations: i64) -> [[char]]:
     rbegin = 3 * number_of_iterations
-    rend = rbegin + i64(len(lines))
+    rend = rbegin + lines.length()
     cbegin = 3 * number_of_iterations
-    cend = cbegin + i64(len(lines[0]))
+    cend = cbegin + lines[0].length()
     height = rend + rbegin
     width = cend + cbegin
     image: [[char]] = []
@@ -57,7 +57,7 @@ def enhance(lines: [string], algorithm: string, number_of_iterations: i64) -> [[
 
     return cropped_image
 
-def count_number_of_lit_pixels(image: [[char]]) -> i64:
+func count_number_of_lit_pixels(image: [[char]]) -> i64:
     total = 0
 
     for row in image:
@@ -65,22 +65,21 @@ def count_number_of_lit_pixels(image: [[char]]) -> i64:
 
     return total
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     algorithm, image = get_input(filename)
 
     return count_number_of_lit_pixels(enhance(image, algorithm, 2))
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     algorithm, image = get_input(filename)
 
     return count_number_of_lit_pixels(enhance(image, algorithm, 50))
 
-def day_20():
+func day_20():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 35
     assert part_2("example.txt") == 3351
     assert part_1("input.txt") == 5203

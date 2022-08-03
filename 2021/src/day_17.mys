@@ -1,12 +1,12 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> (i64, i64, i64, i64):
-    line = TextFile(f"{__assets__}/day_17/{filename}").read().strip()
+func get_input(filename: string) -> (i64, i64, i64, i64):
+    line = Path(f"{__assets__}/day_17/{filename}").read_text().strip()
     mr = line.match(re"target area: x=([-\d]+)..([-\d]+), y=([-\d]+)..([-\d]+)")
 
     return (i64(mr.group(1)), i64(mr.group(2)), i64(mr.group(3)), i64(mr.group(4)))
 
-def find_max(v_x: i64,
+func find_max(v_x: i64,
              v_y: i64,
              x_low: i64,
              x_high: i64,
@@ -33,7 +33,7 @@ def find_max(v_x: i64,
 
     return y_low - 1
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     x_low, x_high, y_low, y_high = get_input(filename)
     y_max = y_low - 1
 
@@ -43,7 +43,7 @@ def part_1(filename: string) -> i64:
 
     return y_max
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     x_low, x_high, y_low, y_high = get_input(filename)
     lines = get_input(filename)
     hits = 0
@@ -55,12 +55,11 @@ def part_2(filename: string) -> i64:
 
     return hits
 
-def day_17():
+func day_17():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 45
     assert part_2("example.txt") == 112
     assert part_1("input.txt") == 11781

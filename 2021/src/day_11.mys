@@ -1,9 +1,9 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> [[i64]]:
+func get_input(filename: string) -> [[i64]]:
     items = []
 
-    for line in TextFile(f"{__assets__}/day_11/{filename}").read().strip().split("\n"):
+    for line in Path(f"{__assets__}/day_11/{filename}").read_text().strip().split("\n"):
         digits = []
 
         for ch in line:
@@ -18,18 +18,18 @@ class Matrix:
     height: i64
     width: i64
 
-    def __init__(self, data: [[i64]]):
+    func __init__(self, data: [[i64]]):
         self.data = data
-        self.height = i64(len(data))
-        self.width = i64(len(data[0]))
+        self.height = data.length()
+        self.width = data[0].length()
 
-    def get(self, r: i64, c: i64) -> i64:
+    func get(self, r: i64, c: i64) -> i64:
         return self.data[r][c]
 
-    def set(self, r: i64, c: i64, v: i64):
+    func set(self, r: i64, c: i64, v: i64):
         self.data[r][c] = v
 
-    def neighbours(self, r: i64, c: i64) -> [(i64, i64)]:
+    func neighbours(self, r: i64, c: i64) -> [(i64, i64)]:
         neighbours = []
 
         for nr in range(r - 1, r + 2):
@@ -42,7 +42,7 @@ class Matrix:
 
         return neighbours
 
-def update(energies: Matrix) -> i64:
+func update(energies: Matrix) -> i64:
     flashes = 0
     to_visit: [(i64, i64)] = []
 
@@ -50,7 +50,7 @@ def update(energies: Matrix) -> i64:
         for c in range(energies.width):
             to_visit.append((r, c))
 
-    while len(to_visit) > 0:
+    while to_visit.length() > 0:
         r, c = to_visit.pop()
         energy = energies.get(r, c)
 
@@ -68,7 +68,7 @@ def update(energies: Matrix) -> i64:
 
     return flashes
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     energies = Matrix(get_input(filename))
     flashes = 0
 
@@ -77,7 +77,7 @@ def part_1(filename: string) -> i64:
 
     return flashes
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     energies = Matrix(get_input(filename))
 
     for step in range(1000):
@@ -88,12 +88,11 @@ def part_2(filename: string) -> i64:
 
     raise UnreachableError("Never.")
 
-def day_11():
+func day_11():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 1656
     assert part_1("input.txt") == 1562
     assert part_2("input.txt") == 268

@@ -1,15 +1,15 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> [(string, string)]:
+func get_input(filename: string) -> [(string, string)]:
     items = []
 
-    for line in TextFile(f"{__assets__}/day_12/{filename}").read().strip().split("\n"):
+    for line in Path(f"{__assets__}/day_12/{filename}").read_text().strip().split("\n"):
         parts = line.split('-')
         items.append((parts[0], parts[1]))
 
     return items
 
-def find_adjecent_caves(lines: [(string, string)]) -> {string: [string]}:
+func find_adjecent_caves(lines: [(string, string)]) -> {string: [string]}:
     adjecent_caves = {}
 
     for begin, end in lines:
@@ -18,13 +18,13 @@ def find_adjecent_caves(lines: [(string, string)]) -> {string: [string]}:
 
     return adjecent_caves
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     lines = get_input(filename)
     adjecent_caves = find_adjecent_caves(lines)
     number_of_paths = 0
     paths = [["start"]]
 
-    while len(paths) > 0:
+    while paths.length() > 0:
         path = paths.pop()
 
         for adjecent_cave in adjecent_caves[path[-1]]:
@@ -35,13 +35,13 @@ def part_1(filename: string) -> i64:
 
     return number_of_paths
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     lines = get_input(filename)
     adjecent_caves = find_adjecent_caves(lines)
     number_of_paths = 0
     paths = [(["start"], False)]
 
-    while len(paths) > 0:
+    while paths.length() > 0:
         path, twice = paths.pop()
 
         for adjecent_cave in adjecent_caves[path[-1]]:
@@ -54,12 +54,11 @@ def part_2(filename: string) -> i64:
 
     return number_of_paths
 
-def day_12():
+func day_12():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 10
     assert part_2("example.txt") == 36
     assert part_1("input.txt") == 3000

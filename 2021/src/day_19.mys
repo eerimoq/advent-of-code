@@ -1,24 +1,24 @@
-from os import TextFile
+from os.path import Path
 
 class Point:
     x: i64
     y: i64
     z: i64
 
-    def __add__(self, other: Point) -> Point:
+    func __add__(self, other: Point) -> Point:
         return Point(self.x + other.x, self.y + other.y, self.z + other.z)
 
-    def __sub__(self, other: Point) -> Point:
+    func __sub__(self, other: Point) -> Point:
         return Point(self.x - other.x, self.y - other.y, self.z - other.z)
 
 class Scanner:
     beacons: [Point]
-    position: Point
+    position: Point?
 
-def get_input(filename: string) -> [Scanner]:
+func get_input(filename: string) -> [Scanner]:
     scanners = []
 
-    for chunk in TextFile(f"{__assets__}/day_19/{filename}").read().strip().split("\n\n"):
+    for chunk in Path(f"{__assets__}/day_19/{filename}").read_text().strip().split("\n\n"):
         scanner = Scanner([], Point(0, 0, 0))
         scanners.append(scanner)
 
@@ -66,7 +66,7 @@ ROTATIONS: [(i64, i64, i64)] = [
     (-2, -3, 1)
 ]
 
-def match_scanners(scanner_1: Scanner, scanner_2: Scanner) -> Scanner:
+func match_scanners(scanner_1: Scanner, scanner_2: Scanner) -> Scanner?:
     for b1 in scanner_1.beacons:
         for b2 in scanner_2.beacons:
             scanner_2_position = b1 - b2
@@ -86,10 +86,10 @@ def match_scanners(scanner_1: Scanner, scanner_2: Scanner) -> Scanner:
 
     return None
 
-def find_beacons(known_scanners: [Scanner], scanner: Scanner) -> Scanner:
+func find_beacons(known_scanners: [Scanner], scanner: Scanner) -> Scanner?:
     for known_scanner in known_scanners:
         for rx, ry, rz in ROTATIONS:
-            rotated_scanner = Scanner([], None)
+            rotated_scanner: Scanner? = Scanner([], None)
 
             for beacon in scanner.beacons:
                 xyz = [beacon.x, beacon.y, beacon.z]
@@ -118,37 +118,37 @@ def find_beacons(known_scanners: [Scanner], scanner: Scanner) -> Scanner:
 
     return None
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     scanners = get_input(filename)
     beacons = {beacon for beacon in scanners[0].beacons}
     known_scanners = [scanners.pop(0)]
 
-    while len(scanners) > 0:
+    while scanners.length() > 0:
         for index, scanner in enumerate(scanners):
-            scanner = find_beacons(known_scanners, scanner)
+            new_scanner: Scanner? = find_beacons(known_scanners, scanner)
 
-            if scanner is not None:
+            if new_scanner is not None:
                 scanners.pop(index)
-                known_scanners.append(scanner)
+                known_scanners.append(new_scanner)
 
-                for beacon in scanner.beacons:
+                for beacon in new_scanner.beacons:
                     beacons.add(beacon)
 
                 break
 
-    return i64(len(beacons))
+    return beacons.length()
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     scanners = get_input(filename)
     known_scanners = [scanners.pop(0)]
 
-    while len(scanners) > 0:
+    while scanners.length() > 0:
         for index, scanner in enumerate(scanners):
-            scanner = find_beacons(known_scanners, scanner)
+            new_scanner: Scanner? = find_beacons(known_scanners, scanner)
 
-            if scanner is not None:
+            if new_scanner is not None:
                 scanners.pop(index)
-                known_scanners.append(scanner)
+                known_scanners.append(new_scanner)
                 break
 
     maximum_distance = 0
@@ -161,11 +161,10 @@ def part_2(filename: string) -> i64:
 
     return maximum_distance
 
-def day_19():
+func day_19():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 79
     assert part_2("example.txt") == 3621

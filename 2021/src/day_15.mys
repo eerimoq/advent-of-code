@@ -1,9 +1,9 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> [[i64]]:
+func get_input(filename: string) -> [[i64]]:
     items = []
 
-    for line in TextFile(f"{__assets__}/day_15/{filename}").read().strip().split("\n"):
+    for line in Path(f"{__assets__}/day_15/{filename}").read_text().strip().split("\n"):
         l = []
 
         for i in line:
@@ -18,18 +18,18 @@ class Matrix:
     height: i64
     width: i64
 
-    def __init__(self, data: [[i64]]):
+    func __init__(self, data: [[i64]]):
         self.data = data
-        self.height = i64(len(data))
-        self.width = i64(len(data[0]))
+        self.height = data.length()
+        self.width = data[0].length()
 
-    def get(self, r: i64, c: i64) -> i64:
+    func get(self, r: i64, c: i64) -> i64:
         return self.data[r][c]
 
-    def set(self, r: i64, c: i64, v: i64):
+    func set(self, r: i64, c: i64, v: i64):
         self.data[r][c] = v
 
-    def neighbours(self, r: i64, c: i64) -> [(i64, i64)]:
+    func neighbours(self, r: i64, c: i64) -> [(i64, i64)]:
         neighbours = []
 
         if c < self.width - 1:
@@ -46,14 +46,14 @@ class Matrix:
 
         return neighbours
 
-def find_lowest_risk(locations: [(i64, i64)],
+func find_lowest_risk(locations: [(i64, i64)],
                      minimum_risks: [[i64]],
                      m: Matrix) -> i64:
     minimum_risk_index = -1
     minimum_risk = -1
     index = 0
 
-    while index < i64(len(locations)):
+    while index < locations.length():
         location = locations[index]
         r, c = location
         skip = True
@@ -75,7 +75,7 @@ def find_lowest_risk(locations: [(i64, i64)],
 
     return minimum_risk_index
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     lines = get_input(filename)
     m = Matrix(lines)
     minimum_risks: [[i64]] = []
@@ -101,7 +101,7 @@ def part_1(filename: string) -> i64:
 
     return minimum_risks[m.height - 1][m.width - 1]
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     lines = get_input(filename)
     m = Matrix(lines)
     big: [[i64]] = []
@@ -154,11 +154,10 @@ def part_2(filename: string) -> i64:
 
     return minimum_risks[m.height - 1][m.width - 1]
 
-def day_15():
+func day_15():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 40
     assert part_2("example.txt") == 315

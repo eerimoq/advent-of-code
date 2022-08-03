@@ -10,7 +10,7 @@ D: i64 = 1000
 # ###D#A#C#D###
 #   #C#A#B#B#
 #   #########
-def part_1() -> i64:
+func part_1() -> i64:
     return (5 * A
             + 5 * A
             + 2 * D
@@ -31,7 +31,7 @@ def part_1() -> i64:
 #   #D#B#A#C#
 #   #C#A#B#B#
 #   #########
-def part_2() -> i64:
+func part_2() -> i64:
     return (7 * A
             + 7 * C
             + 4 * B
@@ -57,11 +57,10 @@ def part_2() -> i64:
             + 9 * A
             + 9 * A)
 
-def day_23():
+func day_23():
     print(part_1())
     print(part_2())
 
-@test
-def test_all():
+test test_all():
     assert part_1() == 14346
     assert part_2() == 48984

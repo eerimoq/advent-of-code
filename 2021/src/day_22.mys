@@ -1,4 +1,4 @@
-from os import TextFile
+from os.path import Path
 
 class Command:
     action: string
@@ -9,7 +9,7 @@ class Command:
     z_min: i64
     z_max: i64
 
-    def clone(self) -> Command:
+    func clone(self) -> Command:
         return Command(self.action,
                        self.x_min,
                        self.x_max,
@@ -18,31 +18,31 @@ class Command:
                        self.z_min,
                        self.z_max)
 
-    def clone_x(self, x_min: i64, x_max: i64) -> Command:
+    func clone_x(self, x_min: i64, x_max: i64) -> Command:
         command = self.clone()
         command.x_min = x_min
         command.x_max = x_max
 
         return command
 
-    def clone_y(self, y_min: i64, y_max: i64) -> Command:
+    func clone_y(self, y_min: i64, y_max: i64) -> Command:
         command = self.clone()
         command.y_min = y_min
         command.y_max = y_max
 
         return command
 
-    def clone_z(self, z_min: i64, z_max: i64) -> Command:
+    func clone_z(self, z_min: i64, z_max: i64) -> Command:
         command = self.clone()
         command.z_min = z_min
         command.z_max = z_max
 
         return command
 
-def get_input(filename: string) -> [Command]:
+func get_input(filename: string) -> [Command]:
     commands = []
 
-    for line in TextFile(f"{__assets__}/day_22/{filename}").read().strip().split("\n"):
+    for line in Path(f"{__assets__}/day_22/{filename}").read_text().strip().split("\n"):
         mo = line.match(re"(\w+) "
                         re"x=(-?\d+)\.\.(-?\d+),"
                         re"y=(-?\d+)\.\.(-?\d+),"
@@ -59,7 +59,7 @@ def get_input(filename: string) -> [Command]:
 
     return commands
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     commands = get_input(filename)
     grid: [[[bool]]] = []
     dimension = 101
@@ -89,7 +89,7 @@ def part_1(filename: string) -> i64:
 
     return count
 
-def are_not_overlapping(cube_1: Command, cube_2: Command) -> bool:
+func are_not_overlapping(cube_1: Command, cube_2: Command) -> bool:
     return (cube_1.x_max < cube_2.x_min
             or cube_1.x_min > cube_2.x_max
             or cube_1.y_max < cube_2.y_min
@@ -97,12 +97,12 @@ def are_not_overlapping(cube_1: Command, cube_2: Command) -> bool:
             or cube_1.z_max < cube_2.z_min
             or cube_1.z_min > cube_2.z_max)
 
-def covers(cover: Command, part: Command) -> bool:
+func covers(cover: Command, part: Command) -> bool:
     return (part.x_min >= cover.x_min and part.x_max <= cover.x_max
             and part.y_min >= cover.y_min and part.y_max <= cover.y_max
             and part.z_min >= cover.z_min and part.z_max <= cover.z_max)
 
-def split_x(sub_cube: Command, cube: Command) -> [Command]:
+func split_x(sub_cube: Command, cube: Command) -> [Command]:
     sub_cubes = []
 
     if sub_cube.x_min < cube.x_min and sub_cube.x_max > cube.x_max:
@@ -120,7 +120,7 @@ def split_x(sub_cube: Command, cube: Command) -> [Command]:
 
     return sub_cubes
 
-def split_y(sub_cubes: [Command], cube: Command) -> [Command]:
+func split_y(sub_cubes: [Command], cube: Command) -> [Command]:
     new_sub_cubes = []
 
     for sub_cube in sub_cubes:
@@ -139,7 +139,7 @@ def split_y(sub_cubes: [Command], cube: Command) -> [Command]:
 
     return new_sub_cubes
 
-def split_z(sub_cubes: [Command], cube: Command) -> [Command]:
+func split_z(sub_cubes: [Command], cube: Command) -> [Command]:
     new_sub_cubes = []
 
     for sub_cube in sub_cubes:
@@ -158,7 +158,7 @@ def split_z(sub_cubes: [Command], cube: Command) -> [Command]:
 
     return new_sub_cubes
 
-def split(sub_cubes: [Command], cube: Command) -> [Command]:
+func split(sub_cubes: [Command], cube: Command) -> [Command]:
     new_sub_cubes = []
 
     for sub_cube in sub_cubes:
@@ -173,7 +173,7 @@ def split(sub_cubes: [Command], cube: Command) -> [Command]:
 
     return new_sub_cubes
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     commands = get_input(filename)
     cubes: [Command] = []
 
@@ -202,12 +202,11 @@ def part_2(filename: string) -> i64:
 
     return count
 
-def day_22():
+func day_22():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 39
     assert part_1("input.txt") == 580012
     assert part_2("example.txt") == 39

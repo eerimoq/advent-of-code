@@ -1,15 +1,15 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> [(string, i64)]:
+func get_input(filename: string) -> [(string, i64)]:
     commands = []
 
-    for line in TextFile(f"{__assets__}/day_02/{filename}").read().strip().split("\n"):
+    for line in Path(f"{__assets__}/day_02/{filename}").read_text().strip().split("\n"):
         parts = line.split(' ')
         commands.append((parts[0], i64(parts[1])))
 
     return commands
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     commands = get_input(filename)
     horizontal_position = 0
     depth = 0
@@ -25,7 +25,7 @@ def part_1(filename: string) -> i64:
 
     return horizontal_position * depth
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     commands = get_input(filename)
     horizontal_position = 0
     depth = 0
@@ -43,12 +43,11 @@ def part_2(filename: string) -> i64:
 
     return horizontal_position * depth
 
-def day_02():
+func day_02():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 150
     assert part_2("example.txt") == 900
     assert part_1("input.txt") == 2272262

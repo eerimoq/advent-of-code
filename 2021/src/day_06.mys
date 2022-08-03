@@ -1,12 +1,12 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> [i64]:
+func get_input(filename: string) -> [i64]:
     return [
         i64(number)
-        for number in TextFile(f"{__assets__}/day_06/{filename}").read().strip().split(",")
+        for number in Path(f"{__assets__}/day_06/{filename}").read_text().strip().split(",")
     ]
 
-def calc_number_of_lanternfish(timers: [i64], days: i64) -> i64:
+func calc_number_of_lanternfish(timers: [i64], days: i64) -> i64:
     number_of_lanternfish_per_timer = [0 for _ in range(9)]
 
     for timer in timers:
@@ -19,22 +19,21 @@ def calc_number_of_lanternfish(timers: [i64], days: i64) -> i64:
 
     return sum(number_of_lanternfish_per_timer)
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     timers = get_input(filename)
 
     return calc_number_of_lanternfish(timers, 80)
 
-def part_2(filename: string) -> i64:
+func part_2(filename: string) -> i64:
     timers = get_input(filename)
 
     return calc_number_of_lanternfish(timers, 256)
 
-def day_06():
+func day_06():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("example.txt") == 5934
     assert part_2("example.txt") == 26984457539
     assert part_1("input.txt") == 379114
