@@ -1,9 +1,9 @@
-from os import TextFile
+from os.path import Path
 
-def get_input(filename: string) -> [string]:
-    return TextFile(f"{__assets__}/day_02/{filename}").read().strip().split("\n")
+func get_input(filename: string) -> [string]:
+    return Path(f"{__assets__}/day_02/{filename}").read_text().strip().split("\n")
 
-def part_1(filename: string) -> i64:
+func part_1(filename: string) -> i64:
     box_ids = get_input(filename)
     two_times = 0
     three_times = 0
@@ -29,7 +29,7 @@ def part_1(filename: string) -> i64:
 
     return two_times * three_times
 
-def part_2(filename: string) -> string:
+func part_2(filename: string) -> string:
     box_ids = get_input(filename)
 
     for box_id_1 in box_ids:
@@ -47,11 +47,10 @@ def part_2(filename: string) -> string:
 
     raise UnreachableError()
 
-def day_02():
+func day_02():
     print(part_1("input.txt"))
     print(part_2("input.txt"))
 
-@test
-def test_all():
+test test_all():
     assert part_1("input.txt") == 6000
     assert part_2("input.txt") == "pbykrmjmizwhxlqnasfgtycdv"
