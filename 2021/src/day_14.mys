@@ -6,10 +6,7 @@ func get_input(filename: string) -> ([char], {char: {char: char}}):
     insert: {char: {char: char}} = {}
 
     for line in slice(lines, 2):
-        if line[0] not in insert:
-            insert[line[0]] = {}
-
-        insert[line[0]][line[1]] = line[6]
+        insert.get(line[0], {}, True)[line[1]] = line[6]
 
     return (polymer, insert)
 
@@ -17,10 +14,7 @@ func increment_pair(pairs: {char: {char: i64}},
                     left: char,
                     right: char,
                     count: i64):
-    if left not in pairs:
-        pairs[left] = {}
-
-    pairs_inner = pairs[left]
+    pairs_inner = pairs.get(left, {}, True)
 
     if right not in pairs_inner:
         pairs_inner[right] = 0
