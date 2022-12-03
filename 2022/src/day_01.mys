@@ -1,0 +1,29 @@
+from os.path import Path
+
+func get_input(filename: string) -> [i64]:
+    elves: [i64] = []
+    chunks = Path(f"{__assets__}/day_01/{filename}").read_text().strip().split("\n\n")
+
+    for chunk in chunks:
+        elves.append(sum([i64(number) for number in chunk.split("\n")]))
+
+    return elves
+
+func part_1(filename: string) -> i64:
+    return max(get_input(filename))
+
+func part_2(filename: string) -> i64:
+    elves = get_input(filename)
+    elves.sort()
+    
+    return sum(elves[-3:])
+
+func day_01():
+    print(part_1("input.txt"))
+    print(part_2("input.txt"))
+
+test all():
+    assert part_1("example.txt") == 24000
+    assert part_2("example.txt") == 45000
+    assert part_1("input.txt") == 74394
+    assert part_2("input.txt") == 212836

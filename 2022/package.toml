@@ -1,0 +1,9 @@
+[package]
+name = "aoc2022"
+version = "0.1.0"
+authors = ["Erik Moqvist <erik.moqvist@gmail.com>"]
+
+[dependencies]
+os = "latest"
+string = "latest"
+argparse = "latest"
