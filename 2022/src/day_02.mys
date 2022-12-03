@@ -1,0 +1,92 @@
+from os.path import Path
+
+func get_input(filename: string) -> [(char, char)]:
+    rounds: [(char, char)] = []
+    lines = Path(f"{__assets__}/day_02/{filename}").read_text().strip().split("\n")
+
+    for line in lines:
+        rounds.append((line[0], line[2]))
+
+    return rounds
+
+func part_1(filename: string) -> i64:
+    rounds = get_input(filename)
+    score = 0
+
+    for they, me in rounds:
+        match me:
+            case 'X':
+                score += 1
+            case 'Y':
+                score += 2
+            case 'Z':
+                score += 3
+
+        match (they, me):
+            # Win:
+            case ('A', 'Y'):
+                score += 6
+            case ('B', 'Z'):
+                score += 6
+            case ('C', 'X'):
+                score += 6
+            # Tie:
+            case ('A', 'X'):
+                score += 3
+            case ('B', 'Y'):
+                score += 3
+            case ('C', 'Z'):
+                score += 3
+
+    return score
+
+func part_2(filename: string) -> i64:
+    rounds = get_input(filename)
+    score = 0
+
+    for they, end in rounds:
+        me = ''
+        
+        match end:
+            case 'X':
+                score += 0
+ 
+                match they:
+                    case 'A':
+                        score += 3
+                    case 'B':
+                        score += 1
+                    case 'C':
+                        score += 2
+            case 'Y':
+                score += 3
+ 
+                match they:
+                    case 'A':
+                        score += 1
+                    case 'B':
+                        score += 2
+                    case 'C':
+                        score += 3
+            case 'Z':
+                score += 6
+ 
+                match they:
+                    case 'A':
+                        score += 2
+                    case 'B':
+                        score += 3
+                    case 'C':
+                        score += 1
+
+    return score
+
+func day_01():
+    print(part_1("input.txt"))
+    print(part_2("input.txt"))
+
+test all():
+    assert part_1("example.txt") == 15
+    assert part_2("example.txt") == 12
+    assert part_1("input.txt") == 14827
+    assert part_2("input.txt") == 13889
