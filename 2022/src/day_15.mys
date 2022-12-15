@@ -1,0 +1,82 @@
+from os.path import Path
+from math import abs
+
+class Point:
+    x: i64
+    y: i64
+
+class MyRange:
+    min: i64
+    max: i64
+
+func manhattan_distance(p1: Point, p2: Point) -> i64:
+    return abs(p1.x - p2.x) + abs(p1.y - p2.y)
+
+func get_input(filename: string) -> [(Point, Point)]:
+    pairs: [(Point, Point)] = []
+    lines = Path(f"{__assets__}/day_15/{filename}").read_text().strip().split("\n")
+
+    for line in lines:
+        mo = line.match(
+            re"Sensor at x=([-\d]+), y=([-\d]+): closest beacon "
+            re"is at x=([-\d]+), y=([-\d]+)")
+        sensor = Point(i64(mo.group(1)), i64(mo.group(2)))
+        beacon = Point(i64(mo.group(3)), i64(mo.group(4)))
+        pairs.append((sensor, beacon))
+
+    return pairs
+
+func part_1(filename: string, target_y: i64) -> i64:
+    pairs = get_input(filename)
+    signals: {i64} = {}
+    beacons_x = {beacon.x for _, beacon in pairs if beacon.y == target_y}
+
+    for sensor, beacon in pairs:
+        distance = manhattan_distance(sensor, beacon)
+        distance_x = distance - abs(target_y - sensor.y)
+
+        if distance_x < 0:
+            continue
+
+        for x in range(sensor.x - distance_x, sensor.x + distance_x + 1):
+            if x not in beacons_x:
+                signals.add(x)
+
+    return signals.length()
+
+func part_2(filename: string, maximum: i64) -> i64:
+    pairs = get_input(filename)
+    ranges_x: [MyRange] = []
+
+    for target_y in range(maximum + 1):
+        ranges_x.clear()
+        
+        for sensor, beacon in pairs:
+            distance = manhattan_distance(sensor, beacon)
+            distance_x = distance - abs(target_y - sensor.y)
+
+            if distance_x < 0:
+                continue
+
+            ranges_x.append(MyRange(sensor.x - distance_x, sensor.x + distance_x))
+
+        ranges_x.sort()
+        x = 0
+
+        for range_x in ranges_x:
+            if range_x.min > x + 1:
+                return (x + 1) * 4000000 + target_y
+
+            x = max(x, range_x.max)
+
+    raise UnreachableError()
+
+func day_15():
+    print(part_1("input.txt", 2000000))
+    print(part_2("input.txt", 4000000))
+
+test all():
+    assert part_1("example.txt", 10) == 26
+    assert part_2("example.txt", 20) == 56000011
+    assert part_1("input.txt", 2000000) == 5073496
+    assert part_2("input.txt", 4000000) == 13081194638237

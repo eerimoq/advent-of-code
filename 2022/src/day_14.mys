@@ -1,0 +1,125 @@
+from os.path import Path
+
+class Point:
+    x: i64
+    y: i64
+
+func get_input(filename: string) -> [[Point]]:
+    paths: [[Point]] = []
+    lines = Path(f"{__assets__}/day_14/{filename}").read_text().strip().split("\n")
+
+    for line in lines:
+        path: [Point] = []
+
+        for point in line.split(" -> "):
+            numbers = point.split(",")
+            path.append(Point(i64(numbers[0]), i64(numbers[1])))
+
+        paths.append(path)
+
+    return paths
+
+func part_1(filename: string) -> i64:
+    paths = get_input(filename)
+    cave: {Point} = {}
+    maximum_y = -1
+
+    for path in paths:
+        for i in range(path.length() - 1):
+            point_1 = path[i]
+            point_2 = path[i + 1]
+            min_x = min(point_1.x, point_2.x)
+            max_x = max(point_1.x, point_2.x)
+            min_y = min(point_1.y, point_2.y)
+            max_y = max(point_1.y, point_2.y)
+            maximum_y = max(maximum_y, max_y)
+
+            for x in range(min_x, max_x + 1):
+                for y in range(min_y, max_y + 1):
+                    cave.add(Point(x, y))
+
+    count = 0
+
+    while True:
+        sand = Point(500, 0)
+
+        while True:
+            next_sands = [
+                Point(sand.x, sand.y + 1),
+                Point(sand.x - 1, sand.y + 1),
+                Point(sand.x + 1, sand.y + 1)
+            ]
+            moved = False
+
+            for next_sand in next_sands:
+                if next_sand not in cave:
+                    sand = next_sand
+                    moved = True
+                    break
+
+            if sand.y == maximum_y:
+                return count
+
+            if not moved:
+                count += 1
+                cave.add(sand)
+                break
+
+func part_2(filename: string) -> i64:
+    paths = get_input(filename)
+    cave: {Point} = {}
+    maximum_y = -1
+
+    for path in paths:
+        for i in range(path.length() - 1):
+            point_1 = path[i]
+            point_2 = path[i + 1]
+            min_x = min(point_1.x, point_2.x)
+            max_x = max(point_1.x, point_2.x)
+            min_y = min(point_1.y, point_2.y)
+            max_y = max(point_1.y, point_2.y)
+            maximum_y = max(maximum_y, max_y)
+
+            for x in range(min_x, max_x + 1):
+                for y in range(min_y, max_y + 1):
+                    cave.add(Point(x, y))
+
+    for x in range(-1000, 1000):
+        cave.add(Point(x, maximum_y + 2))
+
+    count = 0
+
+    while True:
+        sand = Point(500, 0)
+
+        if sand in cave:
+            return count
+
+        while True:
+            next_sands = [
+                Point(sand.x, sand.y + 1),
+                Point(sand.x - 1, sand.y + 1),
+                Point(sand.x + 1, sand.y + 1)
+            ]
+            moved = False
+
+            for next_sand in next_sands:
+                if next_sand not in cave:
+                    sand = next_sand
+                    moved = True
+                    break
+
+            if not moved:
+                count += 1
+                cave.add(sand)
+                break
+
+func day_14():
+    print(part_1("input.txt"))
+    print(part_2("input.txt"))
+
+test all():
+    assert part_1("example.txt") == 24
+    assert part_2("example.txt") == 93
+    assert part_1("input.txt") == 1330
+    assert part_2("input.txt") == 26139

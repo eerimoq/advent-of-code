@@ -1,5 +1,7 @@
 from argparse import Parser
 from .day_01 import day_01
+from .day_14 import day_14
+from .day_15 import day_15
 
 func main(argv: [string]):
     parser = Parser("aoc2022")
@@ -14,5 +16,9 @@ func main(argv: [string]):
         match i64(day):
             case 1:
                 day_01()
+            case 14:
+                day_14()
+            case 15:
+                day_15()
             case _:
                 print("This day is not implemented.")
